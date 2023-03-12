@@ -1,0 +1,48 @@
+.side-bar-wrapper{
+    width: 260px;
+    transform: translateX(-180px);
+    opacity: 0;
+    transition: transform 0.7s ease-in-out, opacity 1s ease-in-out;
+    position: fixed;
+    bottom: 0;
+    top: 3.5rem;
+    background-color: white;
+    z-index: 5;
+}
+
+.side-bar-wrapper:hover{
+    transform: translateX(0px);
+    opacity: 1;
+}
+
+.sidebar-pinned{
+    transform: translateX(0px)!important;
+    opacity: 1!important;
+}
+
+.btn {
+    border: none;
+}
+
+.btn:active, .btn:focus{
+    border: none!important;
+}
+
+
+.side-bar-brand img {
+    width: 140px;
+    height: 50px;
+}
+
+.side-bar-header{
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-around;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
+
+.side-bar-content{
+    height: 100%;
+}

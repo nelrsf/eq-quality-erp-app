@@ -1,0 +1,12 @@
+<div class="viewport">
+    <eq-nav-bar></eq-nav-bar>
+    <eq-side-bar [menuTemplate]="menuTemplate"></eq-side-bar>
+    <div class="main-content">
+        <router-outlet></router-outlet>
+    </div>
+    <eq-footer></eq-footer>
+</div>
+
+<ng-template #menuTemplate>
+    <eq-menu></eq-menu>
+</ng-template>

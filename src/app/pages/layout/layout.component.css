@@ -1,0 +1,10 @@
+.main-content{
+    padding: 1rem 4rem;
+}
+
+@media (max-width: 600px) {
+    .main-content{
+        padding: 1rem 1rem;
+    }
+}
+
