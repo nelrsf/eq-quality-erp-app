@@ -6,8 +6,7 @@ import { AppComponent } from './app.component';
 import { LayoutModule } from './components/layout/layout.module';
 import { MenuComponent } from './components/menu/menu.component';
 import { PagesModule } from './pages/pages.module';
-import { ModulesComponent } from './pages/modules/modules.component';
-import { LoadingComponent } from './components/miscelaneous/loading/loading.component';
+
 
 
 const routes: Routes = [

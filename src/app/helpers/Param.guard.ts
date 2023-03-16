@@ -14,6 +14,8 @@ export class ParamGuard {
                 return this.objectdataParamsGuard(route);
             case "tables/data/:module/:table":
                 return this.moduleTableParamsGuard(route);
+            case "columns/:module/:table/:columndata":
+                return this.columnParamsGuard(route);
             default:
                 return true;
         }
@@ -39,6 +41,16 @@ export class ParamGuard {
         const module = route.params['module'];
         const table = route.params['table'];
         if (!module || !table) {
+            return false;
+        }
+        return true;
+    }
+
+    private columnParamsGuard(route: ActivatedRouteSnapshot): boolean {
+        const columnData = route.params['columndata'];
+        const module = route.params['module'];
+        const table = route.params['table'];
+        if (!columnData || !module || !table) {
             return false;
         }
         return true;

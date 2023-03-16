@@ -52,6 +52,7 @@ export class DataTableComponent implements OnInit {
     this.data.subscribe((rows) => {
       this.rows = rows;
       this.headers = this.getTableHeaders();
+      this.columnsFunctions = [];
       this.setColumnsFunctions();
     })
   }

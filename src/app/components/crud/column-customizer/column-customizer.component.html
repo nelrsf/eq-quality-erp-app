@@ -1,0 +1,37 @@
+<form class="p-5" (submit)="onSubmit()">
+
+  <input type="hidden" class="form-control mb-3" [(ngModel)]="columnData._id"
+    [name]="'id'">
+
+  <label class="form-label mb-3">Nombre de columna</label>
+  <input type="text" class="form-control mb-3" [(ngModel)]="columnData.columnName"
+    [name]="'fieldName'">
+
+  <label class="form-label mb-3">Nombre de tabla</label>
+  <input type="text" [disabled]="true" class="form-control mb-3" [value]="table">
+
+  <label class="form-label mb-3">Nombre de módulo</label>
+  <input type="text" [disabled]="true" class="form-control mb-3" [value]="module">
+
+  <label class="form-label mb-3">Tipo de columna</label>
+  <select class="form-select mb-3" [(ngModel)]="columnData['type']" name="typeColumn">
+    <option *ngFor="let columnType of COLUMN_TYPES" [selected]="columnType===columnData.type">
+      {{columnType}}
+    </option>
+  </select>
+
+  <input class="form-check-input mb-3" type="checkbox" [(ngModel)]="columnData.required" [name]="'required'">
+  <label class="form-check-label mb-3">
+    Obligatorio
+  </label>
+
+  <input class="form-check-input mb-3" type="checkbox" [(ngModel)]="columnData.hidden" [name]="'hidden'">
+  <label class="form-check-label mb-3">
+    Oculto
+  </label>
+
+  <hr>
+
+  <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+
+</form>

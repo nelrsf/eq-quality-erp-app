@@ -1,5 +1,5 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { faCog } from '@fortawesome/free-solid-svg-icons';
 import { DataTableComponent, IMapAsUrl } from 'src/app/components/crud/data-table/data-table.component';
 import { TablesService } from './tables.service';
@@ -19,9 +19,10 @@ export class TablesComponent implements OnInit, AfterViewInit {
 
   loading = false;
   linkedFields: IMapAsUrl[] = [];
+  columnsMetadata: any;
 
 
-  constructor(private tableService: TablesService, private activatedRoute: ActivatedRoute, private cdRef: ChangeDetectorRef) { }
+  constructor(private tableService: TablesService, private activatedRoute: ActivatedRoute, private cdRef: ChangeDetectorRef, private router: Router) { }
 
   ngAfterViewInit(): void {
     this.activatedRoute.params.subscribe((params) => {
@@ -62,7 +63,6 @@ export class TablesComponent implements OnInit, AfterViewInit {
     if (!objectdataStr) {
       return;
     }
-
     let objectdata;
     try {
       objectdata = JSON.parse(objectdataStr)
@@ -95,17 +95,11 @@ export class TablesComponent implements OnInit, AfterViewInit {
     this.dataTable.columnsFunctions.forEach(colF => {
       colF.functions.push({
         functionIcon: this.icons.cog,
-        columnFunction: ()=>{
+        columnFunction: () => {
           this.tableService.getColumnData(module, table, colF.columnName).subscribe(
-            (data: any)=>{
-              if(!data){
-                return;
-              }
-              if(Array.isArray(data)){
-                this.dataTable.data.next(data);
-              } else {
-                this.dataTable.data.next([data]);
-              }
+            (data: any) => {
+              const dataStr = JSON.stringify(data).replaceAll("/", "%2F%2F");
+              this.router.navigate(['columns/' + module + '/' + table + '/' + dataStr])
             }
           )
         }
@@ -135,6 +129,8 @@ export class TablesComponent implements OnInit, AfterViewInit {
     this.tableService.getAllRows(module, table).subscribe(
       {
         next: (result: any) => {
+          // this.columnsMetadata = this.tableService.findAndDeleteColumnsMetadata(result)[0];
+          // const rows = this.tableService.filterRowsByColumnsMetadata(this.columnsMetadata, result);
           this.dataTable.data.next(result);
           this.setColumnsFunctions(module, table);
           this.loading = false;
