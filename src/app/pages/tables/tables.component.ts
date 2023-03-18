@@ -1,7 +1,8 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { faCog } from '@fortawesome/free-solid-svg-icons';
-import { DataTableComponent, IMapAsUrl } from 'src/app/components/crud/data-table/data-table.component';
+import { faCog, faSquareCaretLeft, faSquareCaretRight, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { DataTableComponent, IColumnFunctions, IMapAsUrl } from 'src/app/components/crud/data-table/data-table.component';
+import { IColumn } from 'src/app/Model/interfaces/IColumn';
 import { TablesService } from './tables.service';
 
 @Component({
@@ -12,14 +13,17 @@ import { TablesService } from './tables.service';
 export class TablesComponent implements OnInit, AfterViewInit {
 
   icons = {
-    cog: faCog
+    cog: faCog,
+    columnNext: faSquareCaretRight,
+    columnBefore: faSquareCaretLeft,
+    columnDelete: faTrash
   }
 
   @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
 
   loading = false;
   linkedFields: IMapAsUrl[] = [];
-  columnsMetadata: any;
+  columnData!: IColumn;
 
 
   constructor(private tableService: TablesService, private activatedRoute: ActivatedRoute, private cdRef: ChangeDetectorRef, private router: Router) { }
@@ -93,17 +97,9 @@ export class TablesComponent implements OnInit, AfterViewInit {
 
   setColumnsFunctions(module: string, table: string) {
     this.dataTable.columnsFunctions.forEach(colF => {
-      colF.functions.push({
-        functionIcon: this.icons.cog,
-        columnFunction: () => {
-          this.tableService.getColumnData(module, table, colF.columnName).subscribe(
-            (data: any) => {
-              const dataStr = JSON.stringify(data).replaceAll("/", "%2F%2F");
-              this.router.navigate(['columns/' + module + '/' + table + '/' + dataStr])
-            }
-          )
-        }
-      })
+      colF.functions.push(
+        ...this.createColumnsFunctionsArray(module, table, colF)
+      )
     })
   }
 
@@ -129,8 +125,6 @@ export class TablesComponent implements OnInit, AfterViewInit {
     this.tableService.getAllRows(module, table).subscribe(
       {
         next: (result: any) => {
-          // this.columnsMetadata = this.tableService.findAndDeleteColumnsMetadata(result)[0];
-          // const rows = this.tableService.filterRowsByColumnsMetadata(this.columnsMetadata, result);
           this.dataTable.data.next(result);
           this.setColumnsFunctions(module, table);
           this.loading = false;
@@ -143,6 +137,45 @@ export class TablesComponent implements OnInit, AfterViewInit {
     )
   }
 
+  private createColumnsFunctionsArray(module:string, table:string, colF: IColumnFunctions) {
 
+    const customizeFunc = () => {
+      this.tableService.getColumnData(module, table, colF.columnName).subscribe(
+        (data: any) => {
+          const dataStr = JSON.stringify(data).replaceAll("/", "%2F%2F");
+          this.columnData = data;
+          // this.router.navigate(['columns/' + module + '/' + table + '/' + dataStr])
+        }
+      )
+    }
+
+
+    return [
+      {
+        functionIcon: this.icons.cog,
+        functionName: "Personalizar",
+        columnFunction: customizeFunc
+      },
+
+      {
+        functionIcon: this.icons.columnBefore,
+        functionName: "Insertar columna a la izquierda",
+        columnFunction: ()=>{}
+      },
+
+      {
+        functionIcon: this.icons.columnNext,
+        functionName: "Insertar columna a la derecha",
+        columnFunction: ()=>{}
+      },
+
+      {
+        functionIcon: this.icons.columnDelete,
+        functionName: "Eliminar columna",
+        columnFunction: ()=>{}
+      }
+
+    ]
+  }
 
 }

@@ -12,7 +12,7 @@ import { TablesComponent } from './tables/tables.component';
 import { ParamGuard } from '../helpers/Param.guard';
 import { LoadingComponent } from '../components/miscelaneous/loading/loading.component';
 import { ColumnCustomizerComponent } from '../components/crud/column-customizer/column-customizer.component';
-import { ColumnCustomizerPageComponent } from './column-customizer/column-customizer.component';
+import { ButtonsPadComponent } from '../components/crud/buttons-pad/buttons-pad.component';
 
 
 const routes: Routes = [
@@ -28,7 +28,7 @@ const routes: Routes = [
       {path: 'tables/:module', component: TablesComponent, canActivate: [ParamGuard]},
       {path: 'tables/auxdata/:objectdata', component: TablesComponent, canActivate: [ParamGuard]},
       {path: 'tables/data/:module/:table', component: TablesComponent, canActivate: [ParamGuard]},
-      {path: 'columns/:module/:table/:columndata', component: ColumnCustomizerComponent, canActivate: [ParamGuard]},
+      // {path: 'columns/:module/:table/:columndata', component: ColumnCustomizerComponent, canActivate: [ParamGuard]},
     ]
   }
 ];
@@ -38,8 +38,7 @@ const routes: Routes = [
     LoginComponent,
     LayoutComponent,
     ModulesComponent,
-    TablesComponent,
-    ColumnCustomizerPageComponent
+    TablesComponent
   ],
   imports: [
     CommonModule,
@@ -49,7 +48,8 @@ const routes: Routes = [
     DataTableComponent,
     HttpClientModule,
     LoadingComponent,
-    ColumnCustomizerComponent
+    ColumnCustomizerComponent,
+    ButtonsPadComponent
   ],
   exports: [
     LoginComponent,

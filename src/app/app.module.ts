@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule, Routes } from '@angular/router';
-
 import { AppComponent } from './app.component';
 import { LayoutModule } from './components/layout/layout.module';
 import { MenuComponent } from './components/menu/menu.component';
 import { PagesModule } from './pages/pages.module';
+
 
 
 
@@ -16,7 +16,7 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
   ],
   imports: [
     RouterModule.forRoot(routes),

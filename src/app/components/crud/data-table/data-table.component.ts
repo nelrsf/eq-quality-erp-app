@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faAngleLeft, faAngleRight, IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { faAngleLeft, faAngleRight, IconDefinition, faCogs } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject } from 'rxjs';
 
 export interface IMapAsUrl {
@@ -17,6 +17,7 @@ export interface IColumnFunctions {
 
 export interface IColumnFunction {
   functionIcon: IconDefinition,
+  functionName: string,
   columnFunction: () => void;
 }
 
@@ -38,6 +39,7 @@ export class DataTableComponent implements OnInit {
   icons = {
     angleLeft: faAngleLeft,
     angleRight: faAngleRight,
+    cogs: faCogs
   }
 
   data = new BehaviorSubject<Array<object>>([]);
@@ -105,10 +107,26 @@ export class DataTableComponent implements OnInit {
     const columnFunctions = this.columnsFunctions.find((colFunctions) => {
       return colFunctions.columnName === columnName;
     })
-    if(!columnFunctions){
+    if (!columnFunctions) {
       return ([] as unknown as IColumnFunctions)
     }
     return columnFunctions;
+  }
+
+  toggleColumnsMenu(columnsDropDown: any) {
+    columnsDropDown?.classList?.toggle("show");
+  }
+
+  hideColumnsMenu(columnsDropDown: any){
+    columnsDropDown.style.transition = "opacity 0.5s linear";
+    columnsDropDown.style.opacity = "0";
+    setTimeout(
+      ()=>{
+        columnsDropDown?.classList?.remove("show");
+        columnsDropDown.style.opacity = "1";
+      }
+    ,1000)
+
   }
 
 }

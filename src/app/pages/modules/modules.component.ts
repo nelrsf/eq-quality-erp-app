@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { DataTableComponent, IMapAsUrl } from 'src/app/components/crud/data-table/data-table.component';
 import { ModulesService } from './modules.service';
 
@@ -13,11 +13,13 @@ export class ModulesComponent implements OnInit, AfterViewInit {
 
   modules!: object[];
   linkedFields: IMapAsUrl[] = [];
+  loading: boolean = false;
 
-  constructor(private modulesService: ModulesService) { }
+  constructor(private modulesService: ModulesService, private cdRef: ChangeDetectorRef) { }
 
   ngAfterViewInit(): void {
     this.getModulesData();
+    this.cdRef.detectChanges();
   }
 
   ngOnInit(): void {
@@ -25,6 +27,7 @@ export class ModulesComponent implements OnInit, AfterViewInit {
   }
 
   getModulesData() {
+    this.loading = true;
     this.modulesService.getAllModules().subscribe(
       (data: any) => {
         this.modules = data;
@@ -37,6 +40,7 @@ export class ModulesComponent implements OnInit, AfterViewInit {
           }
         )
         this.dataTable.data.next(this.modules);
+        this.loading = false;
       }
     )
   }

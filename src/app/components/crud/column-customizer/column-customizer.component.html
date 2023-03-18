@@ -1,17 +1,22 @@
-<form class="p-5" (submit)="onSubmit()">
+<div *ngIf="columnData===undefined">
+  <eq-loading></eq-loading>
+</div>
+
+
+<form div *ngIf="columnData!==undefined" class="p-5" (submit)="onSubmit()">
 
   <input type="hidden" class="form-control mb-3" [(ngModel)]="columnData._id"
     [name]="'id'">
 
   <label class="form-label mb-3">Nombre de columna</label>
-  <input type="text" class="form-control mb-3" [(ngModel)]="columnData.columnName"
+  <input type="text" [disabled]="true" class="form-control mb-3" [(ngModel)]="columnData.columnName"
     [name]="'fieldName'">
 
   <label class="form-label mb-3">Nombre de tabla</label>
-  <input type="text" [disabled]="true" class="form-control mb-3" [value]="table">
+  <input type="text" [disabled]="true" class="form-control mb-3" [value]="columnData.table">
 
   <label class="form-label mb-3">Nombre de módulo</label>
-  <input type="text" [disabled]="true" class="form-control mb-3" [value]="module">
+  <input type="text" [disabled]="true" class="form-control mb-3" [value]="columnData.module">
 
   <label class="form-label mb-3">Tipo de columna</label>
   <select class="form-select mb-3" [(ngModel)]="columnData['type']" name="typeColumn">

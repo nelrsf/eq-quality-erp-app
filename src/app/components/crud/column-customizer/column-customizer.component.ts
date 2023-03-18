@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, NgModule, OnInit } from '@angular/core';
+import { Component, Input, NgModule, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ColumnTypes, IColumn } from 'src/app/Model/interfaces/IColumn';
 import { TablesService } from 'src/app/pages/tables/tables.service';
+import { LoadingComponent } from '../../miscelaneous/loading/loading.component';
 
 
 @Component({
@@ -13,14 +14,13 @@ import { TablesService } from 'src/app/pages/tables/tables.service';
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule
+    FormsModule,
+    LoadingComponent
   ]
 })
 export class ColumnCustomizerComponent implements OnInit {
 
-  module!: string;
-  table!: string;
-  columnData: IColumn;
+  @Input() columnData!: IColumn;
   COLUMN_TYPES = Object.values(ColumnTypes);
 
   constructor(private activedRoute: ActivatedRoute, private tableService: TablesService) {
@@ -39,14 +39,14 @@ export class ColumnCustomizerComponent implements OnInit {
     const params = this.activedRoute.params;
     params.subscribe((params) => {
       const columnStr = params['columndata'];
-      this.module = params['module'];
-      this.table = params['table'];
-      this.columnData.table = this.table;
-      this.columnData.module = this.module;
+      // this.module = params['module'];
+      // this.table = params['table'];
+      // this.columnData.table = this.table;
+      // this.columnData.module = this.module;
       try {
         const columnData = JSON.parse(columnStr);
         if (columnData) {
-          this.columnData = columnData;
+          Object.assign(this.columnData, columnData)
         }
       } catch {
         console.log("Error parsing JSON")
@@ -73,6 +73,7 @@ export class ColumnCustomizerComponent implements OnInit {
         }
       );
     } else {
+      console.log(this.columnData)
       this.tableService.createColumn(this.columnData)
       .subscribe(
         {

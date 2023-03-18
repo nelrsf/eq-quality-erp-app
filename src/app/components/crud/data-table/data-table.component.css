@@ -456,7 +456,7 @@ a.btn.disabled {
     width: 100%;
     padding: .25rem 1.5rem;
     text-align: inherit;
-    white-space: nowrap;
+    white-space: break-spaces;
     color: #212529;
     border: 0;
     background-color: transparent;
@@ -1249,7 +1249,7 @@ a.btn-icon-only {
 }
 
 .dropdown-menu {
-    min-width: 12rem;
+    min-width: 14rem;
 }
 .dropdown-menu.show
 {
@@ -1258,8 +1258,8 @@ a.btn-icon-only {
 
 
 .dropdown-menu .dropdown-item {
-    font-size: .875rem;
-    padding: .5rem 1rem;
+    font-size: .8rem;
+    padding: .4rem 1rem;
 }
 
 .dropdown-menu .dropdown-item > i {

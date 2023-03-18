@@ -1,0 +1,55 @@
+.controls-container {
+    padding: 1rem 1rem;
+    display: inline-flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.btn{
+    padding: 0.2rem 0.5rem;
+    margin-left: 0.5rem;
+    height: fit-content;
+}
+
+.controls-wrapper {
+    display: inline-flex;
+    width: 85%;
+    flex-direction: unset;
+    justify-content: space-between;
+}
+
+.buttons-wrapper {
+    width: fit-content;
+}
+
+.search-toolbar input {
+    height: 2rem;
+}
+
+.search-toolbar {
+    padding-left: 0.3rem;
+}
+
+@media (min-width: 576px) {
+    .controls-wrapper {
+        max-width: 540px;
+    }
+}
+
+@media (min-width: 768px) {
+    .controls-wrapper {
+        max-width: 720px;
+    }
+}
+
+@media (min-width: 992px) {
+    .controls-wrapper {
+        max-width: 960px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .controls-wrapper {
+        max-width: 1140px;
+    }
+}

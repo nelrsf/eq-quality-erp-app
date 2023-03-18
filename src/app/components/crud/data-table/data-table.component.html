@@ -13,16 +13,28 @@
                         <table class="table align-items-center table-flush">
                             <thead class="thead-light">
                                 <tr>
-                                    <th scope="col" *ngFor="let header of headers">
+                                    <th scope="col" *ngFor="let header of headers; let colIndex = index">
                                         <div class="col-header d-flex align-items-center">
                                             <span>
                                                 {{header}}
                                             </span>
-                                            <div class="buttons">
-                                                <div *ngFor="let function of getFunctionsByColumnName(header).functions">
-                                                    <button class="p-2 btn btn-ligth" (click)="function.columnFunction()">
-                                                        <fa-icon [icon]="function.functionIcon"></fa-icon>
+                                            <div class="dropdown"
+                                                *ngIf="getFunctionsByColumnName(header).functions.length !==0">
+                                                <div class="buttons">
+                                                    <button class="p-2 btn btn-ligth"
+                                                        (click)="toggleColumnsMenu(columnsDropDown)"
+                                                        (blur)="hideColumnsMenu(columnsDropDown)">
+                                                        <fa-icon [icon]="icons.cogs"></fa-icon>
                                                     </button>
+                                                </div>
+                                                <div #columnsDropDown class="dropdown-menu"
+                                                    [ngClass]="[colIndex!==0?'dropdown-menu-right':'']">
+                                                    <a *ngFor="let function of getFunctionsByColumnName(header).functions"
+                                                        role="button" class="dropdown-item"
+                                                        (click)="function.columnFunction()">
+                                                        <fa-icon [icon]="function.functionIcon"></fa-icon>
+                                                        <span class="px-3">{{function.functionName}}</span>
+                                                    </a>
                                                 </div>
                                             </div>
                                         </div>
@@ -32,10 +44,12 @@
                             <tbody>
                                 <tr *ngFor="let row of rows">
                                     <td *ngFor="let header of headers">
-                                        <ng-container *ngIf="isObject(row[header]) then objectTemplate; else valueTemplate"></ng-container>
+                                        <ng-container
+                                            *ngIf="isObject(row[header]) then objectTemplate; else valueTemplate"></ng-container>
                                         <ng-template #valueTemplate>
                                             <div class="cell-value">
-                                                <ng-container *ngIf="isLinkedField(header) then linkedField; else normalField"></ng-container>
+                                                <ng-container
+                                                    *ngIf="isLinkedField(header) then linkedField; else normalField"></ng-container>
                                                 <ng-template #linkedField>
                                                     <a [href]="getLinkedText(header, row)">
                                                         {{row[header]}}
@@ -47,7 +61,8 @@
                                             </div>
                                         </ng-template>
                                         <ng-template #objectTemplate>
-                                            <a routerLink="/tables/auxdata/{{getObjectAsString(row[header])}}">Ver mas</a>
+                                            <a routerLink="/tables/auxdata/{{getObjectAsString(row[header])}}">Ver
+                                                mas</a>
                                         </ng-template>
                                     </td>
                                 </tr>
@@ -84,4 +99,3 @@
         </div>
     </div>
 </div>
-

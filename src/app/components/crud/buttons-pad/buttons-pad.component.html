@@ -1,0 +1,21 @@
+<div class="controls-container">
+    <div class="card controls-wrapper">
+        <div class="search-toolbar d-flex align-items-center">
+            <input class="form-control" type="search" placeholder="Buscar">
+            <button type="button" class="btn btn-outline-success" [eqTooltip]="'Buscar'">
+                <fa-icon [icon]="icons.search"></fa-icon>
+            </button>
+        </div>
+        <div class="p-1 buttons-wrapper">
+            <button type="button" [eqTooltip]="'Eliminar'" class="btn btn-outline-danger">
+                <fa-icon [icon]="icons.delete"></fa-icon>
+            </button>
+            <button type="button" [eqTooltip]="'Agregar'" class="btn btn-outline-secondary">
+                <fa-icon [icon]="icons.new"></fa-icon>
+            </button>
+            <button type="button" [eqTooltip]="'Editar'" class="btn btn-outline-secondary">
+                <fa-icon [icon]="icons.update"></fa-icon>
+            </button>
+        </div>
+    </div>
+</div>
