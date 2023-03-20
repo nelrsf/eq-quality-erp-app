@@ -5,8 +5,9 @@ import { AppComponent } from './app.component';
 import { LayoutModule } from './components/layout/layout.module';
 import { MenuComponent } from './components/menu/menu.component';
 import { PagesModule } from './pages/pages.module';
-
-
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { FormComponent } from './components/crud/form/form.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 const routes: Routes = [
@@ -16,7 +17,7 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [
-    AppComponent,
+    AppComponent
   ],
   imports: [
     RouterModule.forRoot(routes),
@@ -24,7 +25,10 @@ const routes: Routes = [
     LayoutModule,
     RouterModule,
     MenuComponent,
-    PagesModule
+    PagesModule,
+    FormComponent,
+    NgbModule,
+    BrowserAnimationsModule
   ],
   exports: [RouterModule],
   providers: [],

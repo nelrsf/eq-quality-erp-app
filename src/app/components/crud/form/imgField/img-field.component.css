@@ -1,0 +1,31 @@
+.control-label {
+    display: inline-flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.dragHandle {
+    color: gray;
+    cursor: grabbing;
+}
+
+.button-tool {
+    width: 2rem;
+    padding: 0.1rem;
+}
+
+.form-group img {
+    max-height: 6rem;
+}
+
+.img-gallery {
+    overflow-x: auto;
+}
+
+.img-gallery img {
+    max-height: 40rem;
+}
+
+.form-group img {
+    max-height: 15rem;
+}

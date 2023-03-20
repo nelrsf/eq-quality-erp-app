@@ -22,12 +22,20 @@
     width: fit-content;
 }
 
+.buttons-wrapper button{
+    min-width: 2rem;
+}
+
 .search-toolbar input {
     height: 2rem;
 }
 
 .search-toolbar {
     padding-left: 0.3rem;
+}
+
+.opt-icon {
+    min-width: 2rem;
 }
 
 @media (min-width: 576px) {

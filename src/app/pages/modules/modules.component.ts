@@ -39,8 +39,13 @@ export class ModulesComponent implements OnInit, AfterViewInit {
             }
           }
         )
-        this.dataTable.data.next(this.modules);
         this.loading = false;
+        if(this.modules.length === 0){
+          return;
+        }
+        const headers = Object.keys(this.modules[0]);
+        this.dataTable.headersSubject.next(headers);
+        this.dataTable.data.next(this.modules);
       }
     )
   }

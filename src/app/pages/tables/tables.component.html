@@ -2,30 +2,36 @@
   <eq-loading></eq-loading>
 </div>
 
-<eq-buttons-pad></eq-buttons-pad>
+<eq-buttons-pad (_newColumn)="createColumn()" (_newRow)="createRow()"></eq-buttons-pad>
 <eq-data-table #tables [mapAsUrl]="linkedFields"></eq-data-table>
 
 
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-  Configuración columna
-</button>
+<!-- Columns Customizer -->
+<ng-template  #colCustomizerModal let-modal>
+    <div class="m-0 modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Configurar columna</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="closeColumnsCustomizerModal()"></button>
+        </div>
+        <div class="modal-body">
+          <eq-column-customizer [editColumnName]="editColumnName" [columnData]="columnData" (columnOperationEnd)="colunmOperationEnd()"></eq-column-customizer>
+        </div>
+      </div>
+    </div>
+</ng-template>
 
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+<!-- Form -->
+<ng-template  #formModal let-modal>
+  <div class="m-0 modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h5 class="modal-title" id="exampleModalLabel">Configurar columna</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="closeColumnsCustomizerModal()"></button>
       </div>
       <div class="modal-body">
-        <eq-column-customizer [columnData]="columnData"></eq-column-customizer>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <eq-form [(columns)]="columnData" [module]="module" [table]="table" (formOperationEnd)="onCreatedRow()"></eq-form>
       </div>
     </div>
   </div>
-</div>
+</ng-template>

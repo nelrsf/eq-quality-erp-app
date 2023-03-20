@@ -1,0 +1,35 @@
+<div class="card p-2 m-2 form-group">
+    <label class="my-1 control-label">
+        <div>
+            {{column.key}}
+        </div>
+        <div cdkDragHandle class="dragHandle">
+            <fa-icon [icon]="icons.drag"></fa-icon>
+        </div>
+    </label>
+    <div class="image-tools d-flex justify-content-end">
+        <button class="button-tool mx-1 btn btn-light">
+            <fa-icon [icon]="icons.camera"></fa-icon>
+        </button>
+        <button class="button-tool btn btn-light">
+            <fa-icon [icon]="icons.upload"></fa-icon>
+        </button>
+    </div>
+    <div class="img-container">
+        <img src="{{imageUrl}}" alt="" width="100%" class="my-1">
+    </div>
+
+    <div *ngIf="images.length !== 0" class="img-gallery d-flex">
+        <div class="img-thumb" *ngFor="let img of images" (click)="imageUrl=img">
+            <img height="30rem" src="{{img}}" alt="">
+        </div>
+    </div>
+    <div class="inputUrl d-flex">
+        <input [(ngModel)]="imageUrl" type="text" name="imageInput" class="mt-1 form-control"
+            placeholder="http://url/imagen.jpg">
+        <button role="button" class="mx-1 mt-1 btn btn-light" (click)="addImage(imageUrl)">
+            <fa-icon [icon]="icons.addImage"></fa-icon>
+        </button>
+    </div>
+
+</div>

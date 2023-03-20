@@ -1,0 +1,113 @@
+<form class="fields" (submit)="onSubmit()" [formGroup]="form">
+    <div #DnDContainer class="fields-container d-flex w-100">
+        <div *ngFor="let column of columns | keyvalue; let i = index" class="field d-flex align-items-center"
+            [style.width]="'50%'" eqDrag [eqDragKey]="column.key" [(eqDropTarget)]="columns">
+            <div [ngSwitch]="getAsColumn(column.value).type" class="draggable-card">
+                <div *ngSwitchCase="'string'">
+                    <div class="m-2 form-group">
+                        <label class="my-1 control-label">
+                            <div>
+                                {{column.key}}
+                            </div>
+                            <div cdkDragHandle class="dragHandle">
+                                <fa-icon [icon]="icons.drag"></fa-icon>
+                            </div>
+                        </label>
+                        <input type="text" class="form-control" placeholder="" formControlName="{{column.key}}">
+                    </div>
+                </div>
+
+                <div *ngSwitchCase="'date'">
+                    <div class="m-2 form-group">
+                        <label class="my-1 control-label">
+                            <div>
+                                {{column.key}}
+                            </div>
+                            <div cdkDragHandle class="dragHandle">
+                                <fa-icon [icon]="icons.drag"></fa-icon>
+                            </div>
+                        </label>
+                        <input type="date" class="form-control" placeholder="">
+                    </div>
+                </div>
+
+                <div *ngSwitchCase="'number'">
+                    <div class="m-2 form-group">
+                        <label class="my-1 control-label">
+                            <div>
+                                {{column.key}}
+                            </div>
+                            <div cdkDragHandle class="dragHandle">
+                                <fa-icon [icon]="icons.drag"></fa-icon>
+                            </div>
+                        </label>
+                        <input type="number" class="form-control" placeholder="">
+                    </div>
+                </div>
+
+
+                <div *ngSwitchCase="'file'">
+                    <div class="m-2 form-group">
+                        <label class="my-1 control-label">
+                            <div>
+                                {{column.key}}
+                            </div>
+                            <div cdkDragHandle class="dragHandle">
+                                <fa-icon [icon]="icons.drag"></fa-icon>
+                            </div>
+                        </label>
+                        <input type="file" class="form-control" placeholder="">
+                    </div>
+                </div>
+
+
+                <div *ngSwitchCase="'image'">
+                    <eq-img-field [column]="column" [images]="[]"></eq-img-field>
+                </div>
+
+                <div *ngSwitchCase="'boolean'">
+                    <div class="form-check m-2">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                        <label class="form-check-label control-label" for="flexCheckDefault">
+                            <div>
+                                {{column.key}}
+                            </div>
+                            <div cdkDragHandle class="dragHandle">
+                                <fa-icon [icon]="icons.drag"></fa-icon>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div *ngSwitchCase="'list'">
+                    <div class="m-2 form-group">
+                        <label class="form-check-label my-1 control-label" for="flexCheckDefault">
+                            <div>
+                                {{column.key}}
+                            </div>
+                            <div cdkDragHandle class="dragHandle">
+                                <fa-icon [icon]="icons.drag"></fa-icon>
+                            </div>
+                        </label>
+                        <select class="form-select">
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+    </div>
+
+    <hr class="hr" />
+    <button type="submit" class="btn btn-primary d-flex align-items-center" [disabled]="loading">
+        <div *ngIf="loading" class="spinner-border mx-1 spinner" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <span class="mx-1">Guardar cambios</span>
+    </button>
+</form>

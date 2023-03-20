@@ -1,8 +1,10 @@
-import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { faCog, faSquareCaretLeft, faSquareCaretRight, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { lastValueFrom } from 'rxjs';
 import { DataTableComponent, IColumnFunctions, IMapAsUrl } from 'src/app/components/crud/data-table/data-table.component';
-import { IColumn } from 'src/app/Model/interfaces/IColumn';
+import { ColumnTypes, IColumn } from 'src/app/Model/interfaces/IColumn';
 import { TablesService } from './tables.service';
 
 @Component({
@@ -20,13 +22,18 @@ export class TablesComponent implements OnInit, AfterViewInit {
   }
 
   @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
+  @ViewChild("colCustomizerModal") colCustomizerModal!: ElementRef;
+  @ViewChild("formModal") formModal!: ElementRef;
 
   loading = false;
   linkedFields: IMapAsUrl[] = [];
   columnData!: IColumn;
+  table!: string;
+  module!: string;
+  editColumnName: boolean = true;
 
 
-  constructor(private tableService: TablesService, private activatedRoute: ActivatedRoute, private cdRef: ChangeDetectorRef, private router: Router) { }
+  constructor(private tableService: TablesService, private activatedRoute: ActivatedRoute, private cdRef: ChangeDetectorRef, private router: Router, private ngbModal: NgbModal) { }
 
   ngAfterViewInit(): void {
     this.activatedRoute.params.subscribe((params) => {
@@ -44,19 +51,19 @@ export class TablesComponent implements OnInit, AfterViewInit {
   }
 
   getDataFromServer(params: any) {
-    const module = params['module'];
-    if (module) {
-      this.getTableData(module);
+    this.module = params['module'];
+    if (this.module) {
+      this.getTableData(this.module);
       return true;
     }
     return false;
   }
 
   getRowsFromServer(params: any): boolean {
-    const module = params['module'];
-    const table = params['table'];
-    if (module && table) {
-      this.getRowsData(module, table);
+    this.module = params['module'];
+    this.table = params['table'];
+    if (this.module && this.table) {
+      this.getColumnsData(this.module, this.table)
       return true;
     }
     return false;
@@ -75,6 +82,8 @@ export class TablesComponent implements OnInit, AfterViewInit {
     };
 
     if (objectdata) {
+      const headers = Object.keys(objectdata);
+      this.dataTable.headersSubject.next(headers);
       this.dataTable.data.next([objectdata]);
     }
   }
@@ -109,8 +118,13 @@ export class TablesComponent implements OnInit, AfterViewInit {
       {
         next: (result: any) => {
           this.setLinkedFields(module);
-          this.dataTable.data.next(result);
           this.loading = false;
+          if (result.length === 0) {
+            return;
+          }
+          this.dataTable.data.next(result);
+          const headersNames = Object.keys(result[0]);
+          this.dataTable.headersSubject.next(headersNames);
         },
         error: (error) => {
           console.error(error);
@@ -118,6 +132,23 @@ export class TablesComponent implements OnInit, AfterViewInit {
         }
       }
     )
+  }
+
+  getColumnsData(module: string, table: string) {
+    this.tableService.getAllColumns(module, table)
+      .subscribe(
+        {
+          next: (result: any) => {
+            const headersNames = Object.keys(result);
+            this.dataTable.headersSubject.next(headersNames);
+            this.getRowsData(this.module, this.table);
+          },
+          error: (error) => {
+            console.error(error);
+            this.loading = false;
+          }
+        }
+      );
   }
 
   getRowsData(module: string, table: string) {
@@ -137,14 +168,70 @@ export class TablesComponent implements OnInit, AfterViewInit {
     )
   }
 
-  private createColumnsFunctionsArray(module:string, table:string, colF: IColumnFunctions) {
+  closeColumnsCustomizerModal() {
+    if (this.ngbModal.hasOpenModals()) {
+      this.ngbModal.dismissAll();
+    }
+  }
+
+
+  createColumn() {
+    this.columnData = {
+      _id: null,
+      columnName: "Nueva Columna",
+      hidden: false,
+      required: false,
+      type: ColumnTypes.string,
+      module: this.module,
+      table: this.table
+    }
+    this.editColumnName = true;
+    this.ngbModal.open(this.colCustomizerModal);
+  }
+
+  colunmOperationEnd() {
+    this.closeColumnsCustomizerModal();
+    this.getColumnsData(this.module, this.table);
+  }
+
+  createRow(){
+      this.tableService.getAllColumns(this.module, this.table).subscribe(
+        (columns: any)=>{
+          this.columnData = columns;
+          this.ngbModal.open(this.formModal);
+        }
+      )
+  }
+
+  onCreatedRow(){
+    if(this.ngbModal.hasOpenModals()){
+      this.ngbModal.dismissAll();
+      this.getColumnsData(this.module, this.table)
+    }
+  }
+
+  private createColumnsFunctionsArray(module: string, table: string, colF: IColumnFunctions) {
 
     const customizeFunc = () => {
       this.tableService.getColumnData(module, table, colF.columnName).subscribe(
         (data: any) => {
-          const dataStr = JSON.stringify(data).replaceAll("/", "%2F%2F");
+          this.editColumnName = false;
           this.columnData = data;
-          // this.router.navigate(['columns/' + module + '/' + table + '/' + dataStr])
+          this.ngbModal.open(this.colCustomizerModal);
+        }
+      )
+    }
+
+    const deleteFunc = () => {
+      this.tableService.getColumnData(module, table, colF.columnName).subscribe(
+        (data: any) => {
+          this.loading = true;
+          this.columnData = data;
+          this.tableService.deleteColumn(this.columnData).subscribe(
+            (_response) => {
+              this.getColumnsData(module, table);
+            }
+          );
         }
       )
     }
@@ -157,22 +244,22 @@ export class TablesComponent implements OnInit, AfterViewInit {
         columnFunction: customizeFunc
       },
 
-      {
-        functionIcon: this.icons.columnBefore,
-        functionName: "Insertar columna a la izquierda",
-        columnFunction: ()=>{}
-      },
+      // {
+      //   functionIcon: this.icons.columnBefore,
+      //   functionName: "Insertar columna a la izquierda",
+      //   columnFunction: () => { }
+      // },
 
-      {
-        functionIcon: this.icons.columnNext,
-        functionName: "Insertar columna a la derecha",
-        columnFunction: ()=>{}
-      },
+      // {
+      //   functionIcon: this.icons.columnNext,
+      //   functionName: "Insertar columna a la derecha",
+      //   columnFunction: () => { }
+      // },
 
       {
         functionIcon: this.icons.columnDelete,
         functionName: "Eliminar columna",
-        columnFunction: ()=>{}
+        columnFunction: deleteFunc
       }
 
     ]

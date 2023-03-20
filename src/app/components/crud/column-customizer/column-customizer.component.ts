@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, NgModule, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, NgModule, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ColumnTypes, IColumn } from 'src/app/Model/interfaces/IColumn';
 import { TablesService } from 'src/app/pages/tables/tables.service';
 import { LoadingComponent } from '../../miscelaneous/loading/loading.component';
@@ -23,7 +23,11 @@ export class ColumnCustomizerComponent implements OnInit {
   @Input() columnData!: IColumn;
   COLUMN_TYPES = Object.values(ColumnTypes);
 
-  constructor(private activedRoute: ActivatedRoute, private tableService: TablesService) {
+  @Input() editColumnName: boolean = false;
+
+  @Output() columnOperationEnd = new EventEmitter<void>();
+
+  constructor(private activedRoute: ActivatedRoute, private tableService: TablesService, private router: Router) {
     this.columnData = {
       _id: null,
       columnName: "",
@@ -39,10 +43,6 @@ export class ColumnCustomizerComponent implements OnInit {
     const params = this.activedRoute.params;
     params.subscribe((params) => {
       const columnStr = params['columndata'];
-      // this.module = params['module'];
-      // this.table = params['table'];
-      // this.columnData.table = this.table;
-      // this.columnData.module = this.module;
       try {
         const columnData = JSON.parse(columnStr);
         if (columnData) {
@@ -60,32 +60,18 @@ export class ColumnCustomizerComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.columnData._id) {
-      this.tableService.updateColumn(this.columnData)
+    this.tableService.upsertColumn(this.columnData)
       .subscribe(
         {
-          next: (data)=>{
+          next: (data: any) => {
             console.log(data);
+            this.columnOperationEnd.emit();
           },
-          error: (error)=>{
+          error: (error) => {
             console.log(error);
           }
         }
       );
-    } else {
-      console.log(this.columnData)
-      this.tableService.createColumn(this.columnData)
-      .subscribe(
-        {
-          next: (data)=>{
-            console.log(data);
-          },
-          error: (error)=>{
-            console.log(error);
-          }
-        }
-      );
-    }
   }
 
 }

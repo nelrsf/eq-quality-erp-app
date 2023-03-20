@@ -6,23 +6,22 @@
 
             <div class="col">
                 <div class="card shadow">
-                    <div class="table-responsive">
+                    <div #tableResponsive class="table-responsive">
                         <div *ngIf="data.getValue().length === 0" class="alert alert-warning mb-0" role="alert">
                             No hay datos para mostrar
                         </div>
                         <table class="table align-items-center table-flush">
                             <thead class="thead-light">
                                 <tr>
-                                    <th scope="col" *ngFor="let header of headers; let colIndex = index">
+                                    <th eqDrag [eqDragKey]="header" [(eqDropTarget)]="headers" scope="col" *ngFor="let header of headers; let colIndex = index">
                                         <div class="col-header d-flex align-items-center">
                                             <span>
                                                 {{header}}
                                             </span>
-                                            <div class="dropdown"
-                                                *ngIf="getFunctionsByColumnName(header).functions.length !==0">
+                                            <div class="dropdown" *ngIf="hasColumnsFunctions(header)">
                                                 <div class="buttons">
                                                     <button class="p-2 btn btn-ligth"
-                                                        (click)="toggleColumnsMenu(columnsDropDown)"
+                                                        (click)="toggleColumnsMenu(columnsDropDown, modalContextMenu)"
                                                         (blur)="hideColumnsMenu(columnsDropDown)">
                                                         <fa-icon [icon]="icons.cogs"></fa-icon>
                                                     </button>
@@ -31,11 +30,25 @@
                                                     [ngClass]="[colIndex!==0?'dropdown-menu-right':'']">
                                                     <a *ngFor="let function of getFunctionsByColumnName(header).functions"
                                                         role="button" class="dropdown-item"
-                                                        (click)="function.columnFunction()">
+                                                        (click)="executeColumnFunctionDropDown(function, columnsDropDown)">
                                                         <fa-icon [icon]="function.functionIcon"></fa-icon>
                                                         <span class="px-3">{{function.functionName}}</span>
                                                     </a>
                                                 </div>
+                                                <ng-template #modalContextMenu let-modal>
+                                                    <div class="m-0 modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-body">
+                                                                <a *ngFor="let function of getFunctionsByColumnName(header).functions"
+                                                                    role="button" class="dropdown-item"
+                                                                    (click)="executeColumnFunctionModal(function)">
+                                                                    <fa-icon [icon]="function.functionIcon"></fa-icon>
+                                                                    <span class="px-3">{{function.functionName}}</span>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </ng-template>
                                             </div>
                                         </div>
                                     </th>

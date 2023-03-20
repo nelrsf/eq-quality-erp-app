@@ -9,7 +9,7 @@
     [name]="'id'">
 
   <label class="form-label mb-3">Nombre de columna</label>
-  <input type="text" [disabled]="true" class="form-control mb-3" [(ngModel)]="columnData.columnName"
+  <input type="text" [disabled]="!editColumnName" class="form-control mb-3" [(ngModel)]="columnData.columnName"
     [name]="'fieldName'">
 
   <label class="form-label mb-3">Nombre de tabla</label>

@@ -13,6 +13,9 @@ import { ParamGuard } from '../helpers/Param.guard';
 import { LoadingComponent } from '../components/miscelaneous/loading/loading.component';
 import { ColumnCustomizerComponent } from '../components/crud/column-customizer/column-customizer.component';
 import { ButtonsPadComponent } from '../components/crud/buttons-pad/buttons-pad.component';
+import { FormComponent } from '../components/crud/form/form.component';
+import { DragDirective } from '../directives/drag.directive';
+import { DropTargetDirective } from '../directives/drop-target.directive';
 
 
 const routes: Routes = [
@@ -49,7 +52,8 @@ const routes: Routes = [
     HttpClientModule,
     LoadingComponent,
     ColumnCustomizerComponent,
-    ButtonsPadComponent
+    ButtonsPadComponent,
+    FormComponent
   ],
   exports: [
     LoginComponent,

@@ -2,20 +2,74 @@
     <div class="card controls-wrapper">
         <div class="search-toolbar d-flex align-items-center">
             <input class="form-control" type="search" placeholder="Buscar">
-            <button type="button" class="btn btn-outline-success" [eqTooltip]="'Buscar'">
+            <button type="button" class="btn btn-outline-success" [eqTooltip]="'Buscar'" (click)="search()">
                 <fa-icon [icon]="icons.search"></fa-icon>
             </button>
         </div>
-        <div class="p-1 buttons-wrapper">
-            <button type="button" [eqTooltip]="'Eliminar'" class="btn btn-outline-danger">
+        <div class="p-1 buttons-wrapper d-none d-md-block">
+            <button type="button" [eqTooltip]="'Eliminar'" class="btn btn-outline-danger" (click)="deleteRows()">
                 <fa-icon [icon]="icons.delete"></fa-icon>
             </button>
-            <button type="button" [eqTooltip]="'Agregar'" class="btn btn-outline-secondary">
+            <button type="button" [eqTooltip]="'Agregar'" class="btn btn-outline-secondary" (click)="createRow()">
                 <fa-icon [icon]="icons.new"></fa-icon>
             </button>
-            <button type="button" [eqTooltip]="'Editar'" class="btn btn-outline-secondary">
+            <button type="button" [eqTooltip]="'Editar'" class="btn btn-outline-secondary" (click)="editRows()">
                 <fa-icon [icon]="icons.update"></fa-icon>
             </button>
+            <button type="button" [eqTooltip]="'Nueva columna'" class="btn btn-outline-secondary"
+                (click)="createColumn()">
+                <fa-icon [icon]="icons.newColumn"></fa-icon>
+            </button>
+        </div>
+        <div class="p-1 buttons-wrapper d-block d-md-none">
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary" type="button" (click)="openModal()">
+                    <fa-icon [icon]="icons.bars"></fa-icon>
+                </button>
+            </div>
         </div>
     </div>
 </div>
+
+<ng-template #buttonsModal let-modal>
+    <div class="modal-dialog m-0" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <a role="button" class="d-flex nav-link text-danger" (click)="deleteRows()">
+                            <div class="opt-icon">
+                                <fa-icon [icon]="icons.delete"></fa-icon>
+                            </div>
+                            <span class="mx-2">Eliminar</span>
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a role="button" class="d-flex nav-link" (click)="createRow()">
+                            <div class="opt-icon">
+                                <fa-icon [icon]="icons.new"></fa-icon>
+                            </div>
+                            <span class="mx-2">Agregar</span>
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a role="button" class="d-flex nav-link" (click)="editRows()">
+                            <div class="opt-icon">
+                                <fa-icon [icon]="icons.update"></fa-icon>
+                            </div>
+                            <span class="mx-2">Editar</span>
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a role="button" class="d-flex nav-link" (click)="createColumn()">
+                            <div class="opt-icon">
+                                <fa-icon [icon]="icons.newColumn"></fa-icon>
+                            </div>
+                            <span class="mx-2">Nueva columna</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</ng-template>

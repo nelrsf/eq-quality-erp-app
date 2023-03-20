@@ -1,0 +1,52 @@
+.fields-container{
+    flex-wrap: wrap;
+}
+
+.field {
+    z-index: 999999;
+}
+
+.cdk-drag-preview {
+    z-index: 2000!important;
+}
+
+.control-label {
+    display: inline-flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.dragHandle {
+    color: gray;
+    cursor: grabbing;
+}
+
+.button-tool {
+    width: 2rem;
+    padding: 0.1rem;
+}
+
+.button-add-img {
+    min-width: 2rem;
+    position: absolute;
+    right: 0rem;
+    background-color: gray;
+    color: white;
+    margin: 0.5rem 0.8rem;
+    padding: 0;
+}
+
+.draggable-card {
+    width: 100vh;
+    max-width: 100%;
+}
+
+.field {
+    transition: top, left 3s linear;
+}
+
+.spinner {
+    font-size: 0.8rem;
+    height: 1.2rem;
+    width: 1.2rem;
+}
