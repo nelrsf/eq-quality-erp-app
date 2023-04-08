@@ -1,4 +1,9 @@
 .container{
-    position: relative;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
     margin-top: 2rem;
+    background-color: white;
+    max-width: 90%;
 }

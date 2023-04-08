@@ -16,6 +16,12 @@ import { ButtonsPadComponent } from '../components/crud/buttons-pad/buttons-pad.
 import { FormComponent } from '../components/crud/form/form.component';
 import { DragDirective } from '../directives/drag.directive';
 import { DropTargetDirective } from '../directives/drop-target.directive';
+import { GalleryViewComponent } from '../components/gallery-view/gallery-view.component';
+import { ListFieldComponent } from '../components/crud/form/listField/list-field.component';
+import { ListViewerComponent } from '../components/list-viewer/list-viewer.component';
+import { GridViewComponent } from '../components/grid-view/grid-view.component';
+import { TablesSumaryComponent } from './tables-sumary/tables-sumary.component';
+import { FormsModule } from '@angular/forms';
 
 
 const routes: Routes = [
@@ -28,10 +34,11 @@ const routes: Routes = [
     component: LayoutComponent,
     children: [
       {path: '', component: ModulesComponent},
-      {path: 'tables/:module', component: TablesComponent, canActivate: [ParamGuard]},
+      {path: 'tables/:module', component: TablesSumaryComponent, canActivate: [ParamGuard]},
       {path: 'tables/auxdata/:objectdata', component: TablesComponent, canActivate: [ParamGuard]},
       {path: 'tables/data/:module/:table', component: TablesComponent, canActivate: [ParamGuard]},
-      // {path: 'columns/:module/:table/:columndata', component: ColumnCustomizerComponent, canActivate: [ParamGuard]},
+      {path: 'images-gallery/:images', component: GalleryViewComponent, canActivate: [ParamGuard]},
+      {path: 'list/:listData', component: ListViewerComponent, canActivate: [ParamGuard]},
     ]
   }
 ];
@@ -41,7 +48,8 @@ const routes: Routes = [
     LoginComponent,
     LayoutComponent,
     ModulesComponent,
-    TablesComponent
+    TablesComponent,
+    TablesSumaryComponent
   ],
   imports: [
     CommonModule,
@@ -53,7 +61,9 @@ const routes: Routes = [
     LoadingComponent,
     ColumnCustomizerComponent,
     ButtonsPadComponent,
-    FormComponent
+    FormComponent,
+    GridViewComponent,
+    FormsModule
   ],
   exports: [
     LoginComponent,

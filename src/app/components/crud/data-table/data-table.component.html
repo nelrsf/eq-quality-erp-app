@@ -13,7 +13,14 @@
                         <table class="table align-items-center table-flush">
                             <thead class="thead-light">
                                 <tr>
-                                    <th eqDrag [eqDragKey]="header" [(eqDropTarget)]="headers" scope="col" *ngFor="let header of headers; let colIndex = index">
+                                    <th>
+                                        <div class="form-check d-flex justify-content-center">
+                                            <input class="form-check-input" type="checkbox" name="flexCheckDefault"
+                                                (change)="toggleAll($event)">
+                                        </div>
+                                    </th>
+                                    <th eqDrag [eqDragKey]="header" [(eqDropTarget)]="headers" scope="col"
+                                        *ngFor="let header of headers; let colIndex = index">
                                         <div class="col-header d-flex align-items-center">
                                             <span>
                                                 {{header}}
@@ -55,28 +62,32 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let row of rows">
+                                <tr *ngFor="let row of filterRows(rows)" [ngClass]="[isRowChecked(row['_id'])?'row-selected':'']">
+                                    <td>
+                                        <div class="form-check d-flex justify-content-center align-items-center">
+                                            <input class="form-check-input" type="checkbox"
+                                                [checked]="isRowChecked(row['_id'])" (change)="toggleRow(row['_id'])">
+                                        </div>
+                                    </td>
                                     <td *ngFor="let header of headers">
-                                        <ng-container
-                                            *ngIf="isObject(row[header]) then objectTemplate; else valueTemplate"></ng-container>
-                                        <ng-template #valueTemplate>
-                                            <div class="cell-value">
-                                                <ng-container
-                                                    *ngIf="isLinkedField(header) then linkedField; else normalField"></ng-container>
-                                                <ng-template #linkedField>
-                                                    <a [href]="getLinkedText(header, row)">
-                                                        {{row[header]}}
-                                                    </a>
-                                                </ng-template>
-                                                <ng-template #normalField>
+                                        <div class="cell-value">
+                                            <ng-container
+                                                *ngIf="isLinkedField(header) then linkedField; else normalField"></ng-container>
+                                            <ng-template #linkedField>
+                                                <a [href]="getLinkedText(header, row)">
                                                     {{row[header]}}
-                                                </ng-template>
-                                            </div>
-                                        </ng-template>
-                                        <ng-template #objectTemplate>
-                                            <a routerLink="/tables/auxdata/{{getObjectAsString(row[header])}}">Ver
-                                                mas</a>
-                                        </ng-template>
+                                                </a>
+                                            </ng-template>
+                                            <ng-template #normalField>
+                                                <eq-field-renderer [(value)]="row[header]"
+                                                    [column]="getColumnProperties(header)"
+                                                    [restriction]="getCellRestriction(header, row['_id'])"
+                                                    [restrictions]="getRestrictionsByColumnHeader(header)"
+                                                    (openModal)="openModal($event, row[header])"
+                                                    (onListChange)="setRowRestriction($event, row._id, header)">
+                                                </eq-field-renderer>
+                                            </ng-template>
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -112,3 +123,31 @@
         </div>
     </div>
 </div>
+
+<ng-template #imgViewer let-modal>
+    <div class="m-0 modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title" id="exampleModalLabel">Imagenes</span>
+                <button type="button" class="btn-close mx-2" aria-label="Close" (click)="closeModal()"></button>
+            </div>
+            <div class="modal-body">
+                <eq-gallery-view [(images)]="images" (imagesChange)="closeModal()"></eq-gallery-view>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #listViewer let-modal>
+    <div class="m-0 modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title">Listado</span>
+                <button type="button" class="btn-close mx-2" aria-label="Close" (click)="closeModal()"></button>
+            </div>
+            <div class="modal-body">
+                <eq-list-viewer [(listData)]="list" (listDataChange)="closeModal()"></eq-list-viewer>
+            </div>
+        </div>
+    </div>
+</ng-template>

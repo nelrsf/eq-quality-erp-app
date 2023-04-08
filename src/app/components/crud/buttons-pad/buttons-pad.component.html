@@ -7,19 +7,29 @@
             </button>
         </div>
         <div class="p-1 buttons-wrapper d-none d-md-block">
-            <button type="button" [eqTooltip]="'Eliminar'" class="btn btn-outline-danger" (click)="deleteRows()">
-                <fa-icon [icon]="icons.delete"></fa-icon>
-            </button>
-            <button type="button" [eqTooltip]="'Agregar'" class="btn btn-outline-secondary" (click)="createRow()">
-                <fa-icon [icon]="icons.new"></fa-icon>
-            </button>
-            <button type="button" [eqTooltip]="'Editar'" class="btn btn-outline-secondary" (click)="editRows()">
-                <fa-icon [icon]="icons.update"></fa-icon>
-            </button>
-            <button type="button" [eqTooltip]="'Nueva columna'" class="btn btn-outline-secondary"
-                (click)="createColumn()">
-                <fa-icon [icon]="icons.newColumn"></fa-icon>
-            </button>
+            <div class="button-div" *ngIf="isDisabled('delete')">
+                <button type="button" [eqTooltip]="'Eliminar'" class="btn btn-outline-danger" (click)="deleteRows()">
+                    <fa-icon [icon]="icons.delete"></fa-icon>
+                </button>
+            </div>
+            <div class="button-div" *ngIf="isDisabled('add')">
+                <button type="button" [eqTooltip]="'Agregar'"
+                    class="btn btn-outline-secondary" (click)="createRow()">
+                    <fa-icon [icon]="icons.new"></fa-icon>
+                </button>
+            </div>
+            <div class="button-div" *ngIf="isDisabled('save')">
+                <button type="button" [eqTooltip]="'Editar'"
+                    class="btn btn-outline-secondary" (click)="editRows()">
+                    <fa-icon [icon]="icons.update"></fa-icon>
+                </button>
+            </div>
+            <div class="button-div" *ngIf="isDisabled('add-column')">
+                <button type="button" [eqTooltip]="'Nueva columna'"
+                    class="btn btn-outline-secondary" (click)="createColumn()">
+                    <fa-icon [icon]="icons.newColumn"></fa-icon>
+                </button>
+            </div>
         </div>
         <div class="p-1 buttons-wrapper d-block d-md-none">
             <div class="dropdown">
@@ -36,7 +46,7 @@
         <div class="modal-content">
             <div class="modal-body">
                 <ul class="list-group">
-                    <li class="list-group-item">
+                    <li *ngIf="isDisabled('delete')" class="list-group-item">
                         <a role="button" class="d-flex nav-link text-danger" (click)="deleteRows()">
                             <div class="opt-icon">
                                 <fa-icon [icon]="icons.delete"></fa-icon>
@@ -44,7 +54,7 @@
                             <span class="mx-2">Eliminar</span>
                         </a>
                     </li>
-                    <li class="list-group-item">
+                    <li *ngIf="isDisabled('add')" class="list-group-item">
                         <a role="button" class="d-flex nav-link" (click)="createRow()">
                             <div class="opt-icon">
                                 <fa-icon [icon]="icons.new"></fa-icon>
@@ -52,7 +62,7 @@
                             <span class="mx-2">Agregar</span>
                         </a>
                     </li>
-                    <li class="list-group-item">
+                    <li *ngIf="isDisabled('save')" class="list-group-item">
                         <a role="button" class="d-flex nav-link" (click)="editRows()">
                             <div class="opt-icon">
                                 <fa-icon [icon]="icons.update"></fa-icon>
@@ -60,7 +70,7 @@
                             <span class="mx-2">Editar</span>
                         </a>
                     </li>
-                    <li class="list-group-item">
+                    <li *ngIf="isDisabled('add-column')" class="list-group-item">
                         <a role="button" class="d-flex nav-link" (click)="createColumn()">
                             <div class="opt-icon">
                                 <fa-icon [icon]="icons.newColumn"></fa-icon>

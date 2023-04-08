@@ -1,0 +1,11 @@
+img{
+    border-radius: 33%;
+}
+
+button {
+    opacity: 0.5;
+}
+
+.img-preview {
+    cursor: pointer;
+}

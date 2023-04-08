@@ -8,10 +8,15 @@ import { environment } from 'src/environments/environment';
 export class ModulesService {
 
   private modulesEndpoint = "/modules";
+  private createEndpoint = "/create";
   private modulesTablesEndpoint = "/modules/modulestables";
 
   constructor(private http: HttpClient) { }
 
+  createModule(moduleName: string) {
+    const url = environment.apiUrl + this.modulesEndpoint + this.createEndpoint;
+    return this.http.post(url, { module: moduleName });
+  }
 
   getAllModules() {
     const url = environment.apiUrl + this.modulesEndpoint;

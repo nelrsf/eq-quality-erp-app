@@ -1,0 +1,11 @@
+.list-field{
+    height: 100%;
+}
+
+button {
+    min-width: 2rem;
+}
+
+.form-control, button {
+    font-size: small;
+}

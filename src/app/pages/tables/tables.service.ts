@@ -12,10 +12,20 @@ export class TablesService {
   private endpointColumns = "/columns";
   private endpointRows = "/rows";
   private endpointUpsert = "/upsert";
+  private endpointUpdate = "/update";
   private endpointDelete = "/delete";
   private endpointCreate = "/create";
 
   constructor(private http: HttpClient) { }
+
+
+  createTable(moduleName: string, tableName: string) {
+    const urlRequest = environment.apiUrl + this.endpointTables + this.endpointCreate + "/" + moduleName + "/" + tableName;
+    return this.http.post(urlRequest, {
+      module: moduleName,
+      table: tableName
+    });
+  }
 
   getAllTables(moduleName: string) {
     const urlRequest = environment.apiUrl + this.endpointTables + "/" + moduleName;
@@ -27,9 +37,25 @@ export class TablesService {
     return this.http.get(urlRequest);
   }
 
+  getRowById(moduleName: string, tableName: string, _id: string, column?: string) {
+    const columnRequest: string = column ? "/" + column : '';
+    const urlRequest = environment.apiUrl + this.endpointRows + "/" + moduleName + "/" + tableName + "/" + _id + columnRequest;
+    return this.http.get(urlRequest);
+  }
+
   createRow(moduleName: string, tableName: string, rowData: any) {
     const urlRequest = environment.apiUrl + this.endpointRows + this.endpointCreate + "/" + moduleName + "/" + tableName;
     return this.http.post(urlRequest, rowData);
+  }
+
+  updateRows(moduleName: string, tableName: string, rowData: any) {
+    const urlRequest = environment.apiUrl + this.endpointRows + this.endpointUpdate + "/" + moduleName + "/" + tableName;
+    return this.http.patch(urlRequest, rowData);
+  }
+
+  deleteRows(moduleName: string, tableName: string, rowsChecked: any) {
+    const urlRequest = environment.apiUrl + this.endpointRows + this.endpointDelete + "/" + moduleName + "/" + tableName;
+    return this.http.post(urlRequest, rowsChecked);
   }
 
   getColumnData(moduleName: string, tableName: string, columnName: string) {

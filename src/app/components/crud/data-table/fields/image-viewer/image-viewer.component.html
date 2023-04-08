@@ -1,0 +1,26 @@
+<ng-container *ngIf="isArray() then arrayTemplate; else singleTemplate">
+
+</ng-container>
+
+<ng-template #arrayTemplate>
+    <div class="d-flex align-items-center text-secondary">
+        <button class="btn btn-ligth" (click)="previousPicture()">
+            <fa-icon class="mx-2" [icon]="icons.previous"></fa-icon>
+        </button>
+        <div *ngFor="let img of value; let i = index" class="images-container">
+            <div class="img-preview" *ngIf="i==curentIndex" (click)="openViewGallery()">
+                <img src="{{getLinkAsThumb(img)}}" alt="" width="40px" height="40px">
+            </div>
+        </div>
+        <button class="btn btn-ligth" (click)="nextPicture()">
+            <fa-icon class="mx-2" [icon]="icons.next"></fa-icon>
+        </button>
+    </div>
+
+</ng-template>
+
+<ng-template #singleTemplate>
+    <div  [eqTooltip]="value" [urlImage]="true" class="d-flex align-items-center justify-content-center">
+        <img src="{{getLinkAsThumb(value)}}" alt="" width="40px" height="40px">
+    </div>
+</ng-template>

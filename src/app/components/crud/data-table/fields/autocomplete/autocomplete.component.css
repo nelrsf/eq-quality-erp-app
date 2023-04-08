@@ -1,0 +1,23 @@
+input {
+    border-style: none;
+}
+
+.invalid-field {
+    border: 1px solid red;
+    border-radius: 5px;
+}
+
+.invalid-field:focus {
+    outline: 1px solid red;
+}
+
+.button-delete {  
+    background-color: transparent;
+    border-style: none;
+    opacity: 0.24;
+}
+
+.button-delete:hover {  
+    opacity: 0.4;
+    color: red;
+}

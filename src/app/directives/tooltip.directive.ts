@@ -7,23 +7,29 @@ import { AfterViewInit, Directive, ElementRef, HostListener, Input, OnInit, Rend
 export class TooltipDirective implements AfterViewInit {
 
   @Input() eqTooltip!: string;
+  @Input() eqTooltipWidth!: string;
+  @Input() urlImage: boolean = false;
   tooltip: any;
 
-  constructor(public elementRef: ElementRef, private renderer2: Renderer2) { 
+  constructor(public elementRef: ElementRef, private renderer2: Renderer2) {
 
-   }
+  }
 
 
   ngAfterViewInit(): void {
     this.tooltip = this.createTooltip();
-    this.tooltip.innerHTML = this.eqTooltip;
+    this.elementRef.nativeElement.style.position = "relative";
     this.elementRef.nativeElement.appendChild(this.tooltip);
   }
 
 
   @HostListener('mouseenter', ['$event'])
   onMouseEnter(event: any) {
-    this.tooltip.innerHTML = this.eqTooltip;
+    if(!this.urlImage){
+      this.tooltip.innerHTML = this.eqTooltip;
+    } else {
+      this.tooltip.innerHTML = `<img src='${this.eqTooltip}' width='200rem'/>`;
+    }
     this.tooltip.style.display = "flex";
   }
 
@@ -35,6 +41,7 @@ export class TooltipDirective implements AfterViewInit {
 
   createTooltip() {
     const tooltip = this.renderer2.createElement("div");
+    tooltip.style.width = this.eqTooltipWidth ? this.eqTooltipWidth : "";
     tooltip.classList.add("eq-tooltip")
     return tooltip;
   }

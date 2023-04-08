@@ -1,0 +1,16 @@
+<div class="d-flex justify-content-center align-items-center">
+    <div>
+        <input #autocompleteInput class="text-input" [ngClass]="[!didValueMatchRestrictions()? 'invalid-field': '']" [disabled]="isDisabled"
+            [matAutocomplete]="auto" (focus)="onFocus($event)" [(ngModel)]="value" (ngModelChange)="checkValue()">
+        <span *ngIf="!didValueMatchRestrictions()" class="text-danger">
+            <fa-icon [icon]="icons.invalid"></fa-icon>
+            Campo NO valido!
+        </span>
+        <mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngFor="let element of filteredData" [value]="element.value">
+                <span>{{ element.value }}</span>
+            </mat-option>
+        </mat-autocomplete>
+    </div>
+
+</div>

@@ -3,15 +3,15 @@
         <div>
             {{column.key}}
         </div>
-        <div cdkDragHandle class="dragHandle">
-            <fa-icon [icon]="icons.drag"></fa-icon>
+        <div class="config-field-menu">
+            <fa-icon [icon]="icons.cog"></fa-icon>
         </div>
     </label>
     <div class="image-tools d-flex justify-content-end">
-        <button class="button-tool mx-1 btn btn-light">
+        <button class="button-tool mx-1 btn btn-light" (click)="$event.preventDefault()">
             <fa-icon [icon]="icons.camera"></fa-icon>
         </button>
-        <button class="button-tool btn btn-light">
+        <button class="button-tool btn btn-light" (click)="$event.preventDefault()">
             <fa-icon [icon]="icons.upload"></fa-icon>
         </button>
     </div>
@@ -26,8 +26,8 @@
     </div>
     <div class="inputUrl d-flex">
         <input [(ngModel)]="imageUrl" type="text" name="imageInput" class="mt-1 form-control"
-            placeholder="http://url/imagen.jpg">
-        <button role="button" class="mx-1 mt-1 btn btn-light" (click)="addImage(imageUrl)">
+            placeholder="http://url/imagen.jpg" autocomplete="off" >
+        <button role="button" class="mx-1 mt-1 btn btn-light" (click)="addImage($event, imageUrl)">
             <fa-icon [icon]="icons.addImage"></fa-icon>
         </button>
     </div>

@@ -1,0 +1,12 @@
+.list-field{
+    max-height: 10rem;
+    overflow: auto;
+}
+
+button {
+    min-width: 2rem;
+}
+
+.form-control, button {
+    font-size: small;
+}

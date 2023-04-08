@@ -4,9 +4,9 @@
     justify-content: space-between;
 }
 
-.dragHandle {
+.config-field-menu {
     color: gray;
-    cursor: grabbing;
+    cursor: pointer;
 }
 
 .button-tool {

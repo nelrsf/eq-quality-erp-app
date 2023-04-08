@@ -1,0 +1,17 @@
+input {
+    border-style: none;
+    background-color: transparent;
+}
+
+input:focus {
+    border-style: none;
+}
+
+input:focus-visible {
+    border-style: none;
+    outline: none;
+}
+
+input:disabled {
+    background-color: transparent;
+}

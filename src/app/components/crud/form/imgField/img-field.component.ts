@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faCamera, faCirclePlus, faUpDownLeftRight, faUpload } from '@fortawesome/free-solid-svg-icons';
+import { faCamera, faCirclePlus, faCog, faUpDownLeftRight, faUpload } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'eq-img-field',
@@ -23,9 +23,10 @@ export class ImgFieldComponent {
 
   @Input() column: any;
   @Input() images!: Array<string>
+  @Output() imagesChange = new EventEmitter<Array<string>>();
 
   icons = {
-    drag: faUpDownLeftRight,
+    cog: faCog,
     camera: faCamera,
     upload: faUpload,
     addImage: faCirclePlus
@@ -40,13 +41,14 @@ export class ImgFieldComponent {
     return data.length !== undefined
   }
 
-  addImage(imgUrl: string) {
+  addImage(event: Event, imgUrl: string) {
+    event.preventDefault();
     if (!this.isArray(this.images)) {
       this.images = [imgUrl];
     } else {
       this.images.push(imgUrl)
     }
-    this.imageUrl = "";
+    this.imagesChange.emit(this.images);
   }
 
   async isValidInageUrl(imgUrl: string) {

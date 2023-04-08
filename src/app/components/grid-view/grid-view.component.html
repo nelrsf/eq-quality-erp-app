@@ -1,0 +1,16 @@
+<div class="container d-flex flex-wrap justify-content-center justify-content-lg-start">
+    <div class="grid-element card m-1" *ngFor="let item of data">
+        <h2 class="card-header mb-0 text-capitalize">{{item.label}}</h2>
+        <div class="card-body">
+            <p class="card-text text-muted">{{item.description}}</p>
+            <div class="d-flex align-items-center justify-content-start">
+                <a [routerLink]="linkGetterFuntion(item.name)" class="btn btn-outline-secondary px-2 py-1">
+                    <fa-icon [icon]="icons.edit"></fa-icon>
+                </a>
+                <a href="#" class="btn btn-outline-danger px-2 py-1 mx-1">
+                    <fa-icon [icon]="icons.delete"></fa-icon>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

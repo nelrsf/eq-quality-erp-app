@@ -1,6 +1,8 @@
-import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { DataTableComponent, IMapAsUrl } from 'src/app/components/crud/data-table/data-table.component';
 import { ModulesService } from './modules.service';
+import { IModule } from 'src/app/Model/interfaces/IModule';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'eq-modules',
@@ -9,13 +11,14 @@ import { ModulesService } from './modules.service';
 })
 export class ModulesComponent implements OnInit, AfterViewInit {
 
-  @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
+  @ViewChild('createModule') createModule!: ElementRef;
 
-  modules!: object[];
+  modules!: IModule[];
+  newModuleName!: string;
   linkedFields: IMapAsUrl[] = [];
   loading: boolean = false;
 
-  constructor(private modulesService: ModulesService, private cdRef: ChangeDetectorRef) { }
+  constructor(private modulesService: ModulesService, private cdRef: ChangeDetectorRef, private ngbModal: NgbModal) { }
 
   ngAfterViewInit(): void {
     this.getModulesData();
@@ -31,23 +34,40 @@ export class ModulesComponent implements OnInit, AfterViewInit {
     this.modulesService.getAllModules().subscribe(
       (data: any) => {
         this.modules = data;
-        this.linkedFields.push(
-          {
-            fieldName: 'name',
-            urlMapFunction: (fieldName: string, row: any) => {
-              return "/tables/" + row[fieldName]
-            }
-          }
-        )
         this.loading = false;
-        if(this.modules.length === 0){
-          return;
-        }
-        const headers = Object.keys(this.modules[0]);
-        this.dataTable.headersSubject.next(headers);
-        this.dataTable.data.next(this.modules);
       }
     )
+  }
+
+  closeModal() {
+    if (this.ngbModal.hasOpenModals()) {
+      this.ngbModal.dismissAll();
+    }
+  }
+
+  openCreateModal() {
+    this.ngbModal.open(this.createModule)
+  }
+
+  createNewModule() {
+    if (!this.newModuleName) {
+      return;
+    }
+    this.closeModal();
+    this.loading = true;
+    this.modulesService.createModule(this.newModuleName)
+    .subscribe(
+      {
+        next: (data:any)=>{
+          this.modules = data;
+          this.loading = false;
+        }
+      }
+    );
+  }
+
+  getLinkFunction = (value: string | undefined) => {
+    return "/tables/" + value;
   }
 
 }

@@ -1,5 +1,6 @@
-import { Component, ElementRef, Input, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, Host, HostListener, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
+import { fromEvent } from 'rxjs';
 
 @Component({
   selector: 'eq-side-bar',
@@ -15,7 +16,7 @@ export class SideBarComponent {
     bars: faBars
   }
 
-  hideSideBar(){
+  hideSideBar() {
     if (!this.sideBarWrapper) {
       return
     }
@@ -23,7 +24,8 @@ export class SideBarComponent {
     classListSideBar.remove("sidebar-pinned");
   }
 
-  toggleSideBar() {
+  toggleSideBar(event: any) {
+    event.stopPropagation();
     if (!this.sideBarWrapper) {
       return
     }

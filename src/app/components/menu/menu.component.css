@@ -17,3 +17,8 @@ a{
 .nav-pills .nav-link.active {
     background-color: gray;
 }
+
+.menu-item{
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

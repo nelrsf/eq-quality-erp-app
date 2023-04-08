@@ -1,4 +1,5 @@
-import { Component, ElementRef, EventEmitter, NgModule, Output, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, ElementRef, EventEmitter, Input, NgModule, Output, ViewChild } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faPlus, faPencil, faTrash, faSearch, faRulerVertical, faBars } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -11,7 +12,8 @@ import { TooltipDirective } from 'src/app/directives/tooltip.directive';
   standalone: true,
   imports: [
     FontAwesomeModule,
-    TooltipDirective
+    TooltipDirective,
+    CommonModule
   ]
 })
 export class ButtonsPadComponent {
@@ -26,6 +28,10 @@ export class ButtonsPadComponent {
   }
 
   @ViewChild("buttonsModal") buttonsModal!: ElementRef;
+
+  @Input() buttonsList: Array<'delete' | 'save' | 'add' | 'add-column'> = [
+    'add', 'add-column', 'delete', 'save'
+  ];
 
   @Output() _newRow = new EventEmitter<void>();
   @Output() _updateRows = new EventEmitter<void>();
@@ -58,6 +64,10 @@ export class ButtonsPadComponent {
 
   openModal() {
     this.ngbModal.open(this.buttonsModal);
+  }
+
+  isDisabled(buttonValue: 'delete' | 'save' | 'add' | 'add-column'): boolean {
+    return this.buttonsList.includes(buttonValue);
   }
 
 }

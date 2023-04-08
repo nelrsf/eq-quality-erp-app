@@ -1,6 +1,6 @@
 .side-bar-wrapper{
     width: 260px;
-    transform: translateX(-180px);
+    transform: translateX(-230px);
     opacity: 0;
     transition: transform 0.7s ease-in-out, opacity 1s ease-in-out;
     position: fixed;

@@ -1475,3 +1475,17 @@ p {
 .buttons button {
     color: gray;
 }
+
+.form-check-input {
+    width: 0.82rem;
+    height: 0.82rem;
+}
+
+.row-selected {
+    background: #828282b0;
+}
+
+.btn-close:focus, .btn-close:active {
+    outline: none;
+    box-shadow: none;
+}

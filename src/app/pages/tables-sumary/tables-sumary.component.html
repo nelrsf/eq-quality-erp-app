@@ -1,0 +1,28 @@
+<div *ngIf="loading">
+    <eq-loading></eq-loading>
+</div>
+<eq-buttons-pad [buttonsList]="['add']" (_newRow)="openCreateModal()"></eq-buttons-pad>
+<eq-grid-view [linkGetterFuntion]="getLinkFunction" [data]="data"></eq-grid-view>
+
+<!-- Form Table -->
+<ng-template #createTable let-modal>
+    <div class="m-0 modal-dialog mw-100">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="exampleModalLabel">Crear tabla</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="closeModal()"></button>
+            </div>
+            <div class="modal-body">
+                <form (submit)="createNewTable()">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Nombre</label>
+                        <input type="text" class="form-control" placeholder="" name="newModule" [(ngModel)]="newTableName">
+                    </div>
+                    <hr>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</ng-template>

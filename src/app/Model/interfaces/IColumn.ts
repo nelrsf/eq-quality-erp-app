@@ -5,7 +5,13 @@ export interface IColumn {
     hidden: boolean,
     required: boolean,
     table: string,
-    module: string
+    module: string,
+    width: number
+    unique: boolean,
+    isRestricted: boolean,
+    moduleRestriction?: string,
+    tableRestriction?: string,
+    columnRestriction?: string
 }
 
 export enum ColumnTypes {

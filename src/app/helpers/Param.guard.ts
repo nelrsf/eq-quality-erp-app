@@ -16,6 +16,10 @@ export class ParamGuard {
                 return this.moduleTableParamsGuard(route);
             case "columns/:module/:table/:columndata":
                 return this.columnParamsGuard(route);
+            case "images-gallery/:images":
+                return this.imgGalleryParamsGuard(route);
+            case "list/:listData":
+                return this.listParamsGuard(route);
             default:
                 return true;
         }
@@ -56,4 +60,19 @@ export class ParamGuard {
         return true;
     }
 
+    imgGalleryParamsGuard(route: ActivatedRouteSnapshot): boolean {
+        const images = route.params['images'];
+        if (!images) {
+            return false;
+        }
+        return true;
+    }
+
+    listParamsGuard(route: ActivatedRouteSnapshot): boolean{
+        const listData = route.params['listData'];
+        if (!listData) {
+            return false;
+        }
+        return true;
+    }
 }

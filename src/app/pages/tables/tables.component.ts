@@ -2,9 +2,9 @@ import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewCh
 import { ActivatedRoute, Router } from '@angular/router';
 import { faCog, faSquareCaretLeft, faSquareCaretRight, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { lastValueFrom } from 'rxjs';
 import { DataTableComponent, IColumnFunctions, IMapAsUrl } from 'src/app/components/crud/data-table/data-table.component';
 import { ColumnTypes, IColumn } from 'src/app/Model/interfaces/IColumn';
+import { ChangesTrackerService } from 'src/app/services/changes-tracker.service';
 import { TablesService } from './tables.service';
 
 @Component({
@@ -31,9 +31,11 @@ export class TablesComponent implements OnInit, AfterViewInit {
   table!: string;
   module!: string;
   editColumnName: boolean = true;
+  columnsMetadata!: any;
+  rowsBackup!: any;
 
 
-  constructor(private tableService: TablesService, private activatedRoute: ActivatedRoute, private cdRef: ChangeDetectorRef, private router: Router, private ngbModal: NgbModal) { }
+  constructor(private tableService: TablesService, private activatedRoute: ActivatedRoute, private cdRef: ChangeDetectorRef, private router: Router, private ngbModal: NgbModal, private changesTracker: ChangesTrackerService) { }
 
   ngAfterViewInit(): void {
     this.activatedRoute.params.subscribe((params) => {
@@ -139,8 +141,8 @@ export class TablesComponent implements OnInit, AfterViewInit {
       .subscribe(
         {
           next: (result: any) => {
-            const headersNames = Object.keys(result);
-            this.dataTable.headersSubject.next(headersNames);
+            const columnsAsArray = this.convertColumnsToArray(result);
+            this.dataTable.columnsSubject.next(columnsAsArray);
             this.getRowsData(this.module, this.table);
           },
           error: (error) => {
@@ -151,11 +153,21 @@ export class TablesComponent implements OnInit, AfterViewInit {
       );
   }
 
+  convertColumnsToArray(columnsObject: any) {
+    const arrayColumns: IColumn[] = [];
+    const headers = Object.keys(columnsObject);
+    headers.forEach((h) => {
+      arrayColumns.push(columnsObject[h]);
+    });
+    return arrayColumns;
+  }
+
   getRowsData(module: string, table: string) {
     this.loading = true;
     this.tableService.getAllRows(module, table).subscribe(
       {
         next: (result: any) => {
+          this.rowsBackup = JSON.parse(JSON.stringify(result));
           this.dataTable.data.next(result);
           this.setColumnsFunctions(module, table);
           this.loading = false;
@@ -174,7 +186,6 @@ export class TablesComponent implements OnInit, AfterViewInit {
     }
   }
 
-
   createColumn() {
     this.columnData = {
       _id: null,
@@ -183,7 +194,10 @@ export class TablesComponent implements OnInit, AfterViewInit {
       required: false,
       type: ColumnTypes.string,
       module: this.module,
-      table: this.table
+      table: this.table,
+      unique: false,
+      width: 100,
+      isRestricted: false
     }
     this.editColumnName = true;
     this.ngbModal.open(this.colCustomizerModal);
@@ -194,17 +208,50 @@ export class TablesComponent implements OnInit, AfterViewInit {
     this.getColumnsData(this.module, this.table);
   }
 
-  createRow(){
-      this.tableService.getAllColumns(this.module, this.table).subscribe(
-        (columns: any)=>{
-          this.columnData = columns;
-          this.ngbModal.open(this.formModal);
-        }
-      )
+  createRow() {
+    this.tableService.getAllColumns(this.module, this.table).subscribe(
+      (columns: any) => {
+        this.columnData = columns;
+        this.ngbModal.open(this.formModal, {
+          modalDialogClass: "full-width-modal"
+        });
+      }
+    )
   }
 
-  onCreatedRow(){
-    if(this.ngbModal.hasOpenModals()){
+  deleteRows() {
+    this.loading = true;
+    const rowsChecked = this.dataTable.rowsChecked.filter(rc => rc.checked);
+    this.tableService.deleteRows(this.module, this.table, rowsChecked.map(m => m._id))
+    .subscribe(
+      {
+        next: (response)=>{
+          console.log(response);
+          this.getColumnsData(this.module, this.table);
+          this.loading = false;
+        },
+        error: (error)=>{
+          console.log(error);
+          this.loading = false;
+        }
+      }
+    )
+  }
+
+  updateRows() {
+    const rows = this.dataTable.rows;
+    const rowsChanged = this.changesTracker.trackChanges(this.rowsBackup, rows);
+    this.loading = true;
+    this.tableService.updateRows(this.module, this.table, rowsChanged).subscribe(
+      (response: any) => {
+        console.log(response);
+        this.getColumnsData(this.module, this.table);
+      }
+    )
+  }
+
+  onCreatedRow() {
+    if (this.ngbModal.hasOpenModals()) {
       this.ngbModal.dismissAll();
       this.getColumnsData(this.module, this.table)
     }

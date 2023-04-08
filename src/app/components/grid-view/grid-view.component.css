@@ -1,0 +1,12 @@
+.grid-element {
+    width: 24rem;
+    display: inline-block;
+}
+
+.btn {
+    min-width: 2.5rem;
+}
+
+p {
+    min-height: 1.2rem;
+}

@@ -1,5 +1,29 @@
 <div *ngIf="loading">
     <eq-loading></eq-loading>
 </div>
-<eq-buttons-pad></eq-buttons-pad>
-<eq-data-table [mapAsUrl]="linkedFields"></eq-data-table>
+<eq-buttons-pad [buttonsList]="['add']" (_newRow)="openCreateModal()"></eq-buttons-pad>
+<eq-grid-view [linkGetterFuntion]="getLinkFunction" [data]="modules"></eq-grid-view>
+<!-- <eq-data-table [mapAsUrl]="linkedFields"></eq-data-table> -->
+
+<!-- Form Module -->
+<ng-template #createModule let-modal>
+    <div class="m-0 modal-dialog mw-100">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="exampleModalLabel">Crear módulo</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="closeModal()"></button>
+            </div>
+            <div class="modal-body">
+                <form (submit)="createNewModule()">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Nombre</label>
+                        <input type="text" class="form-control" placeholder="" name="newModule" [(ngModel)]="newModuleName">
+                    </div>
+                    <hr>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</ng-template>
