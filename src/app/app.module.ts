@@ -8,6 +8,10 @@ import { PagesModule } from './pages/pages.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormComponent } from './components/crud/form/form.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { JwtInterceptor } from './helpers/Jwt.interceptor';
+import { ErrorInterceptor } from './helpers/Error.Interceptor';
+
 
 
 const routes: Routes = [
@@ -31,7 +35,10 @@ const routes: Routes = [
     BrowserAnimationsModule
   ],
   exports: [RouterModule],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

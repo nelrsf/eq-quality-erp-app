@@ -2,14 +2,30 @@
     <eq-loading></eq-loading>
 </div>
 <eq-buttons-pad [buttonsList]="['add']" (_newRow)="openCreateModal()"></eq-buttons-pad>
-<eq-grid-view [linkGetterFuntion]="getLinkFunction" [data]="data"></eq-grid-view>
+<eq-grid-view [linkGetterFuntion]="getLinkFunction" [data]="data" (delete)="openDeleteModal($event)" (configItem)="openCustomizerTable($event)"></eq-grid-view>
+
+<!-- Customize Table -->
+<ng-template #customizeTable let-modal>
+    <div class="m-0 modal-dialog mw-100">
+        <div class="modal-content">
+            <div class="modal-header px-3 py-2">
+                <h3 class="modal-title m-0" id="exampleModalLabel">Configurar módulo</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="closeModal()"></button>
+            </div>
+            <div class="modal-body">
+                <eq-table-customizer [(tableData)]="tableData" (tableDataChange)="onCustomizeTable($event)"></eq-table-customizer>
+            </div>
+        </div>
+    </div>
+  </ng-template>
 
 <!-- Form Table -->
 <ng-template #createTable let-modal>
     <div class="m-0 modal-dialog mw-100">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="exampleModalLabel">Crear tabla</h3>
+            <div class="modal-header px-3 py-2">
+                <h3 class="modal-title m-0" id="exampleModalLabel">Crear nueva tabla</h3>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                     (click)="closeModal()"></button>
             </div>
@@ -20,9 +36,38 @@
                         <input type="text" class="form-control" placeholder="" name="newModule" [(ngModel)]="newTableName">
                     </div>
                     <hr>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="btn btn-primary">Crear tabla</button>
                 </form>
             </div>
         </div>
     </div>
+</ng-template>
+
+
+<!-- Form delete table -->
+<ng-template #deleteTable let-modal>
+    <div class="m-0 modal-dialog mw-100">
+        <div class="modal-content">
+            <div class="modal-header px-3 py-2">
+                <h3 class="modal-title m-0" id="exampleModalLabel">Eliminar tabla</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="closeModal()"></button>
+            </div>
+            <div class="modal-body">
+                <form (submit)="deleteCurrentTable()">
+                    <div class="form-group">
+                        <p for="exampleInputEmail1">Está a punto de eliminar la tabla <b class="text-danger">{{currentTable}}</b>, para confirmar digite <b>{{currentTable}}</b> en la caja de texto</p>
+                        <input type="text" class="form-control" placeholder="" name="newModule"
+                            [(ngModel)]="confirmDeleteTableText" autocomplete="off">
+                    </div>
+                    <hr>
+                    <button [disabled]="currentTable!==confirmDeleteTableText" type="submit" class="btn btn-danger">Eliminar tabla</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #modalError let-modal>
+    <eq-error [errorMessage]="errorMessage" (close)="closeModal()"></eq-error>
 </ng-template>

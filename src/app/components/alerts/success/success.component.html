@@ -1,0 +1,11 @@
+<div class="alert mb-0">
+    <button type="button" class="close-modal-error btn btn-outline-secondary" data-dismiss="alert" aria-hidden="true"
+        (click)="closeModal()">
+        ×</button>
+    <fa-icon class="fs-6 text-success" [icon]="icons.success"></fa-icon> <strong
+        class="mx-2 fs-6 text-success">Operación exitosa</strong>
+    <hr class="message-inner-separator">
+    <p>{{message}}</p>
+    <a [href]="link">{{linkMessage}}</a>
+    <div *ngIf="timmer" #timmerBar class="timmer-bar bg-success mt-1" [style.transition]="'width '+timmer+'s linear'"></div>
+</div>

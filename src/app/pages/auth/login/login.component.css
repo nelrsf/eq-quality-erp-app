@@ -50,12 +50,12 @@
   }
 
   .text-center {
-    padding: 5% 32%;
+    padding: 5% 35%;
   }
 
   @media (max-width: 1200px) {
     .text-center {
-        padding: 5% 20%;
+        padding: 5% 30%;
       }
       form img {
         width: 300px!important;
@@ -65,10 +65,19 @@
 
   @media (max-width: 750px) {
     .text-center {
-        padding: 5% 10%;
+        padding: 5% 12%;
       }
     form img {
         width: 180px!important;
     }
   }
 
+  .invalid-text {
+    text-align: start;
+    font-size: small;
+  }
+
+  .forgot-psw-link{
+    text-align: start;
+    font-size: small;
+  }

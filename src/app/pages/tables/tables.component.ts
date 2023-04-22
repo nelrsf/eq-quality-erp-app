@@ -6,6 +6,7 @@ import { DataTableComponent, IColumnFunctions, IMapAsUrl } from 'src/app/compone
 import { ColumnTypes, IColumn } from 'src/app/Model/interfaces/IColumn';
 import { ChangesTrackerService } from 'src/app/services/changes-tracker.service';
 import { TablesService } from './tables.service';
+import { ITable } from 'src/app/Model/interfaces/ITable';
 
 @Component({
   selector: 'eq-tables',
@@ -180,7 +181,7 @@ export class TablesComponent implements OnInit, AfterViewInit {
     )
   }
 
-  closeColumnsCustomizerModal() {
+  closeModal() {
     if (this.ngbModal.hasOpenModals()) {
       this.ngbModal.dismissAll();
     }
@@ -204,7 +205,7 @@ export class TablesComponent implements OnInit, AfterViewInit {
   }
 
   colunmOperationEnd() {
-    this.closeColumnsCustomizerModal();
+    this.closeModal();
     this.getColumnsData(this.module, this.table);
   }
 
@@ -223,19 +224,19 @@ export class TablesComponent implements OnInit, AfterViewInit {
     this.loading = true;
     const rowsChecked = this.dataTable.rowsChecked.filter(rc => rc.checked);
     this.tableService.deleteRows(this.module, this.table, rowsChecked.map(m => m._id))
-    .subscribe(
-      {
-        next: (response)=>{
-          console.log(response);
-          this.getColumnsData(this.module, this.table);
-          this.loading = false;
-        },
-        error: (error)=>{
-          console.log(error);
-          this.loading = false;
+      .subscribe(
+        {
+          next: (response) => {
+            console.log(response);
+            this.getColumnsData(this.module, this.table);
+            this.loading = false;
+          },
+          error: (error) => {
+            console.log(error);
+            this.loading = false;
+          }
         }
-      }
-    )
+      )
   }
 
   updateRows() {

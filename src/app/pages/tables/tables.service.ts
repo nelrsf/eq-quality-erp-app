@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IColumn } from 'src/app/Model/interfaces/IColumn';
+import { ITable } from 'src/app/Model/interfaces/ITable';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -15,12 +16,25 @@ export class TablesService {
   private endpointUpdate = "/update";
   private endpointDelete = "/delete";
   private endpointCreate = "/create";
+  private endpointCustomize = "/customize";
 
   constructor(private http: HttpClient) { }
 
+  customizeTable(moduleName: string, table: ITable) {
+    const urlRequest = environment.apiUrl + this.endpointTables + this.endpointCustomize + "/" + moduleName;
+    return this.http.post(urlRequest, table);
+  }
 
   createTable(moduleName: string, tableName: string) {
     const urlRequest = environment.apiUrl + this.endpointTables + this.endpointCreate + "/" + moduleName + "/" + tableName;
+    return this.http.post(urlRequest, {
+      module: moduleName,
+      table: tableName
+    });
+  }
+
+  deleteTable(moduleName: string, tableName: string) {
+    const urlRequest = environment.apiUrl + this.endpointTables + this.endpointDelete + "/" + moduleName + "/" + tableName;
     return this.http.post(urlRequest, {
       module: moduleName,
       table: tableName

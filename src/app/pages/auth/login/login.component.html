@@ -1,0 +1,55 @@
+<div *ngIf="loading">
+    <eq-loading></eq-loading>
+</div>
+<div class="text-center">
+    <form class="form-signin w-100 m-auto" [formGroup]="getForm()" (submit)="onSubmit()">
+        <img class="mb-4" src="../../../assets/logo/logo_white_bg.png" alt="" width="340">
+        <h5 class="h5 mb-3 fw-normal">Inicia con tus credenciales</h5>
+
+        <div class="form-floating">
+            <input type="email" class="fs-8 form-control" formControlName="email"
+                [ngClass]="[isInvalidField('email')?'is-invalid':'']">
+            <label class="fs-8" for="floatingInput">E-mail</label>
+        </div>
+        <p *ngIf="isInvalidField('email')" class="invalid-text text-danger">Debe ingresar un correo válido</p>
+
+
+        <div class="input-group  mt-2">
+            <div class="form-floating">
+                <div class="input-group"></div>
+                <input [type]="showPassword? 'text' : 'password'" class="fs-6 form-control" formControlName="password"
+                    [ngClass]="[isInvalidField('password')?'is-invalid':'']">
+                <label class="fs-8" for="floatingPassword">Contraseña</label>
+            </div>
+            <div class="input-group-text">
+                <a role="button" (click)="showPassword = !showPassword"><fa-icon [icon]="icons.show"></fa-icon></a>
+            </div>
+        </div>
+        <span>
+            <a role="button" class="forgot-psw-link mt-2 nav-link" (click)="openInputModal()">Olvidé mi contraseña</a>
+        </span>
+
+        <p *ngIf="isInvalidField('password')" class="invalid-text text-danger">Campo requerido</p>
+
+        <button class="w-100 btn btn-lg btn-primary my-3" type="submit">Iniciar sesión</button>
+
+        <a href="/auth/signup" class="nav-link">¿No tienes cuenta? Crea una</a>
+    </form>
+</div>
+
+<ng-template #modalError let-modal>
+    <eq-error [errorMessage]="errorMessage" (close)="closeModal()"></eq-error>
+</ng-template>
+
+<ng-template #modalSuccess let-modal>
+    <eq-success [message]="successMessage" (close)="closeModal()"></eq-success>
+</ng-template>
+
+<ng-template #modalInput let-modal>
+    <eq-alert-input [label]="inputData.label" [message]="inputData.message" [title]="inputData.title" (close)="closeModal()" (submit)="sendRecoveryPasswordEmail($event)"></eq-alert-input>
+</ng-template>
+
+<ng-template #changePassword let-modal>
+    <eq-change-password [firstTime]="firstTimeChangePassword" [padding]="false"
+        [email]="getForm().controls['email'].value" (onSubmitModal)="submitChangePswModal()" (onFail)="changePaswFailed($event)" (onSuccess)="changePaswSuccess($event)"></eq-change-password>
+</ng-template>

@@ -1,0 +1,8 @@
+<div class="alert mb-0">
+    <button type="button" class="close-modal-error btn btn-outline-secondary" data-dismiss="alert"
+        aria-hidden="true" (click)="closeModal()">
+        ×</button>
+    <fa-icon class="fs-6 text-danger" [icon]="icons.error"></fa-icon> <strong class="mx-2 fs-6 text-danger">Error</strong>
+        <hr class="message-inner-separator">
+        <p>{{errorMessage}}</p>
+</div>

@@ -1,0 +1,11 @@
+.close-modal-error {
+    border-style: none;
+    position: absolute;
+    right: 1rem;
+    padding: 0 2%;
+}
+
+.timmer-bar {
+    height: 0.25rem;
+    width: 100%;
+}

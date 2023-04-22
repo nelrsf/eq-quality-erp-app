@@ -12,7 +12,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">Configurar columna</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="closeColumnsCustomizerModal()"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="closeModal()"></button>
         </div>
         <div class="modal-body">
           <eq-column-customizer [editColumnName]="editColumnName" [columnData]="columnData" (columnOperationEnd)="colunmOperationEnd()"></eq-column-customizer>
@@ -27,7 +27,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Nuevo registro</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="closeColumnsCustomizerModal()"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="closeModal()"></button>
       </div>
       <div class="modal-body">
         <eq-form [(columns)]="columnData" [module]="module" [table]="table" (formOperationEnd)="onCreatedRow()"></eq-form>
