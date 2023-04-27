@@ -4,6 +4,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCamera, faCirclePlus, faCog, faUpDownLeftRight, faUpload } from '@fortawesome/free-solid-svg-icons';
+import { FileUploaderComponent } from 'src/app/components/miscelaneous/file-uploader/file-uploader.component';
 
 @Component({
   selector: 'eq-img-field',
@@ -14,7 +15,8 @@ import { faCamera, faCirclePlus, faCog, faUpDownLeftRight, faUpload } from '@for
     FormsModule,
     HttpClientModule,
     CommonModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    FileUploaderComponent
   ]
 })
 export class ImgFieldComponent {

@@ -11,9 +11,12 @@
         <button class="button-tool mx-1 btn btn-light" (click)="$event.preventDefault()">
             <fa-icon [icon]="icons.camera"></fa-icon>
         </button>
-        <button class="button-tool btn btn-light" (click)="$event.preventDefault()">
-            <fa-icon [icon]="icons.upload"></fa-icon>
-        </button>
+        <eq-file-uploader [(files)]="images" [uploadButton]="uploadButton"></eq-file-uploader>
+
+            <button #uploadButton class="button-tool btn btn-light" (click)="$event.preventDefault()">
+                <fa-icon [icon]="icons.upload"></fa-icon>
+            </button>
+
     </div>
     <div class="img-container">
         <img src="{{imageUrl}}" alt="" width="100%" class="my-1">
@@ -26,7 +29,7 @@
     </div>
     <div class="inputUrl d-flex">
         <input [(ngModel)]="imageUrl" type="text" name="imageInput" class="mt-1 form-control"
-            placeholder="http://url/imagen.jpg" autocomplete="off" >
+            placeholder="http://url/imagen.jpg" autocomplete="off">
         <button role="button" class="mx-1 mt-1 btn btn-light" (click)="addImage($event, imageUrl)">
             <fa-icon [icon]="icons.addImage"></fa-icon>
         </button>

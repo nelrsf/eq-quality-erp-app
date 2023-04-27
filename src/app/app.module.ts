@@ -11,7 +11,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor } from './helpers/Jwt.interceptor';
 import { ErrorInterceptor } from './helpers/Error.Interceptor';
-
+import { FileUploaderComponent } from './components/miscelaneous/file-uploader/file-uploader.component';
+import { FileFieldComponent } from './components/crud/form/fileField/file-field.component';
 
 
 const routes: Routes = [

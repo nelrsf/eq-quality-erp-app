@@ -11,6 +11,7 @@ import { DragDirective } from 'src/app/directives/drag.directive';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TablesService } from 'src/app/pages/tables/tables.service';
 import { ListFieldComponent } from './listField/list-field.component';
+import { FileFieldComponent } from './fileField/file-field.component';
 
 
 @Component({
@@ -26,6 +27,7 @@ import { ListFieldComponent } from './listField/list-field.component';
     FormsModule,
     ReactiveFormsModule,
     ImgFieldComponent,
+    FileFieldComponent,
     ListFieldComponent,
     DropTargetDirective,
     DragDirective
@@ -43,6 +45,7 @@ export class FormComponent implements OnInit {
 
   imageUrl: string = "";
   imagesFormData: any = {};
+  filesFormData: any = {};
   listFormData: any = {};
   dragging: boolean = false;
   loading: boolean = false;
@@ -65,6 +68,16 @@ export class FormComponent implements OnInit {
     this.form = new FormGroup(this.createFormControl());
     this.createImagesFormData();
     this.createListFormData();
+  }
+
+  createFilesFormData() {
+    Object.keys(this.columns).forEach(
+      (col: string) => {
+        if(this.columns[col].type === ColumnTypes.file){
+          this.imagesFormData[col] = [];
+        }
+      }
+    )
   }
 
   createImagesFormData() {
@@ -122,6 +135,16 @@ export class FormComponent implements OnInit {
     )
   }
 
+  asignFilesFormData(rowData: any){
+    Object.keys(this.columns).forEach(
+      (columnName) => {
+        if(this.columns[columnName].type === ColumnTypes.file){
+          rowData[columnName] = this.imagesFormData[columnName];
+        }
+      }
+    )
+  }
+
   asignListFormData(rowData: any){
     Object.keys(this.columns).forEach(
       (columnName) => {
@@ -147,6 +170,7 @@ export class FormComponent implements OnInit {
     )
     this.asignImagesFormData(newRow);
     this.asignListFormData(newRow);
+    this.asignFilesFormData(newRow);
     this.tableService.createRow(this.module, this.table, newRow)
       .subscribe(
         {

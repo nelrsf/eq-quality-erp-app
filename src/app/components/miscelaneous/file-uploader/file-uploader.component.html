@@ -1,0 +1,12 @@
+<ng-container *ngIf="!uploadButton then defaultButtonTemplate">
+
+</ng-container>
+
+<ng-template #defaultButtonTemplate>
+    <button class="btn btn-outline-secondary" (click)="openFileExplorer($event)">
+        <fa-icon [icon]="icons.upload"></fa-icon>
+    </button>
+</ng-template>
+
+
+<input #fileUploader type="file" id="src-file" aria-label="Archivo" [accept]="accept" style="display:none" [multiple]="multiple" (change)="onSelectedFile($event)">

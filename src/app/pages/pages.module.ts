@@ -25,6 +25,7 @@ import { AuthGuard } from '../helpers/Auth.guard';
 import { AuthModule } from './auth/auth.module';
 import { ErrorNotFoundComponent } from './error/404/error-page.component';
 import { ErrorUnauthorizedPageComponent } from './error/401/error-unauthorized.component';
+import { ApiDocsComponent } from './api-docs/api-docs.component';
 
 
 
@@ -46,6 +47,7 @@ const routes: Routes = [
       {path: 'list/:listData', component: ListViewerComponent, canActivate: [ParamGuard]},
       {path: 'error', component: ErrorNotFoundComponent},
       {path: 'unauthorized', component: ErrorUnauthorizedPageComponent},
+      {path: 'docs', component: ApiDocsComponent},
       {path: '**', component: ErrorNotFoundComponent},
     ],
     canActivate: [AuthGuard]
@@ -59,7 +61,8 @@ const routes: Routes = [
     TablesComponent,
     TablesSumaryComponent,
     ErrorNotFoundComponent,
-    ErrorUnauthorizedPageComponent
+    ErrorUnauthorizedPageComponent,
+    ApiDocsComponent
   ],
   imports: [
     CommonModule,

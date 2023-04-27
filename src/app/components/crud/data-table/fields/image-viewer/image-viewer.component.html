@@ -12,6 +12,11 @@
                 <img src="{{getLinkAsThumb(img)}}" alt="" width="40px" height="40px">
             </div>
         </div>
+        <div *ngIf="value.length===0">
+            <div class="img-preview" (click)="openViewGallery()">
+                <img src="../../../../../../assets/images/previews/1.jpg" alt="" width="40px" height="40px">
+            </div>
+        </div>
         <button class="btn btn-ligth" (click)="nextPicture()">
             <fa-icon class="mx-2" [icon]="icons.next"></fa-icon>
         </button>

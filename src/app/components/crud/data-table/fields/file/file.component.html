@@ -1,1 +1,6 @@
-<input type="file" (input)="onChange($event)" [disabled]="false">
+<div class="d-flex justify-content-start align-items-center">
+    <eq-file-uploader [multiple]="false" [(files)]="value" (filesChange)="onFileChange($event)" [accept]="'*'"></eq-file-uploader>
+    <div *ngIf="value.length > 0">
+        <a role="button" class="mx-2" [href]="value[value.length - 1]" target="_blank">Descargar</a>
+    </div>
+</div>

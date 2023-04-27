@@ -8,4 +8,5 @@ button {
 
 .img-preview {
     cursor: pointer;
+    min-width: 2rem;
 }

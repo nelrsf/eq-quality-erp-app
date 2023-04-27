@@ -57,7 +57,8 @@
                                 <fa-icon [icon]="icons.cog"></fa-icon>
                             </div>
                         </label>
-                        <input type="file" class="form-control" placeholder="" formControlName="{{column.key}}">
+                        <eq-file-field [(files)]="this.imagesFormData[getAsColumn(column.value).columnName]"></eq-file-field>
+                        <!-- <input type="file" class="form-control" placeholder="" formControlName="{{column.key}}"> -->
                     </div>
                 </div>
 

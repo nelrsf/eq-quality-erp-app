@@ -1,17 +1,21 @@
-<div class="album py-5 bg-light">
+<div class="album py-3 bg-light">
     <div class="container">
 
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-            <div *ngFor="let img of images" class="col">
+            <div *ngFor="let img of images; let i = index" class="col">
                 <div class="card shadow-sm">
-                    <img src="{{img}}" alt="'imagen'" width="100%">
+                    <img src="{{img}}" alt="'imagen'" width="100%" (click)="goToImage(img)">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-                                <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+                                <button #uploadImageButton type="button" class="btn btn-sm btn-outline-secondary">
+                                    <fa-icon [icon]="icons.edit"></fa-icon>
+                                </button>
+                                <eq-file-uploader [multiple]="false" [uploadButton]="uploadImageButton" (filesChange)="changeImg($event, i)" [files]="[]"></eq-file-uploader>
+                                <button type="button" class="btn btn-sm btn-outline-danger" (click)="deleteFile(img, i)">
+                                    <fa-icon [icon]="icons.delete"></fa-icon>
+                                </button>
                             </div>
-                            <!-- <small class="text-muted">9 mins</small> -->
                         </div>
                     </div>
                 </div>
@@ -20,8 +24,9 @@
     </div>
     <hr class="hr" />
     <div class="buttons d-flex justify-content-between align-items-center w-100 p-3">
-        <button type="submit" class="btn btn-primary d-flex align-items-center" (click)="onSubmit()">
-            <span class="mx-1">Guardar cambios</span>
+        <button #buttonAddImage type="button" class="btn btn-success d-flex align-items-center rounded-circle">
+            <fa-icon [icon]="icons.add"></fa-icon>
         </button>
     </div>
+    <eq-file-uploader accept="image/*" [multiple]="false" [uploadButton]="buttonAddImage" [files]="[]" (filesChange)="addImage($event)"></eq-file-uploader>
 </div>
