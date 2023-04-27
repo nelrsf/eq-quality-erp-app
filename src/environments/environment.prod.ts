@@ -3,15 +3,12 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false,
+  production: true,
   hmr: false,
   apiUrl: 'https://eco-quality-erp-crud-service.vercel.app',
-  // authUrl: 'https://eco-quality-auth.vercel.app'
-  // authUrl: 'http://localhost:3001',
-  authUrl: 'http://192.168.20.21:3001',
-  // filesUrl: 'http://localhost:3002',
-  filesUrl: 'http://192.168.20.21:3002',
-  recoveryCodeKey: "EQ_ADMIN_RECOVERY"
+  authUrl: 'https://eco-quality-auth.vercel.app',
+  filesUrl: 'https://eco-quality-files.vercel.app',
+  recoveryCodeKey: "SANTI_Y_SILVIA_LOS_AMO"
 };
 
 /*
