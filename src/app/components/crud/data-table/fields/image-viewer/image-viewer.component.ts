@@ -26,7 +26,7 @@ export class ImageViewerComponent {
 
   curentIndex: number = 0;
 
-  thumbStr = "upload/t_media_lib_thumb";
+  thumbStr = "?thumb=true";
 
   icons = {
     next: faAngleRight,
@@ -41,7 +41,7 @@ export class ImageViewerComponent {
     if (typeof link !== "string") {
       return "";
     }
-    return link.replace("upload", this.thumbStr);
+    return link + this.thumbStr;
   }
 
   onChange(event: any) {

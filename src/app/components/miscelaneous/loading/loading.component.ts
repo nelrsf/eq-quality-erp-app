@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'eq-loading',
@@ -7,5 +7,8 @@ import { Component } from '@angular/core';
   standalone: true
 })
 export class LoadingComponent {
+
+  @Input() position: 'absolute' | 'fixed' = 'fixed';
+  @Input() size: string = '6rem'
 
 }

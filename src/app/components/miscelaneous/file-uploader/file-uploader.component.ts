@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faUpload } from '@fortawesome/free-solid-svg-icons';
 import { fromEvent } from 'rxjs';
 import { FileService } from 'src/app/services/file.service';
+import { LoadingComponent } from '../loading/loading.component';
 
 @Component({
   selector: 'eq-file-uploader',
@@ -12,12 +13,14 @@ import { FileService } from 'src/app/services/file.service';
   standalone: true,
   imports: [
     CommonModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    LoadingComponent
   ]
 })
 export class FileUploaderComponent implements AfterViewInit {
 
   @ViewChild('fileUploader') fileUploader!: ElementRef;
+  @ViewChild('loadingSpinner') loadingSpinner!: TemplateRef<any>;
 
   @Input() uploadButton!: Element;
   @Input() files!: Array<string>;
@@ -25,15 +28,19 @@ export class FileUploaderComponent implements AfterViewInit {
   @Input() accept: string = "image/*";
   @Output() filesChange = new EventEmitter<Array<string>>();
 
-  constructor(private fileService: FileService) { }
+  constructor(private fileService: FileService, private renderer: Renderer2, private viewContainerRef: ViewContainerRef) { }
 
   icons = {
     upload: faUpload,
   }
   filesData!: Array<any>;
+  loading: boolean = false;
 
   ngAfterViewInit(): void {
     if (this.uploadButton) {
+      this.renderer.setStyle(this.uploadButton, 'position', 'relative');
+      const viewRef = this.viewContainerRef.createEmbeddedView(this.loadingSpinner);
+      this.renderer.insertBefore(this.uploadButton, viewRef.rootNodes[0], this.uploadButton.childNodes[0]);
       const clickEvent = fromEvent(this.uploadButton, "click");
       clickEvent.subscribe(
         (event: any) => {
@@ -50,6 +57,7 @@ export class FileUploaderComponent implements AfterViewInit {
 
   onSelectedFile(event: any) {
     event.preventDefault();
+    this.loading = true;
     this.filesData = event.target.files;
     const formData = new FormData();
     let filesLength = Array.from(this.filesData).length;
@@ -62,9 +70,11 @@ export class FileUploaderComponent implements AfterViewInit {
         next: (data: any) => {
           this.files.push(...data.urls);
           this.filesChange.emit(this.files);
+          this.loading = false;
         },
         error: (error) => {
-          console.log(error)
+          console.log(error);
+          this.loading = false;
         }
       })
 

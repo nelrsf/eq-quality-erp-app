@@ -4,15 +4,20 @@
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
             <div *ngFor="let img of images; let i = index" class="col">
                 <div class="card shadow-sm">
-                    <img src="{{img}}" alt="'imagen'" width="100%" (click)="goToImage(img)">
+                    <img src="{{img}}" alt="'imagen'" width="100%" (click)="goToImage(img)" (load)="setImgLoaded(i)">
+                    <div *ngIf="isLoading(i)">
+                        <eq-loading [position]="'absolute'"></eq-loading>
+                    </div>
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="btn-group">
                                 <button #uploadImageButton type="button" class="btn btn-sm btn-outline-secondary">
                                     <fa-icon [icon]="icons.edit"></fa-icon>
                                 </button>
-                                <eq-file-uploader [multiple]="false" [uploadButton]="uploadImageButton" (filesChange)="changeImg($event, i)" [files]="[]"></eq-file-uploader>
-                                <button type="button" class="btn btn-sm btn-outline-danger" (click)="deleteFile(img, i)">
+                                <eq-file-uploader [multiple]="false" [uploadButton]="uploadImageButton"
+                                    (filesChange)="changeImg($event, i)" [files]="[]"></eq-file-uploader>
+                                <button type="button" class="btn btn-sm btn-outline-danger"
+                                    (click)="deleteFile(img, i)">
                                     <fa-icon [icon]="icons.delete"></fa-icon>
                                 </button>
                             </div>
@@ -28,5 +33,6 @@
             <fa-icon [icon]="icons.add"></fa-icon>
         </button>
     </div>
-    <eq-file-uploader accept="image/*" [multiple]="false" [uploadButton]="buttonAddImage" [files]="[]" (filesChange)="addImage($event)"></eq-file-uploader>
+    <eq-file-uploader accept="image/*" [multiple]="false" [uploadButton]="buttonAddImage" [files]="[]"
+        (filesChange)="addImage($event)"></eq-file-uploader>
 </div>
