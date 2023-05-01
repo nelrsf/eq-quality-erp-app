@@ -15,7 +15,10 @@ export class FileService {
   uploadFile(files: any) {
     const requestUrl = environment.filesUrl + this.filesEndpoint;
     return this.http.post(requestUrl, files, {
-      headers: { 'enctype': 'multipart/form-data' }
+      headers: { 
+        'enctype': 'multipart/form-data',
+        'Content-Type': 'multipart/form-data'
+       }
     })
   }
 
