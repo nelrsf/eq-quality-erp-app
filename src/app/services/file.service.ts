@@ -22,6 +22,7 @@ export class FileService {
     })
   }
 
+  
   deleteFile(fileName: string) {
     const requestUrl = environment.filesUrl + this.deleteFilesEndpoint + "/" + fileName;
     return this.http.get(requestUrl);
