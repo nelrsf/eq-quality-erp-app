@@ -7,7 +7,7 @@ export const environment = {
   hmr: false,
   apiUrl: 'https://eco-quality-erp-crud-service.vercel.app',
   authUrl: 'https://eco-quality-auth.vercel.app',
-  filesUrl: 'https://eq-files.netlify.app',
+  filesUrl: 'https://eq-files.onrender.com',
   recoveryCodeKey: "SANTI_Y_SILVIA_LOS_AMO"
 };
 
