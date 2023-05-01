@@ -7,7 +7,7 @@ export const environment = {
   hmr: false,
   apiUrl: 'https://eco-quality-erp-crud-service.vercel.app',
   authUrl: 'https://eco-quality-auth.vercel.app',
-  filesUrl: 'http://localhost:3002',
+  filesUrl: 'https://eq-files.netlify.app',
   recoveryCodeKey: "EQ_ADMIN_RECOVERY"
 };
 
