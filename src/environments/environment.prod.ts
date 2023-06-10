@@ -5,10 +5,10 @@
 export const environment = {
   production: true,
   hmr: false,
-  apiUrl: process.env["CRUD_SERVICE_URL"],
-  authUrl: process.env["AUTH_URL"],
-  filesUrl: process.env["FILES_URL"],
-  recoveryCodeKey: process.env["RECOVERY_CODE_KEY"]
+  apiUrl: process.env["CRUD_SERVICE_URL"] ? process.env["CRUD_SERVICE_URL"] : '',
+  authUrl: process.env["AUTH_URL"] ? process.env["AUTH_URL"] : '',
+  filesUrl: process.env["FILES_URL"] ? process.env["FILES_URL"] : '',
+  recoveryCodeKey: process.env["RECOVERY_CODE_KEY"] ? process.env["RECOVERY_CODE_KEY"] : ''
 };
 
 /*
