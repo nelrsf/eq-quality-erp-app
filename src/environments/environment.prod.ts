@@ -5,10 +5,10 @@
 export const environment = {
   production: true,
   hmr: false,
-  apiUrl: 'https://eco-quality-erp-crud-service.vercel.app',
-  authUrl: 'https://eco-quality-auth.vercel.app',
-  filesUrl: 'https://eq-files.onrender.com',
-  recoveryCodeKey: "210_SANTI_Y_3_SILVIA_2_LOS_AMO_1"
+  apiUrl: process.env["CRUD_SERVICE_URL"],
+  authUrl: process.env["AUTH_URL"],
+  filesUrl: process.env["FILES_URL"],
+  recoveryCodeKey: process.env["RECOVERY_CODE_KEY"]
 };
 
 /*
