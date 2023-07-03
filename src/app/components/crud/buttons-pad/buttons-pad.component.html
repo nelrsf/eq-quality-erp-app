@@ -7,6 +7,11 @@
             </button>
         </div>
         <div class="p-1 buttons-wrapper d-none d-md-block">
+            <div class="button-div" *ngIf="isDisabled('add-folder')">
+                <button type="button" [eqTooltip]="'Añadir Folder'" class="btn btn-outline-secondary" (click)="addFolder()">
+                    <fa-icon [icon]="icons.addFolder"></fa-icon>
+                </button>
+            </div>
             <div class="button-div" *ngIf="isDisabled('delete')">
                 <button type="button" [eqTooltip]="'Eliminar'" class="btn btn-outline-danger" (click)="deleteRows()">
                     <fa-icon [icon]="icons.delete"></fa-icon>

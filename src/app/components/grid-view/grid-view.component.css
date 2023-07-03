@@ -4,7 +4,8 @@
 }
 
 .btn {
-    min-width: 2.5rem;
+    min-width: 2rem;
+    font-size: smaller;
 }
 
 p {

@@ -5,11 +5,12 @@
 export const environment = {
   production: true,
   hmr: false,
-  apiUrl: process.env["CRUD_SERVICE_URL"] ? process.env["CRUD_SERVICE_URL"] : '',
-  authUrl: process.env["AUTH_URL"] ? process.env["AUTH_URL"] : '',
-  filesUrl: process.env["FILES_URL"] ? process.env["FILES_URL"] : '',
-  recoveryCodeKey: process.env["RECOVERY_CODE_KEY"] ? process.env["RECOVERY_CODE_KEY"] : ''
+  apiUrl: 'https://eco-quality-erp-crud-service.vercel.app',
+  authUrl: 'https://eco-quality-auth.vercel.app',
+  filesUrl: 'https://eq-files.onrender.com',
+  recoveryCodeKey: "210_SANTI_Y_3_SILVIA_2_LOS_AMO_1"
 };
+
 
 /*
  * For easier debugging in development mode, you can import the following file

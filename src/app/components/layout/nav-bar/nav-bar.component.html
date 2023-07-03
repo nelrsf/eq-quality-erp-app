@@ -21,10 +21,16 @@
             </a>
             <ul class="dropdown-menu">
                 <!-- <li><a class="dropdown-item" href="#">Action</a></li>
-                <li><a class="dropdown-item" href="#">Another action</a></li>
+                <li><a class="dropdown-item" href="#">Another action</a></li> -->
+                <li class="d-flex justify-content-between align-items-center">
+                    <a class="dropdown-item" role="button" (click)="switchTheme()">
+                        {{getTheme()}}
+                        <fa-icon class="mx-2" [icon]="theme !== 'light' ? icons.lightTheme : icons.darkTheme"></fa-icon>
+                    </a>
+                </li>
                 <li>
                     <hr class="dropdown-divider">
-                </li> -->
+                </li>
                 <li><a class="dropdown-item" role="button" (click)="loguot()">Cerrar sesión</a></li>
             </ul>
         </li>

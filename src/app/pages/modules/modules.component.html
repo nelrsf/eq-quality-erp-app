@@ -2,7 +2,7 @@
     <eq-loading></eq-loading>
 </div>
 <eq-buttons-pad [buttonsList]="['add']" (_newRow)="openCreateModal()"></eq-buttons-pad>
-<eq-grid-view [linkGetterFuntion]="getLinkFunction" [data]="modules" (delete)="openDeleteModal($event)" (configItem)="openConfigModal($event)"></eq-grid-view>
+<eq-grid-view [disableNavigator]="true" [linkGetterFuntion]="getLinkFunction" [data]="modules" (delete)="openDeleteModal($event)" (configItem)="openConfigModal($event)"></eq-grid-view>
 
 
 <!-- Form Module -->
@@ -18,7 +18,7 @@
                 <form (submit)="createNewModule()">
                     <div class="form-group">
                         <label for="exampleInputEmail1">Nombre</label>
-                        <input type="text" class="form-control" placeholder="" name="newModule"
+                        <input type="text" class="form-control" placeholder="" name="newFolder"
                             [(ngModel)]="newModuleName">
                     </div>
                     <hr>
@@ -75,6 +75,8 @@
     </div>
 </ng-template>
 
+<!-- Error -->
 <ng-template #modalError let-modal>
     <eq-error [errorMessage]="errorMessage" (close)="closeModal()"></eq-error>
 </ng-template>
+

@@ -7,6 +7,7 @@ import { MenuComponent } from '../menu/menu.component';
 import { FooterComponent } from './footer/footer.component';
 import { PageRendererComponent } from './page-renderer/page-renderer/page-renderer.component';
 import { PageRendererDirective } from './page-renderer/page-renderer.directive';
+import { LogoComponent } from './logo/logo.component';
 
 
 
@@ -16,7 +17,8 @@ import { PageRendererDirective } from './page-renderer/page-renderer.directive';
     NavBarComponent,
     FooterComponent,
     PageRendererComponent,
-    PageRendererDirective
+    PageRendererDirective,
+    LogoComponent
   ],
   imports: [
     CommonModule,
@@ -26,7 +28,8 @@ import { PageRendererDirective } from './page-renderer/page-renderer.directive';
     SideBarComponent,
     NavBarComponent,
     FooterComponent,
-    PageRendererComponent
+    PageRendererComponent,
+    LogoComponent
   ]
 })
 export class LayoutModule { }

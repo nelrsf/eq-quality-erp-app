@@ -1,5 +1,3 @@
-import { ITable } from "./ITable";
-
 export interface IModule {
     name: string,
     label: string,

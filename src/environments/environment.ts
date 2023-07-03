@@ -5,9 +5,9 @@
 export const environment = {
   production: false,
   hmr: false,
-  apiUrl: 'https://eco-quality-erp-crud-service.vercel.app',
-  authUrl: 'https://eco-quality-auth.vercel.app',
-  filesUrl: 'https://eq-files.onrender.com',
+  apiUrl: 'http://localhost:3000',
+  authUrl: 'http://localhost:3001',
+  filesUrl: 'http://localhost:3002',
   recoveryCodeKey: "EQ_ADMIN_RECOVERY"
 };
 

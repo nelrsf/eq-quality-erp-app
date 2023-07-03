@@ -1,0 +1,20 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb breadcrumb-custom">
+        <li class="breadcrumb-item">
+            <a [href]="'tables/' + module">{{module}}</a>
+        </li>
+        <li class="breadcrumb-item" *ngFor="let segment of getRouteSegments(); let i = index">
+            <ng-container *ngIf="i !== getRouteSegments().length - 1 then nsegment; else lastSegment"></ng-container>
+            <ng-template #nsegment>
+                <a [routerLink]="linkGetterFuntion('',{isFolder:true, routeParam: segment})">{{segment}}</a>
+            </ng-template>
+            <ng-template #lastSegment>
+                <span class="mx-3">
+                    <a [routerLink]="linkGetterFuntion('',{isFolder:true, routeParam: segment})">
+                        {{segment}}
+                    </a>
+                </span>
+            </ng-template>
+        </li>
+    </ol>
+</nav>

@@ -4,6 +4,7 @@ import { ModulesService } from './modules.service';
 import { IModule } from 'src/app/Model/interfaces/IModule';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ITable } from 'src/app/Model/interfaces/ITable';
+import { error } from 'console';
 
 
 @Component({
@@ -43,9 +44,17 @@ export class ModulesComponent implements OnInit, AfterViewInit {
   getModulesData() {
     this.loading = true;
     this.modulesService.getAllModules().subscribe(
-      (data: any) => {
-        this.modules = data;
-        this.loading = false;
+      {
+        next: (data: any) => {
+          this.modules = data;
+          this.loading = false;
+        },
+        error: (error)=>{
+          console.log(error);
+          this.loading = false;
+          this.errorMessage = error.message;
+          this.openErrorModal();
+        }
       }
     )
   }
@@ -57,8 +66,9 @@ export class ModulesComponent implements OnInit, AfterViewInit {
   }
 
   openCreateModal() {
-    this.ngbModal.open(this.createModule)
+    this.ngbModal.open(this.createModule);
   }
+
 
   openConfigModal(module: IModule | ITable) {
     this.moduleData = module as IModule;
@@ -78,6 +88,8 @@ export class ModulesComponent implements OnInit, AfterViewInit {
         error: (error: any) => {
           console.log(error);
           this.loading = false;
+          this.errorMessage = error.message;
+          this.openErrorModal();
         }
       })
   }
@@ -121,7 +133,9 @@ export class ModulesComponent implements OnInit, AfterViewInit {
             this.getModulesData();
           },
           error: (error) => {
-            console.log(error);
+            this.loading = false;
+            this.errorMessage = error.error;
+            this.openErrorModal();
           }
         }
       );
@@ -133,7 +147,7 @@ export class ModulesComponent implements OnInit, AfterViewInit {
   }
 
   getLinkFunction = (value: string | undefined) => {
-    return "/tables/" + value;
+    return "/tables/" + value + '/';
   }
 
 }

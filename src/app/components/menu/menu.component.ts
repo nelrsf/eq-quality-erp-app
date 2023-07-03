@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { IModule } from 'src/app/Model/interfaces/IModule';
 import { MenuService } from './menu.service';
+import { SubmenuComponent } from './submenu/submenu.component';
 
 @Component({
   selector: 'eq-menu',
@@ -11,7 +12,8 @@ import { MenuService } from './menu.service';
   standalone: true,
   imports: [
     CommonModule,
-    RouterModule
+    RouterModule,
+    SubmenuComponent
   ]
 })
 export class MenuComponent implements OnInit {

@@ -26,6 +26,8 @@ import { AuthModule } from './auth/auth.module';
 import { ErrorNotFoundComponent } from './error/404/error-page.component';
 import { ErrorUnauthorizedPageComponent } from './error/401/error-unauthorized.component';
 import { ApiDocsComponent } from './api-docs/api-docs.component';
+import { BreadcrumbComponent } from '../components/breadcrumb/breadcrumb.component';
+import { LogoComponent } from '../components/layout/logo/logo.component';
 
 
 
@@ -40,6 +42,7 @@ const routes: Routes = [
     component: LayoutComponent,
     children: [
       {path: '', component: ModulesComponent},
+      {path: 'tables/:module/:route', component: TablesSumaryComponent, canActivate: [ParamGuard]},
       {path: 'tables/:module', component: TablesSumaryComponent, canActivate: [ParamGuard]},
       {path: 'tables/auxdata/:objectdata', component: TablesComponent, canActivate: [ParamGuard]},
       {path: 'tables/data/:module/:table', component: TablesComponent, canActivate: [ParamGuard]},
@@ -80,6 +83,7 @@ const routes: Routes = [
     ErrorComponent,
     ModuleCustomizerComponent,
     TableCustomizerComponent,
+    BreadcrumbComponent,
     AuthModule
   ],
   exports: [

@@ -53,11 +53,18 @@
     padding: 5% 35%;
   }
 
+  .brand {
+    transform: scale(2) translateX(-5%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   @media (max-width: 1200px) {
     .text-center {
         padding: 5% 30%;
       }
-      form img {
+      form .brand {
         width: 300px!important;
     }
   }
@@ -67,7 +74,8 @@
     .text-center {
         padding: 5% 12%;
       }
-    form img {
+    form .brand {
+        transform: scale(1.5) translateX(-5%);
         width: 180px!important;
     }
   }

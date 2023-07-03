@@ -10,6 +10,7 @@ import { environment } from 'src/environments/environment';
 export class TablesService {
 
   private endpointTables = "/tables";
+  private endpointMetadata = "/metadata";
   private endpointColumns = "/columns";
   private endpointRows = "/rows";
   private endpointUpsert = "/upsert";
@@ -25,11 +26,22 @@ export class TablesService {
     return this.http.post(urlRequest, table);
   }
 
-  createTable(moduleName: string, tableName: string) {
+  createTable(moduleName: string, tableName: string, route: string) {
     const urlRequest = environment.apiUrl + this.endpointTables + this.endpointCreate + "/" + moduleName + "/" + tableName;
     return this.http.post(urlRequest, {
       module: moduleName,
-      table: tableName
+      table: tableName,
+      ...(route ? { route: route } : {})
+    });
+  }
+
+  createFolder(moduleName: string, tableName: string, route: string) {
+    const urlRequest = environment.apiUrl + this.endpointTables + this.endpointCreate + "/" + moduleName + "/" + tableName;
+    return this.http.post(urlRequest, {
+      module: moduleName,
+      table: tableName,
+      isFolder: true,
+      ...(route ? { route: route } : {})
     });
   }
 
@@ -39,6 +51,16 @@ export class TablesService {
       module: moduleName,
       table: tableName
     });
+  }
+
+  getTableObjectMetadata(moduleName: string, table: string){
+    const urlRequest = environment.apiUrl + this.endpointTables + this.endpointMetadata + "/" + moduleName + "/" + table;
+    return this.http.get(urlRequest);
+  }
+
+  getTablesByRoute(moduleName: string, route: string) {
+    const urlRequest = environment.apiUrl + this.endpointTables + "/" + moduleName + "/" + route;
+    return this.http.get(urlRequest);
   }
 
   getAllTables(moduleName: string) {
@@ -90,6 +112,13 @@ export class TablesService {
   deleteColumn(column: IColumn) {
     const urlRequest = environment.apiUrl + this.endpointColumns + this.endpointDelete;
     return this.http.post(urlRequest, column);
+  }
+
+  getLinkFunction = (value: string | undefined, module: string, item?: any) => {
+    if (item.isFolder) {
+      return "/tables/" + module + "/" + item.routeParam;
+    }
+    return "/tables/data/" + module + "/" + value;
   }
 
 }

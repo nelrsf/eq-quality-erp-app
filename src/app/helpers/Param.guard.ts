@@ -8,6 +8,8 @@ export class ParamGuard {
     canActivate(route: ActivatedRouteSnapshot): boolean {
         const url = route.routeConfig?.path;
         switch (url) {
+            case "tables/:module/:route":
+                return this.moduleParamsGuard(route);
             case "tables/:module":
                 return this.moduleParamsGuard(route);
             case "tables/auxdata/:objectdata":
@@ -68,7 +70,7 @@ export class ParamGuard {
         return true;
     }
 
-    listParamsGuard(route: ActivatedRouteSnapshot): boolean{
+    listParamsGuard(route: ActivatedRouteSnapshot): boolean {
         const listData = route.params['listData'];
         if (!listData) {
             return false;

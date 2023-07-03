@@ -8,12 +8,18 @@
       <div #collapsible class="collapse">
         <ul class="nav nav-pills flex-column mb-auto p-2">
           <li *ngFor="let table of module.tables" class="nav-item w-100">
-            <a routerLinkActive="active" routerLink="/tables/data/{{module.name}}/{{table.name}}" class="menu-item  nav-link"
-              aria-current="page">
-              <span class="fs-8 text-capitalize">
-                {{table.label}}
-              </span>
-            </a>
+            <ng-container *ngIf="!table.isFolder then tableTemplate; else folderTemplate"></ng-container>
+            <ng-template #tableTemplate>
+              <a routerLinkActive="active" routerLink="/tables/data/{{module.name}}/{{table.name}}"
+                class="menu-item  nav-link" aria-current="page">
+                <span class="fs-8 text-capitalize">
+                  {{table.label}}
+                </span>
+              </a>
+            </ng-template>
+            <ng-template #folderTemplate>
+              <eq-submenu [submenu]="table" [moduleName]="module.name"></eq-submenu>
+            </ng-template>
           </li>
         </ul>
       </div>

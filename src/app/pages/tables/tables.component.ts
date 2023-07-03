@@ -31,6 +31,7 @@ export class TablesComponent implements OnInit, AfterViewInit {
   columnData!: IColumn;
   table!: string;
   module!: string;
+  mainRoute: string = '';
   editColumnName: boolean = true;
   columnsMetadata!: any;
   rowsBackup!: any;
@@ -66,6 +67,7 @@ export class TablesComponent implements OnInit, AfterViewInit {
     this.module = params['module'];
     this.table = params['table'];
     if (this.module && this.table) {
+      this.getRoute();
       this.getColumnsData(this.module, this.table)
       return true;
     }
@@ -94,6 +96,20 @@ export class TablesComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     //not implemented
+  }
+
+  getRoute() {
+    this.tableService.getTableObjectMetadata(this.module, this.table)
+      .subscribe(
+        {
+          next: (data: any) => {
+            this.mainRoute = data.table_metadata.route;
+          },
+          error: (error) => {
+            console.log(error)
+          }
+        }
+      )
   }
 
   setLinkedFields(module: string) {
@@ -258,6 +274,10 @@ export class TablesComponent implements OnInit, AfterViewInit {
     }
   }
 
+  getLinkFunction = (value: string | undefined, item?: any) => {
+    return this.tableService.getLinkFunction(value, this.module, item);
+  }
+
   private createColumnsFunctionsArray(module: string, table: string, colF: IColumnFunctions) {
 
     const customizeFunc = () => {
@@ -283,7 +303,6 @@ export class TablesComponent implements OnInit, AfterViewInit {
         }
       )
     }
-
 
     return [
       {

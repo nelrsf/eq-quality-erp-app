@@ -1,5 +1,6 @@
 input {
     border-style: none;
+    color: var(--bs-emphasis-color);
 }
 
 .invalid-field {

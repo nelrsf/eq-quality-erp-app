@@ -3,6 +3,9 @@
 }
 
 .width-viewer {
+    background-color: var(--bs-form-control-disabled-bg)!important;
+    color: var(--bs-emphasis-color)!important;
+    border-radius: 5px;
     float: right;
     border-style: none;
 }

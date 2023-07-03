@@ -4,6 +4,6 @@
     right: 0;
     left: 0;
     margin-top: 2rem;
-    background-color: white;
+    background-color: var(--bs-body-bg);
     max-width: 90%;
 }

@@ -11,6 +11,8 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
 import { SuccessComponent } from 'src/app/components/alerts/success/success.component';
 import { RecoverPasswordComponent } from './recover-password/recover-password.component';
 import { AlertInputComponent } from 'src/app/components/alerts/input/input.component';
+import { LayoutComponent } from '../layout/layout.component';
+import { LayoutModule } from "../../components/layout/layout.module";
 
 
 const routes: Routes = [
@@ -29,21 +31,22 @@ const routes: Routes = [
 ]
 
 @NgModule({
-  declarations: [
-    LoginComponent,
-    SignupComponent,
-    ChangePasswordComponent,
-    RecoverPasswordComponent
-  ],
-  imports: [
-    RouterModule.forChild(routes),
-    CommonModule,
-    ReactiveFormsModule,
-    ErrorComponent,
-    SuccessComponent,
-    AlertInputComponent,
-    LoadingComponent,
-    FontAwesomeModule
-  ]
+    declarations: [
+        LoginComponent,
+        SignupComponent,
+        ChangePasswordComponent,
+        RecoverPasswordComponent
+    ],
+    imports: [
+        RouterModule.forChild(routes),
+        CommonModule,
+        ReactiveFormsModule,
+        ErrorComponent,
+        SuccessComponent,
+        AlertInputComponent,
+        LoadingComponent,
+        FontAwesomeModule,
+        LayoutModule
+    ]
 })
 export class AuthModule { }

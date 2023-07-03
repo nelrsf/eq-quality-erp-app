@@ -1,0 +1,26 @@
+<a role="button" class="nav-link d-flex align-items-center mb-1 mt-2 mb-md-0 me-md-auto text-decoration-none"
+    (click)="collapseModule(collapsible)">
+    <div class="d-flex justify-content-between w-100">
+        <span class="fs-6 text-capitalize">{{submenu.label}}</span>
+        <fa-icon [icon]="icons.folder"></fa-icon>
+    </div>
+</a>
+<div #collapsible class="collapse">
+    <ul class="nav nav-pills flex-column mb-auto p-2">
+        <li *ngFor="let table of submenu.tables" class="nav-item w-100">
+            <ng-container *ngIf="table.isFolder then folderTemplate; else tableTemplate"></ng-container>
+            <ng-template #tableTemplate>
+                <a routerLinkActive="active" class="menu-item nav-link"
+                    routerLink="/tables/data/{{moduleName}}/{{table.name}}" aria-current="page">
+                    <span class="fs-8 text-capitalize">
+                        {{table.label}}
+                    </span>
+                </a>
+            </ng-template>
+            <ng-template #folderTemplate>
+                <eq-submenu [submenu]="table" [moduleName]="moduleName"></eq-submenu>
+            </ng-template>
+
+        </li>
+    </ul>
+</div>

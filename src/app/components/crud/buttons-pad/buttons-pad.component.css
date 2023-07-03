@@ -1,5 +1,5 @@
 .controls-container {
-    padding: 1rem 1rem;
+    padding: 1rem 0rem;
     display: inline-flex;
     justify-content: center;
     width: 100%;
@@ -13,7 +13,7 @@
 
 .controls-wrapper {
     display: inline-flex;
-    width: 85%;
+    width: 100%;
     flex-direction: unset;
     justify-content: space-between;
 }
@@ -42,7 +42,7 @@
     display: inline-block;
 }
 
-@media (min-width: 576px) {
+/* @media (min-width: 576px) {
     .controls-wrapper {
         max-width: 540px;
     }
@@ -64,4 +64,4 @@
     .controls-wrapper {
         max-width: 1140px;
     }
-}
+} */

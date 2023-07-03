@@ -1,0 +1,32 @@
+<div *ngIf="loading">
+    <eq-loading></eq-loading>
+</div>
+
+<ul class="dropdown-menu position-static d-grid gap-1 p-2 rounded-3 mx-0 shadow w-220px">
+    <li>
+        <button class="dropdown-item rounded-2" (click)="upFolder()">
+            <div>
+                <fa-icon [icon]="icons.upToFolder"></fa-icon>
+            </div>
+        </button>
+    </li>
+    <li *ngFor="let item of data">
+        <button class="dropdown-item rounded-2" [disabled]="!item.isFolder"
+            (click)="downFolder(item)">
+            <div>
+                <fa-icon [icon]="item.isFolder ? icons.folder : icons.table"></fa-icon>
+                <span class="mx-2">{{item.label}}</span>
+            </div>
+        </button>
+    </li>
+    <li>
+        <hr class="dropdown-divider">
+    </li>
+    <li><a role="button" class="dropdown-item rounded-2" (click)="updateTable()">Mover a {{mainRoute}}</a></li>
+</ul>
+
+
+<!-- Error -->
+<ng-template #modalError let-modal>
+    <eq-error [errorMessage]="errorMessage" (close)="closeModal()"></eq-error>
+</ng-template>

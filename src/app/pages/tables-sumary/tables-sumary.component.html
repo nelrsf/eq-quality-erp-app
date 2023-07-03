@@ -1,8 +1,13 @@
 <div *ngIf="loading">
     <eq-loading></eq-loading>
 </div>
-<eq-buttons-pad [buttonsList]="['add']" (_newRow)="openCreateModal()"></eq-buttons-pad>
-<eq-grid-view [linkGetterFuntion]="getLinkFunction" [data]="data" (delete)="openDeleteModal($event)" (configItem)="openCustomizerTable($event)"></eq-grid-view>
+
+<eq-breadcrumb [linkGetterFuntion]="getLinkFunction" [module]="module" [mainRoute]="mainRoute"></eq-breadcrumb>
+
+<eq-buttons-pad [buttonsList]="['add', 'add-folder']" (_newRow)="openCreateModal()"
+    (_addFolder)="openCreateFolder()"></eq-buttons-pad>
+<eq-grid-view [linkGetterFuntion]="getLinkFunction" [data]="data" (delete)="openDeleteModal($event)"
+    (configItem)="openCustomizerTable($event)" [moduleName]="module"></eq-grid-view>
 
 <!-- Customize Table -->
 <ng-template #customizeTable let-modal>
@@ -14,11 +19,12 @@
                     (click)="closeModal()"></button>
             </div>
             <div class="modal-body">
-                <eq-table-customizer [(tableData)]="tableData" (tableDataChange)="onCustomizeTable($event)"></eq-table-customizer>
+                <eq-table-customizer [(tableData)]="tableData"
+                    (tableDataChange)="onCustomizeTable($event)"></eq-table-customizer>
             </div>
         </div>
     </div>
-  </ng-template>
+</ng-template>
 
 <!-- Form Table -->
 <ng-template #createTable let-modal>
@@ -33,7 +39,8 @@
                 <form (submit)="createNewTable()">
                     <div class="form-group">
                         <label for="exampleInputEmail1">Nombre</label>
-                        <input type="text" class="form-control" placeholder="" name="newModule" [(ngModel)]="newTableName">
+                        <input type="text" class="form-control" placeholder="" name="newModule"
+                            [(ngModel)]="newTableName">
                     </div>
                     <hr>
                     <button type="submit" class="btn btn-primary">Crear tabla</button>
@@ -56,18 +63,47 @@
             <div class="modal-body">
                 <form (submit)="deleteCurrentTable()">
                     <div class="form-group">
-                        <p for="exampleInputEmail1">Está a punto de eliminar la tabla <b class="text-danger">{{currentTable}}</b>, para confirmar digite <b>{{currentTable}}</b> en la caja de texto</p>
+                        <p for="exampleInputEmail1">Está a punto de eliminar la tabla <b
+                                class="text-danger">{{currentTable}}</b>, para confirmar digite <b>{{currentTable}}</b>
+                            en la caja de texto</p>
                         <input type="text" class="form-control" placeholder="" name="newModule"
                             [(ngModel)]="confirmDeleteTableText" autocomplete="off">
                     </div>
                     <hr>
-                    <button [disabled]="currentTable!==confirmDeleteTableText" type="submit" class="btn btn-danger">Eliminar tabla</button>
+                    <button [disabled]="currentTable!==confirmDeleteTableText" type="submit"
+                        class="btn btn-danger">Eliminar tabla</button>
                 </form>
             </div>
         </div>
     </div>
 </ng-template>
 
+<!-- Error -->
 <ng-template #modalError let-modal>
     <eq-error [errorMessage]="errorMessage" (close)="closeModal()"></eq-error>
+</ng-template>
+
+
+<!-- Create Folder -->
+<ng-template #createFolder let-modal>
+    <div class="m-0 modal-dialog mw-100">
+        <div class="modal-content">
+            <div class="modal-header px-3 py-2">
+                <h3 class="modal-title m-0" id="exampleModalLabel">Crear nuevo folder</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="closeModal()"></button>
+            </div>
+            <div class="modal-body">
+                <form (submit)="createNewFolder()">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Nombre</label>
+                        <input type="text" class="form-control" placeholder="" name="newModule"
+                            [(ngModel)]="newFolderName">
+                    </div>
+                    <hr>
+                    <button type="submit" class="btn btn-primary">Crear folder</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </ng-template>

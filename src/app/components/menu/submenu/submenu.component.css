@@ -1,0 +1,13 @@
+fa-icon {
+    color: gray;
+}
+
+span {
+    max-width: 75%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.nav-pills, .nav-link {
+    padding-right: 0!important;
+}

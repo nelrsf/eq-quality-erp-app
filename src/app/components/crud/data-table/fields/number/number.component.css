@@ -1,6 +1,7 @@
 input {
     border-style: none;
     background-color: transparent;
+    color: var(--bs-emphasis-color);
 }
 
 input:focus {
