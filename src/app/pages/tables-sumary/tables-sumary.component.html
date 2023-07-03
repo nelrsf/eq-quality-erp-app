@@ -14,7 +14,7 @@
     <div class="m-0 modal-dialog mw-100">
         <div class="modal-content">
             <div class="modal-header px-3 py-2">
-                <h3 class="modal-title m-0" id="exampleModalLabel">Configurar módulo</h3>
+                <h5 class="modal-title m-0" id="exampleModalLabel">Configurar módulo</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                     (click)="closeModal()"></button>
             </div>
@@ -31,7 +31,7 @@
     <div class="m-0 modal-dialog mw-100">
         <div class="modal-content">
             <div class="modal-header px-3 py-2">
-                <h3 class="modal-title m-0" id="exampleModalLabel">Crear nueva tabla</h3>
+                <h5 class="modal-title m-0" id="exampleModalLabel">Crear nueva tabla</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                     (click)="closeModal()"></button>
             </div>
@@ -56,14 +56,14 @@
     <div class="m-0 modal-dialog mw-100">
         <div class="modal-content">
             <div class="modal-header px-3 py-2">
-                <h3 class="modal-title m-0" id="exampleModalLabel">Eliminar tabla</h3>
+                <h5 class="modal-title m-0" id="exampleModalLabel">Eliminar item</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                     (click)="closeModal()"></button>
             </div>
             <div class="modal-body">
                 <form (submit)="deleteCurrentTable()">
                     <div class="form-group">
-                        <p for="exampleInputEmail1">Está a punto de eliminar la tabla <b
+                        <p for="exampleInputEmail1">Está a punto de eliminar la tabla o folder <b
                                 class="text-danger">{{currentTable}}</b>, para confirmar digite <b>{{currentTable}}</b>
                             en la caja de texto</p>
                         <input type="text" class="form-control" placeholder="" name="newModule"
@@ -71,7 +71,7 @@
                     </div>
                     <hr>
                     <button [disabled]="currentTable!==confirmDeleteTableText" type="submit"
-                        class="btn btn-danger">Eliminar tabla</button>
+                        class="btn btn-danger">Eliminar</button>
                 </form>
             </div>
         </div>
@@ -89,7 +89,7 @@
     <div class="m-0 modal-dialog mw-100">
         <div class="modal-content">
             <div class="modal-header px-3 py-2">
-                <h3 class="modal-title m-0" id="exampleModalLabel">Crear nuevo folder</h3>
+                <h5 class="modal-title m-0" id="exampleModalLabel">Crear nuevo folder</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                     (click)="closeModal()"></button>
             </div>

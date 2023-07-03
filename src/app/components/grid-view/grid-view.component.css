@@ -1,6 +1,7 @@
 .grid-element {
     width: 24rem;
     display: inline-block;
+    box-shadow: -2px 1px 14px 0px var(--bs-primary-bg-subtle);
 }
 
 .btn {

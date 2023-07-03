@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
 import { AuthService } from 'src/app/pages/auth/auth.service';
@@ -8,7 +8,7 @@ import { AuthService } from 'src/app/pages/auth/auth.service';
   templateUrl: './nav-bar.component.html',
   styleUrls: ['./nav-bar.component.css']
 })
-export class NavBarComponent {
+export class NavBarComponent implements AfterViewInit {
 
   theme: 'dark' | 'light' = 'light';
 
@@ -19,19 +19,29 @@ export class NavBarComponent {
 
   constructor(private authService: AuthService, private router: Router) { }
 
+  ngAfterViewInit(): void {
+    const theme = localStorage.getItem('theme');
+    if (theme === 'dark') {
+      this.theme = 'dark';
+    } else if(theme === 'light'){
+      this.theme = 'light';
+    }
+  }
+
   loguot() {
     this.authService.logout();
     this.router.navigate(['/auth/login'])
   }
 
-  switchTheme() { 
-    if(this.theme == 'light'){
+  switchTheme() {
+    if (this.theme == 'light') {
       this.theme = 'dark';
     } else {
       this.theme = 'light';
     }
 
     document.querySelector('html')?.setAttribute('data-bs-theme', this.theme);
+    localStorage.setItem('theme', this.theme);
   }
 
   getTheme() {

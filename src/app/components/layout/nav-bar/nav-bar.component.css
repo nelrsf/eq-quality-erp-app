@@ -19,11 +19,12 @@
     left: 0;
     z-index: 10;
     background-color: var(--bs-body-bg);
+    box-shadow: -10px 3px 14px 0px var(--bs-primary-bg-subtle);
 }
 
 .profile-img img{
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     padding: 5px;
     border-radius: 50%;
 }
