@@ -18,26 +18,26 @@ export class ModulesService {
 
   customizeModule(module: IModule) {
     const url = environment.apiUrl + this.modulesEndpoint + this.customizeEndpoint;
-    return this.http.post(url, module);
+    return this.http.post(encodeURI(url), module);
   }
 
   createModule(moduleName: string) {
     const url = environment.apiUrl + this.modulesEndpoint + this.createEndpoint;
-    return this.http.post(url, { module: moduleName });
+    return this.http.post(encodeURI(url), { module: moduleName });
   }
 
   deleteModule(moduleName: string) {
     const url = environment.apiUrl + this.modulesEndpoint + this.deleteEndpoint;
-    return this.http.post(url, { module: moduleName });
+    return this.http.post(encodeURI(url), { module: moduleName });
   }
 
   getAllModules() {
     const url = environment.apiUrl + this.modulesEndpoint;
-    return this.http.get(url);
+    return this.http.get(encodeURI(url));
   }
 
   getAllModulesWithTables() {
     const url = environment.apiUrl + this.modulesTablesEndpoint;
-    return this.http.get(url);
+    return this.http.get(encodeURI(url));
   }
 }

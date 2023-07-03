@@ -23,12 +23,12 @@ export class TablesService {
 
   customizeTable(moduleName: string, table: ITable) {
     const urlRequest = environment.apiUrl + this.endpointTables + this.endpointCustomize + "/" + moduleName;
-    return this.http.post(urlRequest, table);
+    return this.http.post(encodeURI(urlRequest), table);
   }
 
   createTable(moduleName: string, tableName: string, route: string) {
     const urlRequest = environment.apiUrl + this.endpointTables + this.endpointCreate + "/" + moduleName + "/" + tableName;
-    return this.http.post(urlRequest, {
+    return this.http.post(encodeURI(urlRequest), {
       module: moduleName,
       table: tableName,
       ...(route ? { route: route } : {})
@@ -37,7 +37,7 @@ export class TablesService {
 
   createFolder(moduleName: string, tableName: string, route: string) {
     const urlRequest = environment.apiUrl + this.endpointTables + this.endpointCreate + "/" + moduleName + "/" + tableName;
-    return this.http.post(urlRequest, {
+    return this.http.post(encodeURI(urlRequest), {
       module: moduleName,
       table: tableName,
       isFolder: true,
@@ -47,7 +47,7 @@ export class TablesService {
 
   deleteTable(moduleName: string, tableName: string) {
     const urlRequest = environment.apiUrl + this.endpointTables + this.endpointDelete + "/" + moduleName + "/" + tableName;
-    return this.http.post(urlRequest, {
+    return this.http.post(encodeURI(urlRequest), {
       module: moduleName,
       table: tableName
     });
@@ -55,63 +55,63 @@ export class TablesService {
 
   getTableObjectMetadata(moduleName: string, table: string){
     const urlRequest = environment.apiUrl + this.endpointTables + this.endpointMetadata + "/" + moduleName + "/" + table;
-    return this.http.get(urlRequest);
+    return this.http.get(encodeURI(urlRequest));
   }
 
   getTablesByRoute(moduleName: string, route: string) {
     const urlRequest = environment.apiUrl + this.endpointTables + "/" + moduleName + "/" + route;
-    return this.http.get(urlRequest);
+    return this.http.get(encodeURI(urlRequest));
   }
 
   getAllTables(moduleName: string) {
     const urlRequest = environment.apiUrl + this.endpointTables + "/" + moduleName;
-    return this.http.get(urlRequest);
+    return this.http.get(encodeURI(urlRequest));
   }
 
   getAllRows(moduleName: string, tableName: string) {
     const urlRequest = environment.apiUrl + this.endpointRows + "/" + moduleName + "/" + tableName;
-    return this.http.get(urlRequest);
+    return this.http.get(encodeURI(urlRequest));
   }
 
   getRowById(moduleName: string, tableName: string, _id: string, column?: string) {
     const columnRequest: string = column ? "/" + column : '';
     const urlRequest = environment.apiUrl + this.endpointRows + "/" + moduleName + "/" + tableName + "/" + _id + columnRequest;
-    return this.http.get(urlRequest);
+    return this.http.get(encodeURI(urlRequest));
   }
 
   createRow(moduleName: string, tableName: string, rowData: any) {
     const urlRequest = environment.apiUrl + this.endpointRows + this.endpointCreate + "/" + moduleName + "/" + tableName;
-    return this.http.post(urlRequest, rowData);
+    return this.http.post(encodeURI(urlRequest), rowData);
   }
 
   updateRows(moduleName: string, tableName: string, rowData: any) {
     const urlRequest = environment.apiUrl + this.endpointRows + this.endpointUpdate + "/" + moduleName + "/" + tableName;
-    return this.http.patch(urlRequest, rowData);
+    return this.http.patch(encodeURI(urlRequest), rowData);
   }
 
   deleteRows(moduleName: string, tableName: string, rowsChecked: any) {
     const urlRequest = environment.apiUrl + this.endpointRows + this.endpointDelete + "/" + moduleName + "/" + tableName;
-    return this.http.post(urlRequest, rowsChecked);
+    return this.http.post(encodeURI(urlRequest), rowsChecked);
   }
 
   getColumnData(moduleName: string, tableName: string, columnName: string) {
     const urlRequest = environment.apiUrl + this.endpointColumns + "/" + moduleName + "/" + tableName + "/" + columnName;
-    return this.http.get(urlRequest);
+    return this.http.get(encodeURI(urlRequest));
   }
 
   getAllColumns(moduleName: string, tableName: string) {
     const urlRequest = environment.apiUrl + this.endpointColumns + "/" + moduleName + "/" + tableName;
-    return this.http.get(urlRequest);
+    return this.http.get(encodeURI(urlRequest));
   }
 
   upsertColumn(column: IColumn) {
     const urlRequest = environment.apiUrl + this.endpointColumns + this.endpointUpsert;
-    return this.http.post(urlRequest, column);
+    return this.http.post(encodeURI(urlRequest), column);
   }
 
   deleteColumn(column: IColumn) {
     const urlRequest = environment.apiUrl + this.endpointColumns + this.endpointDelete;
-    return this.http.post(urlRequest, column);
+    return this.http.post(encodeURI(urlRequest), column);
   }
 
   getLinkFunction = (value: string | undefined, module: string, item?: any) => {
