@@ -1,3 +1,5 @@
 button {
     font-size: smaller;
+    border-color: var(--bs-tertiary-color);;
+    color: var(--bs-tertiary-color);
 }

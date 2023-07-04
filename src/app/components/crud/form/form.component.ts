@@ -90,6 +90,15 @@ export class FormComponent implements OnInit {
     )
   }
 
+  getColorScheme(){
+    const theme = localStorage.getItem('theme');
+    if(theme=='dark'){
+      return 'dark';
+    } else {
+      return 'unset';
+    }
+  }
+
   createListFormData() {
     Object.keys(this.columns).forEach(
       (col: string) => {
@@ -191,5 +200,9 @@ export class FormComponent implements OnInit {
 
   submitConfiguration(event: Event) {
     event.preventDefault();
+  }
+
+  getColumnName(column: any){
+    return column.columnName;
   }
 }

@@ -76,7 +76,7 @@ export class RowsRestrictionsService {
       };
       rows.push(restrictions);
     } else {
-      const cellRestriction = this.findRestrictionByRowAndColumn(restrictions.data, rowId, column.columnName);
+      const cellRestriction = this.findRestrictionByRowAndColumn(restrictions.data, rowId, column._id);
       if (cellRestriction) {
         Object.assign(cellRestriction, newRestriction);
         return;
@@ -111,9 +111,9 @@ export class RowsRestrictionsService {
     row[column.columnName] = "";
   }
 
-  findRestrictionByRowAndColumn(restrictions: ICellRestriction[], rowId: string, columnName: string): ICellRestriction | undefined {
+  findRestrictionByRowAndColumn(restrictions: ICellRestriction[], rowId: string, columnId: string): ICellRestriction | undefined {
     const cellRestriction = restrictions.find((res: ICellRestriction) => {
-      return res.column.columnName === columnName && res.rowId === rowId
+      return res.column._id === columnId && res.rowId === rowId
     })
     return cellRestriction;
   }

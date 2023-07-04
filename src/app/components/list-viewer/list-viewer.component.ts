@@ -31,6 +31,9 @@ export class ListViewerComponent implements OnInit {
   constructor(private route: ActivatedRoute) { }
 
   ngOnInit() {
+    if(!this.listData){
+      this.listData = [];
+    }
     // this.route.params.subscribe(params => {
     //   let listData;
     //   const listDataStr = params['listData'];

@@ -55,7 +55,7 @@
       <label class="form-label mb-3">Columna</label>
       <select class="form-select mb-3" name="restrictedColumn" [(ngModel)]="columnData.columnRestriction">
         <option *ngIf="!columnData.columnRestriction"></option>
-        <option *ngFor="let column of columnsForRestriction">
+        <option *ngFor="let column of columnsForRestriction" [value]="column._id">
           {{column.columnName}}
         </option>
       </select>

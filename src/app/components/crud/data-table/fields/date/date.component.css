@@ -2,7 +2,9 @@ input {
     border-style: none;
     background-color: transparent;
     color: var(--bs-emphasis-color);
+    color-scheme: dark;
 }
+
 
 input:focus {
     border-style: none;

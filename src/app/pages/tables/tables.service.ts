@@ -68,6 +68,11 @@ export class TablesService {
     return this.http.get(encodeURI(urlRequest));
   }
 
+  getTablesAndFolders(moduleName: string) {
+    const urlRequest = environment.apiUrl + this.endpointTables +  '/all/' + moduleName;
+    return this.http.get(encodeURI(urlRequest));
+  }
+
   getAllRows(moduleName: string, tableName: string) {
     const urlRequest = environment.apiUrl + this.endpointRows + "/" + moduleName + "/" + tableName;
     return this.http.get(encodeURI(urlRequest));
@@ -94,8 +99,8 @@ export class TablesService {
     return this.http.post(encodeURI(urlRequest), rowsChecked);
   }
 
-  getColumnData(moduleName: string, tableName: string, columnName: string) {
-    const urlRequest = environment.apiUrl + this.endpointColumns + "/" + moduleName + "/" + tableName + "/" + columnName;
+  getColumnData(moduleName: string, tableName: string, columnId: string) {
+    const urlRequest = environment.apiUrl + this.endpointColumns + "/" + moduleName + "/" + tableName + "/" + columnId;
     return this.http.get(encodeURI(urlRequest));
   }
 

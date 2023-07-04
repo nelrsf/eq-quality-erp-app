@@ -2,3 +2,7 @@
     width: 1rem;
     height: 1rem;
 }
+
+.form-check-input[type=checkbox]{
+    border-color: var(--bs-tertiary-color);
+}

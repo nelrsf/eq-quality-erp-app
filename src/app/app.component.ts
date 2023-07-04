@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -6,11 +6,15 @@ import { AfterViewInit, Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements AfterViewInit{
+
+  constructor(private cdr: ChangeDetectorRef){}
+
   title = 'eco-quality';
   ngAfterViewInit(): void {
     const theme = localStorage.getItem('theme');
     if(theme){
       document.querySelector('html')?.setAttribute('data-bs-theme', theme);
-    }
+    };
+    this.cdr.detectChanges();
   }
 }

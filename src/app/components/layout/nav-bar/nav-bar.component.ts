@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
 import { AuthService } from 'src/app/pages/auth/auth.service';
@@ -17,7 +17,7 @@ export class NavBarComponent implements AfterViewInit {
     darkTheme: faMoon
   }
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(private authService: AuthService, private router: Router, private cdr: ChangeDetectorRef) { }
 
   ngAfterViewInit(): void {
     const theme = localStorage.getItem('theme');
@@ -26,6 +26,7 @@ export class NavBarComponent implements AfterViewInit {
     } else if(theme === 'light'){
       this.theme = 'light';
     }
+    this.cdr.detectChanges();
   }
 
   loguot() {

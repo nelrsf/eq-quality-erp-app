@@ -17,12 +17,12 @@ import { FieldsModule } from './fields/fields.module';
 
 
 export interface IMapAsUrl {
-  fieldName: string,
+  columnId: string,
   urlMapFunction: (fieldName: string, row: object) => string;
 }
 
 export interface IColumnFunctions {
-  columnName: string,
+  columnId: string,
   functions: IColumnFunction[]
 }
 
@@ -71,8 +71,8 @@ export class DataTableComponent implements OnInit, AfterViewInit {
   }
   data = new BehaviorSubject<Array<object>>([]);
   columnsSubject = new BehaviorSubject<Array<IColumn>>([]);
-  headersSubject = new BehaviorSubject<Array<string>>([]);
-  headers: Array<string> = [];
+  // headersSubject = new BehaviorSubject<Array<string>>([]);
+  // headers: Array<string> = [];
   rows: Array<any> = [];
   images: Array<string> = [];
   list: Array<string> = [];
@@ -80,8 +80,7 @@ export class DataTableComponent implements OnInit, AfterViewInit {
   columnsFunctions: IColumnFunctions[] = [];
   columnsRestrictions: IColumnRestriction[] = [];
   contextMenuModal: boolean = false;
-
-  private columnsProperties!: IColumn[];
+  columnsProperties!: IColumn[];
 
   constructor(private ngbModal: NgbModal, private rowsRestrictionService: RowsRestrictionsService) { }
 
@@ -129,15 +128,15 @@ export class DataTableComponent implements OnInit, AfterViewInit {
     this.columnsSubject.subscribe(
       (columns: IColumn[]) => {
         this.columnsProperties = columns;
-        this.headers = columns.map(m => m.columnName);
+        // this.headers = columns.map(m => m.columnName);
       }
     )
 
-    this.headersSubject.subscribe(
-      (headers: string[]) => {
-        this.headers = headers;
-      }
-    )
+    // this.headersSubject.subscribe(
+    //   (headers: string[]) => {
+    //     this.headers = headers;
+    //   }
+    // )
   }
 
   isObject(data: any): boolean {
@@ -148,9 +147,9 @@ export class DataTableComponent implements OnInit, AfterViewInit {
     return JSON.stringify(data).replaceAll("/", "%2F%2F");
   }
 
-  isLinkedField(fieldName: string): boolean {
+  isLinkedField(id: string): boolean {
     const mapAsUrl = this.mapAsUrl.find((mapAsUrlElement) => {
-      return mapAsUrlElement.fieldName === fieldName;
+      return mapAsUrlElement.columnId === id;
     });
     if (mapAsUrl) {
       return true;
@@ -158,23 +157,31 @@ export class DataTableComponent implements OnInit, AfterViewInit {
     return false;
   }
 
-  getLinkedText(fieldName: string, row: object): string {
+  getLinkedText(column: IColumn, row: object): string {
     const mapAsUrl = this.mapAsUrl.find((mapAsUrlElement) => {
-      return mapAsUrlElement.fieldName === fieldName;
+      return mapAsUrlElement.columnId === column._id;
     });
     if (!mapAsUrl) {
       return "";
     }
-    return mapAsUrl.urlMapFunction(fieldName, row);
+    return mapAsUrl.urlMapFunction(column.columnName, row);
   }
 
   private setColumnsFunctions() {
-    this.headers.forEach(h => {
-      this.columnsFunctions.push({
-        columnName: h,
-        functions: []
-      })
-    })
+    // this.headers.forEach(h => {
+    //   this.columnsFunctions.push({
+    //     columnName: h,
+    //     functions: []
+    //   })
+    // })
+    this.columnsFunctions = this.columnsProperties.map(
+      (col) => {
+        return {
+          columnId: col._id,
+          functions: []
+        }
+      }
+    )
   }
 
   executeColumnFunctionDropDown(columnFunction: IColumnFunction, columnDropDown: any) {
@@ -187,9 +194,9 @@ export class DataTableComponent implements OnInit, AfterViewInit {
     columnFunction.columnFunction();
   }
 
-  getFunctionsByColumnName(columnName: string): IColumnFunctions {
+  getFunctionsByColumnId(columnId: string): IColumnFunctions {
     const columnFunctions = this.columnsFunctions.find((colFunctions) => {
-      return colFunctions.columnName === columnName;
+      return colFunctions.columnId === columnId;
     })
     if (!columnFunctions) {
       return ([] as unknown as IColumnFunctions)
@@ -234,12 +241,12 @@ export class DataTableComponent implements OnInit, AfterViewInit {
     this.ngbModal.open(this.listViewer);
   }
 
-  hasColumnsFunctions(header: string): boolean {
-    const columnFunctions = this.getFunctionsByColumnName(header);
+  hasColumnsFunctions(id: string): boolean {
+    const columnFunctions = this.getFunctionsByColumnId(id);
     if ((columnFunctions as unknown as Array<any>).length === 0) {
       return false;
     }
-    return this.getFunctionsByColumnName(header)?.functions?.length !== 0;
+    return this.getFunctionsByColumnId(id)?.functions?.length !== 0;
   }
 
   hideColumnsMenu(columnsDropDown: any) {
@@ -253,12 +260,12 @@ export class DataTableComponent implements OnInit, AfterViewInit {
       , 1000)
   }
 
-  getColumnProperties(header: string): IColumn | undefined {
+  getColumnProperties(id: string): IColumn | undefined {
     if (!this.columnsProperties) {
       return
     }
     return this.columnsProperties.find((colP: any) => {
-      return colP.columnName === header;
+      return colP._id === id;
     })
   }
 
@@ -295,8 +302,7 @@ export class DataTableComponent implements OnInit, AfterViewInit {
     }
   }
 
-  setRowRestriction(data: any, rowId: string, header: string) {
-    const column = this.getColumnProperties(header)
+  setRowRestriction(data: any, rowId: string, column: IColumn) {
     if (!column) {
       return;
     }
@@ -311,13 +317,12 @@ export class DataTableComponent implements OnInit, AfterViewInit {
     )
   }
 
-  getCellRestriction(header: string, rowId: string) {
+  getCellRestriction(column: IColumn, rowId: string) {
     const restrictions = this.rows.find(
       (row: any) => {
         return Object.hasOwn(row, "__rows_restrictions__data__");
       }
     )
-    const column = this.getColumnProperties(header);
     if (!column) {
       return;
     }
@@ -329,7 +334,7 @@ export class DataTableComponent implements OnInit, AfterViewInit {
       };
     }
     let cellRestriction = this.rowsRestrictionService
-      .findRestrictionByRowAndColumn(restrictions.data, rowId, header);
+      .findRestrictionByRowAndColumn(restrictions.data, rowId, column._id);
     if (cellRestriction) {
       return cellRestriction;
     }
@@ -345,9 +350,8 @@ export class DataTableComponent implements OnInit, AfterViewInit {
   }
 
   getColumnRestrictions() {
-    this.headers.forEach(
-      (h) => {
-        const column = this.getColumnProperties(h);
+    this.columnsProperties.forEach(
+      (column: IColumn) => {
         if (!column) {
           return;
         }
@@ -369,10 +373,10 @@ export class DataTableComponent implements OnInit, AfterViewInit {
 
   }
 
-  getRestrictionsByColumnHeader(header: string) {
+  getRestrictionsByColumnId(id: string) {
     const colRestriction = this.columnsRestrictions.find(
       (colRestr) => {
-        return colRestr.column?.columnName === header;
+        return colRestr.column?._id === id;
       }
     );
     return colRestriction?.restrictions;

@@ -51,7 +51,8 @@ export class TablesComponent implements OnInit, AfterViewInit {
       }
       this.getAuxData(params);
       this.cdRef.detectChanges();
-    })
+    });
+    this.cdRef.detectChanges();
   }
 
   getDataFromServer(params: any) {
@@ -88,7 +89,7 @@ export class TablesComponent implements OnInit, AfterViewInit {
 
     if (objectdata) {
       const headers = Object.keys(objectdata);
-      this.dataTable.headersSubject.next(headers);
+      // this.dataTable.headersSubject.next(headers);
       this.dataTable.data.next([objectdata]);
     }
   }
@@ -115,7 +116,8 @@ export class TablesComponent implements OnInit, AfterViewInit {
   setLinkedFields(module: string) {
     this.linkedFields.push(
       {
-        fieldName: 'name',
+        // fieldName: 'name',
+        columnId: '',
         urlMapFunction: (fieldName: string, row: any) => {
           return "/tables/data/" + module + "/" + row[fieldName];
         }
@@ -143,7 +145,7 @@ export class TablesComponent implements OnInit, AfterViewInit {
           }
           this.dataTable.data.next(result);
           const headersNames = Object.keys(result[0]);
-          this.dataTable.headersSubject.next(headersNames);
+          // this.dataTable.headersSubject.next(headersNames);
         },
         error: (error) => {
           console.error(error);
@@ -281,7 +283,7 @@ export class TablesComponent implements OnInit, AfterViewInit {
   private createColumnsFunctionsArray(module: string, table: string, colF: IColumnFunctions) {
 
     const customizeFunc = () => {
-      this.tableService.getColumnData(module, table, colF.columnName).subscribe(
+      this.tableService.getColumnData(module, table, colF.columnId).subscribe(
         (data: any) => {
           this.editColumnName = false;
           this.columnData = data;
@@ -291,7 +293,7 @@ export class TablesComponent implements OnInit, AfterViewInit {
     }
 
     const deleteFunc = () => {
-      this.tableService.getColumnData(module, table, colF.columnName).subscribe(
+      this.tableService.getColumnData(module, table, colF.columnId).subscribe(
         (data: any) => {
           this.loading = true;
           this.columnData = data;

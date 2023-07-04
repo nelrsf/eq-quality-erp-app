@@ -25,6 +25,11 @@ export class TooltipDirective implements AfterViewInit {
 
   @HostListener('mouseenter', ['$event'])
   onMouseEnter(event: any) {
+    this.tooltip.style.position = 'fixed';
+    const offsetx = 30;
+    const offsety = 30;
+    this.tooltip.style.left = event.x + offsetx + 'px';
+    this.tooltip.style.top = event.y + offsety + 'px';
     if(!this.urlImage){
       this.tooltip.innerHTML = this.eqTooltip;
     } else {

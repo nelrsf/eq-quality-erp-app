@@ -18,10 +18,10 @@ import { ColumnTypes } from 'src/app/Model/interfaces/IColumn';
     TooltipDirective
   ]
 })
-export class ImageViewerComponent {
+export class ImageViewerComponent implements OnInit{
 
-  @Input() value!: string;
-  @Output() valueChange = new EventEmitter<string>();
+  @Input() value!: any;
+  @Output() valueChange = new EventEmitter<any>();
   @Output() openModal = new EventEmitter<ColumnTypes>();
 
   curentIndex: number = 0;
@@ -35,6 +35,10 @@ export class ImageViewerComponent {
 
 
   constructor(private router: Router) { }
+
+  ngOnInit(): void {
+    this.value = this.value ? this.value : '../../../../../../assets/images/previews/1.jpg';
+  }
 
 
   getLinkAsThumb(link: string): string {

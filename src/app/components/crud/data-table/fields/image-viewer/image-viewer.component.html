@@ -25,7 +25,7 @@
 </ng-template>
 
 <ng-template #singleTemplate>
-    <div  [eqTooltip]="value" [urlImage]="true" class="d-flex align-items-center justify-content-center">
+    <div  (click)="openViewGallery()" [eqTooltip]="value" [urlImage]="true" class="d-flex align-items-center justify-content-center">
         <img src="{{getLinkAsThumb(value)}}" alt="" width="40px" height="40px">
     </div>
 </ng-template>

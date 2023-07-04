@@ -82,6 +82,7 @@ export class ColumnCustomizerComponent implements OnInit {
       this.searchModules();
     }
   }
+  
 
 
   getObjToStr() {
@@ -125,11 +126,11 @@ export class ColumnCustomizerComponent implements OnInit {
     if (!this.columnData?.moduleRestriction) {
       return
     }
-    this.tableService.getAllTables(this.columnData.moduleRestriction).subscribe(
+    this.tableService.getTablesAndFolders(this.columnData.moduleRestriction).subscribe(
       (data: any) => {
         this.tablesForRestriction = data.filter(
           (table:any)=>{
-            return table.name !== this.columnData.table
+            return table.name !== this.columnData.table && !table.isFolder;
           }
         );
         this.searchColumns();

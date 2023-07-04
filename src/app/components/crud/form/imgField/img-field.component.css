@@ -12,6 +12,21 @@
 .button-tool {
     width: 2rem;
     padding: 0.1rem;
+    color: var(--bs-tertiary-color);
+    background-color: transparent;
+    border-color: var(--bs-tertiary-color);
+}
+
+.btn.btn-light {
+    color: var(--bs-tertiary-color);
+    background-color: transparent;
+    border-color: var(--bs-tertiary-color);
+}
+
+.btn.btn-light:hover, .button-tool:hover {
+    color: var(--bs-btn-hover-color);
+    background-color: var(--bs-btn-hover-bg);
+    border-color: var(--bs-btn-hover-border-color);
 }
 
 .form-group img {

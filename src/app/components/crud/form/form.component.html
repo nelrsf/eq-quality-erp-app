@@ -8,7 +8,7 @@
                     <div class="m-2 form-group">
                         <label class="my-1 control-label">
                             <div>
-                                {{column.key}}
+                                {{getColumnName(column.value)}}
                             </div>
                             <div class="config-field-menu">
                                 <fa-icon [icon]="icons.cog"></fa-icon>
@@ -22,13 +22,13 @@
                     <div class="m-2 form-group">
                         <label class="my-1 control-label">
                             <div>
-                                {{column.key}}
+                                {{getColumnName(column.value)}}
                             </div>
                             <div class="config-field-menu">
                                 <fa-icon [icon]="icons.cog"></fa-icon>
                             </div>
                         </label>
-                        <input type="date" class="form-control" placeholder="" formControlName="{{column.key}}">
+                        <input [style.colorScheme]="getColorScheme()" type="datetime-local" class="form-control" placeholder="" formControlName="{{column.key}}">
                     </div>
                 </div>
 
@@ -36,7 +36,7 @@
                     <div class="m-2 form-group">
                         <label class="my-1 control-label">
                             <div>
-                                {{column.key}}
+                                {{getColumnName(column.value)}}
                             </div>
                             <div class="config-field-menu">
                                 <fa-icon [icon]="icons.cog"></fa-icon>
@@ -51,7 +51,7 @@
                     <div class="m-2 form-group">
                         <label class="my-1 control-label">
                             <div>
-                                {{column.key}}
+                                {{getColumnName(column.value)}}
                             </div>
                             <div class="config-field-menu">
                                 <fa-icon [icon]="icons.cog"></fa-icon>
@@ -72,7 +72,7 @@
                         <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" formControlName="{{column.key}}">
                         <label class="form-check-label control-label" for="flexCheckDefault">
                             <div>
-                                {{column.key}}
+                                {{getColumnName(column.value)}}
                             </div>
                             <div class="config-field-menu">
                                 <fa-icon [icon]="icons.cog"></fa-icon>
@@ -85,7 +85,7 @@
                     <div class="m-2 form-group">
                         <label class="form-check-label my-1 control-label">
                             <div>
-                                {{column.key}}
+                                {{getColumnName(column.value)}}
                             </div>
                             <div class="config-field-menu">
                                 <fa-icon [icon]="icons.cog"></fa-icon>

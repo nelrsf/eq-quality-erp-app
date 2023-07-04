@@ -2,7 +2,7 @@
     <div>
         <input #autocompleteInput class="text-input" [ngClass]="[!didValueMatchRestrictions()? 'invalid-field': '']" [disabled]="isDisabled"
             [matAutocomplete]="auto" (focus)="onFocus($event)" [(ngModel)]="value" (ngModelChange)="checkValue()">
-        <span *ngIf="!didValueMatchRestrictions()" class="text-danger">
+        <span *ngIf="!didValueMatchRestrictions()" class="mx-1 text-danger">
             <fa-icon [icon]="icons.invalid"></fa-icon>
             Campo NO valido!
         </span>

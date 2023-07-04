@@ -10,7 +10,7 @@
                         <div *ngIf="data.getValue().length === 0" class="alert alert-warning mb-0" role="alert">
                             No hay datos para mostrar
                         </div>
-                        <table class="table align-items-center table-flush">
+                        <table *ngIf="data.getValue().length !== 0" class="table align-items-center table-flush">
                             <thead class="thead-light">
                                 <tr>
                                     <th>
@@ -19,13 +19,13 @@
                                                 (change)="toggleAll($event)">
                                         </div>
                                     </th>
-                                    <th eqDrag [eqDragKey]="header" [(eqDropTarget)]="headers" scope="col"
-                                        *ngFor="let header of headers; let colIndex = index">
+                                    <th eqDrag [eqDragKey]="column.columnName" [(eqDropTarget)]="column._id" scope="col"
+                                        *ngFor="let column of columnsProperties; let colIndex = index">
                                         <div class="col-header d-flex align-items-center">
                                             <span>
-                                                {{header}}
+                                                {{column.columnName}}
                                             </span>
-                                            <div class="dropdown" *ngIf="hasColumnsFunctions(header)">
+                                            <div class="dropdown" *ngIf="hasColumnsFunctions(column._id)">
                                                 <div class="buttons">
                                                     <button class="p-2 btn btn-ligth"
                                                         (click)="toggleColumnsMenu(columnsDropDown, modalContextMenu)"
@@ -35,7 +35,7 @@
                                                 </div>
                                                 <div #columnsDropDown class="dropdown-menu"
                                                     [ngClass]="[colIndex!==0?'dropdown-menu-right':'']">
-                                                    <a *ngFor="let function of getFunctionsByColumnName(header).functions"
+                                                    <a *ngFor="let function of getFunctionsByColumnId(column._id).functions"
                                                         role="button" class="dropdown-item"
                                                         (click)="executeColumnFunctionDropDown(function, columnsDropDown)">
                                                         <fa-icon [icon]="function.functionIcon"></fa-icon>
@@ -46,7 +46,7 @@
                                                     <div class="m-0 modal-dialog">
                                                         <div class="modal-content">
                                                             <div class="modal-body">
-                                                                <a *ngFor="let function of getFunctionsByColumnName(header).functions"
+                                                                <a *ngFor="let function of getFunctionsByColumnId(column._id).functions"
                                                                     role="button" class="dropdown-item"
                                                                     (click)="executeColumnFunctionModal(function)">
                                                                     <fa-icon [icon]="function.functionIcon"></fa-icon>
@@ -69,22 +69,22 @@
                                                 [checked]="isRowChecked(row['_id'])" (change)="toggleRow(row['_id'])">
                                         </div>
                                     </td>
-                                    <td *ngFor="let header of headers">
+                                    <td *ngFor="let column of columnsProperties">
                                         <div class="cell-value">
                                             <ng-container
-                                                *ngIf="isLinkedField(header) then linkedField; else normalField"></ng-container>
+                                                *ngIf="isLinkedField(column._id) then linkedField; else normalField"></ng-container>
                                             <ng-template #linkedField>
-                                                <a [href]="getLinkedText(header, row)">
-                                                    {{row[header]}}
+                                                <a [href]="getLinkedText(column._id, row)">
+                                                    {{row[column.columnName]}}
                                                 </a>
                                             </ng-template>
                                             <ng-template #normalField>
-                                                <eq-field-renderer [(value)]="row[header]"
-                                                    [column]="getColumnProperties(header)"
-                                                    [restriction]="getCellRestriction(header, row['_id'])"
-                                                    [restrictions]="getRestrictionsByColumnHeader(header)"
-                                                    (openModal)="openModal($event, row[header])"
-                                                    (onListChange)="setRowRestriction($event, row._id, header)">
+                                                <eq-field-renderer [(value)]="row[column._id]"
+                                                    [column]="getColumnProperties(column._id)"
+                                                    [restriction]="getCellRestriction(column, row['_id'])"
+                                                    [restrictions]="getRestrictionsByColumnId(column._id)"
+                                                    (openModal)="openModal($event, row[column._id])"
+                                                    (onListChange)="setRowRestriction($event, row._id, column)">
                                                 </eq-field-renderer>
                                             </ng-template>
                                         </div>
@@ -93,7 +93,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="card-footer py-4">
+                    <div *ngIf="data.getValue().length !== 0" class="card-footer py-4">
                         <nav aria-label="...">
                             <ul class="pagination justify-content-end mb-0">
                                 <li class="page-item disabled">

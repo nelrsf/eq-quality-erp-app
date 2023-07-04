@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCamera, faCirclePlus, faCog, faUpDownLeftRight, faUpload } from '@fortawesome/free-solid-svg-icons';
@@ -19,7 +19,7 @@ import { FileUploaderComponent } from 'src/app/components/miscelaneous/file-uplo
     FileUploaderComponent
   ]
 })
-export class ImgFieldComponent {
+export class ImgFieldComponent implements OnInit{
 
   constructor(private http: HttpClient) { }
 
@@ -38,6 +38,10 @@ export class ImgFieldComponent {
   previousImageUrl: string = "";
 
   isValidImgUrl: boolean = false;
+
+  ngOnInit(): void {
+    this.images = this.images ? this.images : [];
+  }
 
   isArray(data: any): data is Array<any> {
     return data.length !== undefined

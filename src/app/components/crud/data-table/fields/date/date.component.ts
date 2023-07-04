@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'eq-date',
@@ -17,6 +18,15 @@ export class DateComponent {
 
   onChange(event: any){
     this.valueChange.emit(event.target.value)
+  }
+
+  getColorScheme(){
+    const theme = localStorage.getItem('theme');
+    if(theme=='dark'){
+      return 'dark';
+    } else {
+      return 'unset';
+    }
   }
 
 }

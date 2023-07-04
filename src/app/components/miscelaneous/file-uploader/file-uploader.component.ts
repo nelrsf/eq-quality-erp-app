@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faUpload } from '@fortawesome/free-solid-svg-icons';
 import { fromEvent } from 'rxjs';
@@ -28,8 +28,9 @@ export class FileUploaderComponent implements AfterViewInit {
   @Input() accept: string = "image/*";
   @Output() filesChange = new EventEmitter<Array<string>>();
 
-  constructor(private fileService: FileService, private renderer: Renderer2, private viewContainerRef: ViewContainerRef) { }
-
+  constructor(private fileService: FileService, private renderer: Renderer2, private viewContainerRef: ViewContainerRef, private cdr: ChangeDetectorRef) { }
+ 
+  
   icons = {
     upload: faUpload,
   }
@@ -48,6 +49,7 @@ export class FileUploaderComponent implements AfterViewInit {
         }
       );
     }
+    this.cdr.detectChanges();
   }
 
   openFileExplorer(event: any) {
