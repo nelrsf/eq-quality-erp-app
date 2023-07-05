@@ -20,13 +20,4 @@ export class DateComponent {
     this.valueChange.emit(event.target.value)
   }
 
-  getColorScheme(){
-    const theme = localStorage.getItem('theme');
-    if(theme=='dark'){
-      return 'dark';
-    } else {
-      return 'unset';
-    }
-  }
-
 }
