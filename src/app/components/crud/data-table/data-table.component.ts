@@ -71,8 +71,6 @@ export class DataTableComponent implements OnInit, AfterViewInit {
   }
   data = new BehaviorSubject<Array<object>>([]);
   columnsSubject = new BehaviorSubject<Array<IColumn>>([]);
-  // headersSubject = new BehaviorSubject<Array<string>>([]);
-  // headers: Array<string> = [];
   rows: Array<any> = [];
   images: Array<string> = [];
   list: Array<string> = [];
@@ -128,15 +126,8 @@ export class DataTableComponent implements OnInit, AfterViewInit {
     this.columnsSubject.subscribe(
       (columns: IColumn[]) => {
         this.columnsProperties = columns;
-        // this.headers = columns.map(m => m.columnName);
       }
     )
-
-    // this.headersSubject.subscribe(
-    //   (headers: string[]) => {
-    //     this.headers = headers;
-    //   }
-    // )
   }
 
   isObject(data: any): boolean {
@@ -168,12 +159,6 @@ export class DataTableComponent implements OnInit, AfterViewInit {
   }
 
   private setColumnsFunctions() {
-    // this.headers.forEach(h => {
-    //   this.columnsFunctions.push({
-    //     columnName: h,
-    //     functions: []
-    //   })
-    // })
     this.columnsFunctions = this.columnsProperties.map(
       (col) => {
         return {

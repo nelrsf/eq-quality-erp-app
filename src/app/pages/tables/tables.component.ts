@@ -219,7 +219,7 @@ export class TablesComponent implements OnInit, AfterViewInit {
       isRestricted: false
     }
     this.editColumnName = true;
-    this.ngbModal.open(this.colCustomizerModal);
+    this.ngbModal.open(this.colCustomizerModal, { size: 'xl' });
   }
 
   colunmOperationEnd() {
@@ -287,7 +287,7 @@ export class TablesComponent implements OnInit, AfterViewInit {
         (data: any) => {
           this.editColumnName = false;
           this.columnData = data;
-          this.ngbModal.open(this.colCustomizerModal);
+          this.ngbModal.open(this.colCustomizerModal, { size: 'xl' });
         }
       )
     }

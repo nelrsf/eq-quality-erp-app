@@ -4,6 +4,7 @@ import { LoadingComponent } from '../../miscelaneous/loading/loading.component';
 import { IColumn } from 'src/app/Model/interfaces/IColumn';
 import { GeneralAttributesComponent } from './general-attributes/general-attributes.component';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { PermissionsComponent } from './permissions/permissions.component';
 
 
 @Component({
@@ -15,7 +16,9 @@ import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
     CommonModule,
     LoadingComponent,
     GeneralAttributesComponent,
-    NgbNavModule
+    PermissionsComponent,
+    NgbNavModule,
+    PermissionsComponent
   ]
 })
 export class ColumnCustomizerComponent {

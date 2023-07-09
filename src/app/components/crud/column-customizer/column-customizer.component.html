@@ -1,30 +1,26 @@
 <div *ngIf="columnData===undefined">
-  <eq-loading></eq-loading>
+	<eq-loading></eq-loading>
 </div>
 
-<div class="d-flex">
-	<div ngbNav #nav="ngbNav" [(activeId)]="active" class="flex-column" orientation="vertical">
-		<ng-container ngbNavItem="permissions">
-			<button  ngbNavLink>Permisos</button>
+<div class="nav-vertical" *ngIf="columnData">
+	<ul ngbNav #navVertical="ngbNav" class="nav nav-tabs nav-left" [destroyOnHide]="false">
+		<li ngbNavItem [ngbNavItem]="0">
+			<a ngbNavLink>
+				General
+			</a>
 			<ng-template ngbNavContent>
-				<p>
-					Exercitation +1 labore velit, blog sartorial PBR leggings next level wes anderson artisan four loko
-					farm-to-table craft beer twee. Qui photo booth letterpress, commodo enim craft beer mlkshk aliquip jean shorts
-					ullamco ad vinyl cillum PBR. Homo nostrud organic, assumenda labore aesthetic magna delectus mollit. Keytar
-					helvetica VHS salvia yr, vero magna velit sapiente labore stumptown. Vegan fanny pack odio cillum wes anderson
-					8-bit, sustainable jean shorts beard ut DIY ethical culpa terry richardson biodiesel. Art party scenester
-					stumptown, tumblr butcher vero sint qui sapiente accusamus tattooed echo park.
-				</p>
+				<eq-general-attributes [columnData]="columnData" (columnOperationEnd)="onColumnOperationEnd()"></eq-general-attributes>
 			</ng-template>
-		</ng-container>
-		<ng-container ngbNavItem="general">
-			<button ngbNavLink>General</button>
+		</li>
+		<li ngbNavItem [ngbNavItem]="1">
+			<a ngbNavLink>
+				Permisos
+			</a>
 			<ng-template ngbNavContent>
-        <eq-general-attributes [columnData]="columnData" (columnOperationEnd)="onColumnOperationEnd()"></eq-general-attributes>
+				<eq-permissions [columnData]="columnData"></eq-permissions>
 			</ng-template>
-		</ng-container>
+		</li>
+	</ul>
+	<div [ngbNavOutlet]="navVertical">
 	</div>
-
-	<div [ngbNavOutlet]="nav" class="ms-4"></div>
 </div>
-
