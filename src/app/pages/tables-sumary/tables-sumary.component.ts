@@ -181,7 +181,7 @@ export class TablesSumaryComponent implements OnInit, OnDestroy {
 
   openCustomizerTable(table: ITable) {
     this.tableData = table;
-    this.ngbModal.open(this.customizeTable);
+    this.ngbModal.open(this.customizeTable, {size: 'xl'});
   }
 
   onCustomizeTable(table: ITable) {

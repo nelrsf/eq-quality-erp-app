@@ -49,7 +49,7 @@ export class ModulesComponent implements OnInit, AfterViewInit {
           this.modules = data;
           this.loading = false;
         },
-        error: (error)=>{
+        error: (error) => {
           console.log(error);
           this.loading = false;
           this.errorMessage = error.message;
@@ -72,7 +72,7 @@ export class ModulesComponent implements OnInit, AfterViewInit {
 
   openConfigModal(module: IModule | ITable) {
     this.moduleData = module as IModule;
-    this.ngbModal.open(this.customizeModule);
+    this.ngbModal.open(this.customizeModule, { size: 'xl' });
   }
 
   onModuleCustomize(module: IModule) {
