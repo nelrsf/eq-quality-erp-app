@@ -1,3 +1,7 @@
+<div *ngIf="loading">
+	<eq-loading></eq-loading>
+</div>
+
 <form div *ngIf="columnData!==undefined" class="p-5" (submit)="onSubmit()">
 
     <input type="hidden" class="form-control mb-3" [(ngModel)]="columnData._id" [name]="'id'">

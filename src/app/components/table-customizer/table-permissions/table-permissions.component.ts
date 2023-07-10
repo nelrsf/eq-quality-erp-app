@@ -1,17 +1,18 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { DataTableComponent } from '../../data-table/data-table.component';
-import { ColumnTypes, IColumn } from 'src/app/Model/interfaces/IColumn';
-import { permissionsColumns } from './permission-data';
+import { permissionsColumns } from './table-permission-data';
 import { TablesService } from 'src/app/pages/tables/tables.service';
 import { ErrorComponent } from 'src/app/components/alerts/error/error.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LoadingComponent } from 'src/app/components/miscelaneous/loading/loading.component';
 import { CommonModule } from '@angular/common';
+import { DataTableComponent } from '../../crud/data-table/data-table.component';
+import { ModulesService } from 'src/app/pages/modules/modules.service';
+import { ITable } from 'src/app/Model/interfaces/ITable';
 
 @Component({
-  selector: 'eq-permissions',
-  templateUrl: './permissions.component.html',
-  styleUrls: ['./permissions.component.css'],
+  selector: 'eq-table-permissions',
+  templateUrl: './table-permissions.component.html',
+  styleUrls: ['./table-permissions.component.css'],
   standalone: true,
   imports: [
     DataTableComponent,
@@ -20,23 +21,24 @@ import { CommonModule } from '@angular/common';
     CommonModule
   ]
 })
-export class PermissionsComponent implements AfterViewInit {
+export class TablePermissionsComponent implements AfterViewInit {
 
   @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
   @ViewChild('modalError') modalError!: ElementRef;
 
-  @Output() columnOperationEnd = new EventEmitter<void>();
-  @Input() columnData!: IColumn;
+  @Output() tableOperationEnd = new EventEmitter<ITable>();
+  @Input() tableData!: ITable;
+  @Input() module: string = "";
 
   public errorMessage: string = '';
 
   public loading: boolean = false;
 
-  constructor(private tablesService: TablesService, private ngbModal: NgbModal) { }
+  constructor(private tablesService: TablesService, private modulesService: ModulesService, private ngbModal: NgbModal) { }
 
 
   ngAfterViewInit(): void {
-    this.tablesService.getAllRows(this.columnData.module, "__profiles_module_table__")
+    this.tablesService.getAllRows(this.module, "__profiles_module_table__")
       .subscribe(
         {
           next: (result: any) => {
@@ -57,13 +59,13 @@ export class PermissionsComponent implements AfterViewInit {
   checkPermissions(data: Array<any>) {
     data.forEach(
       (item: any) => {
-        if (this.columnData?.permissions?.read.includes(item._id)) {
+        if (this.tableData?.permissions?.read.includes(item._id)) {
           item['Ver'] = true;
         } else {
           item['Ver'] = false;
         }
 
-        if (this.columnData?.permissions?.edit.includes(item._id)) {
+        if (this.tableData?.permissions?.edit.includes(item._id)) {
           item['Editar'] = true;
         } else {
           item['Editar'] = false;
@@ -77,8 +79,15 @@ export class PermissionsComponent implements AfterViewInit {
   }
 
   savePermissionsByItem(item: any) {
-    const edit = this.columnData.permissions.edit;
-    const read = this.columnData.permissions.read;
+    let permissions = this.tableData?.permissions;
+    if(!permissions){
+      permissions = {
+        edit: [],
+        read: []
+      }
+    }
+    const edit = permissions.edit;
+    const read = permissions.read;
     if (item.Ver) {
       if (!read.includes(item._id)) {
         read.push(item._id);
@@ -90,8 +99,8 @@ export class PermissionsComponent implements AfterViewInit {
       }
     }
     if (item.Editar) {
-      if (!this.columnData.permissions.edit.includes(item._id)) {
-        this.columnData.permissions.edit.push(item._id);
+      if (!edit.includes(item._id)) {
+        edit.push(item._id);
       }
     } else {
       const indx = edit.findIndex(e => e == item._id);
@@ -104,8 +113,8 @@ export class PermissionsComponent implements AfterViewInit {
   savePermissions() {
     this.loading = true;
     const data = this.dataTable.data.getValue();
-    if (!this.columnData.permissions) {
-      this.columnData.permissions = {
+    if (!this.tableData?.permissions) {
+      this.tableData.permissions = {
         edit: [],
         read: []
       }
@@ -116,13 +125,13 @@ export class PermissionsComponent implements AfterViewInit {
       }
     );
 
-    this.tablesService.upsertColumn(this.columnData)
+    this.tablesService.customizeTable(this.module, this.tableData)
       .subscribe(
         {
           next: (data: any) => {
             console.log(data);
             this.loading = false;
-            this.columnOperationEnd.emit();
+            this.tableOperationEnd.emit(this.tableData);
           },
           error: (error: any) => {
             this.loading = false;

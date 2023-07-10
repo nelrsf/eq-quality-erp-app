@@ -2,20 +2,26 @@
     <eq-loading></eq-loading>
 </div>
 
-<form div *ngIf="tableData!==undefined" class="p-2" (submit)="onSubmit()">
+<div *ngIf="tableData">
+	<ul ngbNav #navVertical="ngbNav" class="nav nav-tabs nav-left" [destroyOnHide]="false">
+		<li ngbNavItem [ngbNavItem]="0">
+			<a ngbNavLink>
+				General
+			</a>
+			<ng-template ngbNavContent>
+                <eq-table-customizer-general [(tableData)]="tableData" (tableDataChange)="onTableChange($event)"></eq-table-customizer-general>
+			</ng-template>
+		</li>
+		<li ngbNavItem [ngbNavItem]="1">
+			<a ngbNavLink>
+				Permisos
+			</a>
+			<ng-template ngbNavContent>
+				<eq-table-permissions [module]="module" [tableData]="tableData" (tableOperationEnd)="onTableChange($event)"></eq-table-permissions>
+			</ng-template>
+		</li>
+	</ul>
+	<div [ngbNavOutlet]="navVertical">
+	</div>
+</div>
 
-    <label class="form-label mb-3">Nombre del módulo</label>
-    <input type="text" [disabled]="true" class="form-control mb-3" [(ngModel)]="tableData.name" [name]="'name'">
-
-    <label class="form-label mb-3">Etiqueta</label>
-    <input type="text" class="form-control mb-3" [(ngModel)]="tableData.label" [name]="'label'">
-
-    <label class="form-label mb-3">Descripción</label>
-    <textarea class="form-control mb-3" rows="4" cols="50" [(ngModel)]="tableData.description"
-        [name]="'description'"></textarea>
-
-    <hr>
-
-    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-
-</form>

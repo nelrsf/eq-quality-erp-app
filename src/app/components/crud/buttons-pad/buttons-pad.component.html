@@ -59,6 +59,14 @@
                             <span class="mx-2">Eliminar</span>
                         </a>
                     </li>
+                    <li *ngIf="isDisabled('add-folder')" class="list-group-item">
+                        <a role="button" class="d-flex nav-link" (click)="addFolder()">
+                            <div class="opt-icon">
+                                <fa-icon [icon]="icons.addFolder"></fa-icon>
+                            </div>
+                            <span class="mx-2">Nuevo Folder</span>
+                        </a>
+                    </li>
                     <li *ngIf="isDisabled('add')" class="list-group-item">
                         <a role="button" class="d-flex nav-link" (click)="createRow()">
                             <div class="opt-icon">

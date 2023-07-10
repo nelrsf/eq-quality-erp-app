@@ -216,7 +216,11 @@ export class TablesComponent implements OnInit, AfterViewInit {
       table: this.table,
       unique: false,
       width: 100,
-      isRestricted: false
+      isRestricted: false,
+      permissions: {
+        edit: [],
+        read: []
+    }
     }
     this.editColumnName = true;
     this.ngbModal.open(this.colCustomizerModal, { size: 'xl' });

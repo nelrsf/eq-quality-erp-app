@@ -82,3 +82,9 @@ a:link{
     color: var(--bs-emphasis-color-rgb);
     content: "/";
 }
+
+@media (max-width: 767px) {
+    .breadcrumb-item:not(:nth-last-child(2)) {
+      display: none!important;
+    }
+  }

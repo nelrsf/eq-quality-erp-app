@@ -39,6 +39,8 @@ export class GeneralAttributesComponent {
   tablesForRestriction: Array<any> = [];
   columnsForRestriction: Array<any> = [];
 
+  loading: boolean = false;
+
   constructor(private activedRoute: ActivatedRoute, private tableService: TablesService, private moduleService: ModulesService) {
     this.columnData = {
       _id: null,
@@ -53,7 +55,11 @@ export class GeneralAttributesComponent {
       isRestricted: false,
       tableRestriction: "",
       columnRestriction: "",
-      moduleRestriction: ""
+      moduleRestriction: "",
+      permissions: {
+        edit: [],
+        read: []
+    }
     }
   }
 
@@ -87,14 +93,17 @@ export class GeneralAttributesComponent {
   }
 
   onSubmit() {
+    this.loading = true;
     this.tableService.upsertColumn(this.columnData)
       .subscribe(
         {
           next: (data: any) => {
             console.log(data);
+            this.loading = false;
             this.columnOperationEnd.emit();
           },
           error: (error: any) => {
+            this.loading = false;
             console.log(error);
           }
         }

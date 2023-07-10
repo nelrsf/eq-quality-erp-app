@@ -1,3 +1,5 @@
+import { IPermission } from "./IPermission"
+
 export interface IColumn {
     _id: any,
     columnName: string,
@@ -11,7 +13,8 @@ export interface IColumn {
     isRestricted: boolean,
     moduleRestriction?: string,
     tableRestriction?: string,
-    columnRestriction?: string
+    columnRestriction?: string,
+    permissions: IPermission
 }
 
 export enum ColumnTypes {

@@ -1,0 +1,20 @@
+<div *ngIf="moduleData===undefined">
+  <eq-loading></eq-loading>
+</div>
+<form div *ngIf="moduleData!==undefined" class="p-2" (submit)="onSubmit()">
+
+  <label class="form-label mb-3">Nombre del módulo</label>
+  <input type="text" [disabled]="true" class="form-control mb-3" [(ngModel)]="moduleData.name" [name]="'name'">
+
+  <label class="form-label mb-3">Etiqueta</label>
+  <input type="text" class="form-control mb-3" [(ngModel)]="moduleData.label" [name]="'label'">
+
+  <label class="form-label mb-3">Descripción</label>
+  <textarea class="form-control mb-3" rows="4" cols="50" [(ngModel)]="moduleData.description"
+    [name]="'description'"></textarea>
+
+  <hr>
+
+  <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+
+</form>

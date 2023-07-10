@@ -129,7 +129,7 @@ export class ModulesComponent implements OnInit, AfterViewInit {
       .subscribe(
         {
           next: (response) => {
-            console.log(response)
+            console.log(response);
             this.getModulesData();
           },
           error: (error) => {

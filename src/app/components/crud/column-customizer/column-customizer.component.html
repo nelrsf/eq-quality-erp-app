@@ -17,7 +17,7 @@
 				Permisos
 			</a>
 			<ng-template ngbNavContent>
-				<eq-permissions [columnData]="columnData"></eq-permissions>
+				<eq-permissions [columnData]="columnData" (columnOperationEnd)="onColumnOperationEnd()"></eq-permissions>
 			</ng-template>
 		</li>
 	</ul>
