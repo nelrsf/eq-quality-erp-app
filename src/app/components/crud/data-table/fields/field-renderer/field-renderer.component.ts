@@ -132,6 +132,7 @@ export class FieldRendererComponent implements AfterViewInit, OnDestroy {
         data.rowId = this.restriction?.rowId;
         this.rowsRestriction.onRestrictionsChange.next(data);
         this.onListChange.emit(data);
+        this.valueChange.emit(data.value);
       }
     )
   }
@@ -191,6 +192,7 @@ export class FieldRendererComponent implements AfterViewInit, OnDestroy {
           this.restriction.rowIdRestriction = foreignRestriction.rowIdRestriction;
           this.restriction.deleteMode = foreignRestriction.deleteMode;
           this.onListChange.emit(this.restriction);
+          this.valueChange.emit(this.restriction.value);
           if (foreignRestriction.deleteMode) {
             this.component.instance.value = "";
             return;

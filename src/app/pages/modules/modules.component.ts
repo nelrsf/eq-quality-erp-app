@@ -4,7 +4,6 @@ import { ModulesService } from './modules.service';
 import { IModule } from 'src/app/Model/interfaces/IModule';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ITable } from 'src/app/Model/interfaces/ITable';
-import { error } from 'console';
 
 
 @Component({

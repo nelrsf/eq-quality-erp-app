@@ -31,6 +31,11 @@ export class ModulesService {
     return this.http.post(encodeURI(url), { module: moduleName });
   }
 
+  getModuleByName(moduleName: string) {
+    const url = environment.apiUrl + this.modulesEndpoint + '/findone/' + moduleName;
+    return this.http.get(encodeURI(url));
+  }
+
   getAllModules() {
     const url = environment.apiUrl + this.modulesEndpoint;
     return this.http.get(encodeURI(url));

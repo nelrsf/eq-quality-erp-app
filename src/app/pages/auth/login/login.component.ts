@@ -5,6 +5,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { HttpClient } from '@angular/common/http';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'eq-login',
@@ -38,7 +39,7 @@ export class LoginComponent implements OnInit {
   showPassword:boolean = false;
   firstTimeChangePassword: boolean = true; 
 
-  constructor(private authService: AuthService, private ngbModal: NgbModal, private router: Router, private http: HttpClient) {
+  constructor(private authService: AuthService, private ngbModal: NgbModal, private router: Router, private http: HttpClient, private userService: UserService) {
     this.loginForm = new FormGroup({
       email: new FormControl("", [Validators.required, Validators.email]),
       password: new FormControl("", [Validators.required]),
@@ -82,6 +83,11 @@ export class LoginComponent implements OnInit {
               return;
             }
             this.authService.setToken(data.token);
+            this.userService.setUser({
+              _id: data._id,
+              email: data.email,
+              name: data.name
+            })
             this.router.navigate(['/']);
             this.loading = false;
           },

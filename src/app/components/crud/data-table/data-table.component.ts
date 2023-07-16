@@ -14,6 +14,8 @@ import { GalleryViewComponent } from '../../gallery-view/gallery-view.component'
 import { ListViewerComponent } from '../../list-viewer/list-viewer.component';
 import { ListFieldComponent } from '../form/listField/list-field.component';
 import { FieldsModule } from './fields/fields.module';
+import { ShowIfIsAdmin } from 'src/app/directives/permissions/show-if-is-admin.directive';
+import { showIfIsOwner } from 'src/app/directives/permissions/show-if-is-owner.directive';
 
 
 export interface IMapAsUrl {
@@ -52,7 +54,9 @@ interface IRowChecked {
     FieldsModule,
     ListFieldComponent,
     GalleryViewComponent,
-    ListViewerComponent
+    ListViewerComponent,
+    ShowIfIsAdmin,
+    showIfIsOwner
   ]
 })
 export class DataTableComponent implements OnInit, AfterViewInit {

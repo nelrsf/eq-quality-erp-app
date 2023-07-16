@@ -1,7 +1,7 @@
 <div class="container d-flex flex-wrap justify-content-center justify-content-lg-start">
-    <div class="grid-element card m-1 mt-2" *ngFor="let item of getDataAsModules()">
-        <h5 class="align-items-center card-header mb-0 text-capitalize d-flex justify-content-between">{{item.label}}
-            <a role="button" class="btn btn-outline-ligth px-2 py-1 mx-1" (click)="onConfigItem(item)">
+    <div class="grid-element card m-1 mt-2" *ngFor="let item of data">
+        <h5 class="card-header align-items-center card-header mb-0 text-capitalize d-flex justify-content-between">{{item.label}}
+            <a [showIfIsAdmin]="getParentModuleName(item)" [showIfIsOwner]="getParentModuleName(item)" role="button" class="btn btn-outline-ligth px-2 py-1 mx-1" (click)="onConfigItem(item)">
                 <fa-icon [icon]="icons.cogs"></fa-icon>
             </a>
         </h5>

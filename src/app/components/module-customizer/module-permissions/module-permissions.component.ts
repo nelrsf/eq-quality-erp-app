@@ -59,13 +59,13 @@ export class ModulePermissionsComponent implements AfterViewInit {
   checkPermissions(data: Array<any>) {
     data.forEach(
       (item: any) => {
-        if (this.moduleData?.permissions?.read.includes(item._id)) {
+        if (this.moduleData?.permissions?.read?.includes(item._id)) {
           item['Ver'] = true;
         } else {
           item['Ver'] = false;
         }
 
-        if (this.moduleData?.permissions?.edit.includes(item._id)) {
+        if (this.moduleData?.permissions?.edit?.includes(item._id)) {
           item['Editar'] = true;
         } else {
           item['Editar'] = false;
@@ -122,7 +122,6 @@ export class ModulePermissionsComponent implements AfterViewInit {
       .subscribe(
         {
           next: (data: any) => {
-            console.log(data);
             this.loading = false;
             this.moduleOperationEnd.emit(this.moduleData);
           },

@@ -6,7 +6,9 @@ import { DataTableComponent, IColumnFunctions, IMapAsUrl } from 'src/app/compone
 import { ColumnTypes, IColumn } from 'src/app/Model/interfaces/IColumn';
 import { ChangesTrackerService } from 'src/app/services/changes-tracker.service';
 import { TablesService } from './tables.service';
-import { ITable } from 'src/app/Model/interfaces/ITable';
+
+import { PermissionsService } from 'src/app/services/permissions.service';
+import { buttonType } from 'src/app/components/crud/buttons-pad/buttons-pad.component';
 
 @Component({
   selector: 'eq-tables',
@@ -35,9 +37,10 @@ export class TablesComponent implements OnInit, AfterViewInit {
   editColumnName: boolean = true;
   columnsMetadata!: any;
   rowsBackup!: any;
+  buttonsList: Array<buttonType> = ['add', 'delete', 'save'];
 
 
-  constructor(private tableService: TablesService, private activatedRoute: ActivatedRoute, private cdRef: ChangeDetectorRef, private router: Router, private ngbModal: NgbModal, private changesTracker: ChangesTrackerService) { }
+  constructor(private tableService: TablesService, private activatedRoute: ActivatedRoute, private cdRef: ChangeDetectorRef, private permissionsService: PermissionsService, private ngbModal: NgbModal, private changesTracker: ChangesTrackerService) { }
 
   ngAfterViewInit(): void {
     this.activatedRoute.params.subscribe((params) => {
@@ -126,11 +129,39 @@ export class TablesComponent implements OnInit, AfterViewInit {
   }
 
   setColumnsFunctions(module: string, table: string) {
-    this.dataTable.columnsFunctions.forEach(colF => {
-      colF.functions.push(
-        ...this.createColumnsFunctionsArray(module, table, colF)
-      )
-    })
+
+    const subscriberCallback = () => {
+      this.dataTable.columnsFunctions.forEach(colF => {
+        colF.functions = [];
+        colF.functions.push(
+          ...this.createColumnsFunctionsArray(module, table, colF)
+        )
+      });
+    }
+
+    this.permissionsService.isAdmin(module)
+      .subscribe({
+        next: (isAdmin: boolean) => {
+          if (isAdmin) {
+            if (!this.buttonsList.includes('add-column')) {
+              this.buttonsList.push('add-column');
+            }
+            subscriberCallback();
+          }
+        }
+      });
+
+    this.permissionsService.isOwner(module)
+      .subscribe({
+        next: (isOwner: boolean) => {
+          if (isOwner) {
+            if (!this.buttonsList.includes('add-column')) {
+              this.buttonsList.push('add-column');
+            }
+            subscriberCallback();
+          }
+        }
+      })
   }
 
   getTableData(module: string) {
@@ -220,7 +251,7 @@ export class TablesComponent implements OnInit, AfterViewInit {
       permissions: {
         edit: [],
         read: []
-    }
+      }
     }
     this.editColumnName = true;
     this.ngbModal.open(this.colCustomizerModal, { size: 'xl' });
@@ -289,7 +320,7 @@ export class TablesComponent implements OnInit, AfterViewInit {
     const customizeFunc = () => {
       this.tableService.getColumnData(module, table, colF.columnId).subscribe(
         (data: any) => {
-          this.editColumnName = false;
+          this.editColumnName = true;
           this.columnData = data;
           this.ngbModal.open(this.colCustomizerModal, { size: 'xl' });
         }
@@ -310,32 +341,22 @@ export class TablesComponent implements OnInit, AfterViewInit {
       )
     }
 
-    return [
-      {
-        functionIcon: this.icons.cog,
-        functionName: "Personalizar",
-        columnFunction: customizeFunc
-      },
+    const colFunctionsArray = [];
 
-      // {
-      //   functionIcon: this.icons.columnBefore,
-      //   functionName: "Insertar columna a la izquierda",
-      //   columnFunction: () => { }
-      // },
+    colFunctionsArray.push({
+      functionIcon: this.icons.cog,
+      functionName: "Personalizar",
+      columnFunction: customizeFunc
+    });
 
-      // {
-      //   functionIcon: this.icons.columnNext,
-      //   functionName: "Insertar columna a la derecha",
-      //   columnFunction: () => { }
-      // },
+    colFunctionsArray.push({
+      functionIcon: this.icons.columnDelete,
+      functionName: "Eliminar columna",
+      columnFunction: deleteFunc
+    });
 
-      {
-        functionIcon: this.icons.columnDelete,
-        functionName: "Eliminar columna",
-        columnFunction: deleteFunc
-      }
+    return colFunctionsArray;
 
-    ]
   }
 
 }

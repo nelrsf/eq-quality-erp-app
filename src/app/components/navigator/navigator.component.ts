@@ -3,15 +3,12 @@ import { HttpClient } from "@angular/common/http";
 import { Component, ElementRef, Input, OnInit, ViewChild } from "@angular/core";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { faFolder, faTable, faTurnUp } from "@fortawesome/free-solid-svg-icons";
-import { IModule } from "src/app/Model/interfaces/IModule";
 import { ITable } from "src/app/Model/interfaces/ITable";
 import { TablesService } from "src/app/pages/tables/tables.service";
-import { environment } from "src/environments/environment";
 import { ErrorComponent } from "../alerts/error/error.component";
 import { LoadingComponent } from "../miscelaneous/loading/loading.component";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { BreadcrumbComponent } from "../breadcrumb/breadcrumb.component";
-import { error } from "console";
 import { Router } from "@angular/router";
 
 @Component({
@@ -153,21 +150,6 @@ export class NavigatorComponent implements OnInit {
 
         this.router.navigate([ '/tables/' + this.moduleName + '/' + lastSegment]);
 
-        // this.tablesService.getTablesByRoute(this.moduleName, lastSegment)
-        //     .subscribe(
-        //         {
-        //             next: (data: any) => {
-        //                 this.data = data;
-        //                 this.loading = false;
-        //             },
-        //             error: (error) => {
-        //                 this.loading = false;
-        //                 this.errorMessage = error.message;
-        //                 this.openErrorModal();
-        //                 console.log(error);
-        //             }
-        //         }
-        //     )
     }
 
 }

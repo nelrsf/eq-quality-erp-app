@@ -7,6 +7,9 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IModule } from 'src/app/Model/interfaces/IModule';
 import { ITable } from 'src/app/Model/interfaces/ITable';
 import { NavigatorComponent } from '../navigator/navigator.component';
+import { ShowIfIsAdmin } from 'src/app/directives/permissions/show-if-is-admin.directive';
+import { showIfIsOwner } from 'src/app/directives/permissions/show-if-is-owner.directive';
+
 
 @Component({
   selector: 'eq-grid-view',
@@ -17,20 +20,21 @@ import { NavigatorComponent } from '../navigator/navigator.component';
     CommonModule,
     FontAwesomeModule,
     RouterModule,
-    NavigatorComponent
+    NavigatorComponent,
+    ShowIfIsAdmin,
+    showIfIsOwner
   ]
 })
 export class GridViewComponent {
 
-  constructor(private ngbModal: NgbModal) {
-
-  }
+  constructor(private ngbModal: NgbModal) { }
 
   @ViewChild('navigatorModal') navigatorModal!: ElementRef;
 
-  @Input() data!: IModule[] | ITable[];
+  @Input() data!: Array<IModule | ITable>;
   @Input() disableNavigator: boolean = false;
   @Input() moduleName!: string;
+
   @Input() linkGetterFuntion!: (value: string | undefined, object?: any) => string
 
   @Output() delete = new EventEmitter<string>();
@@ -56,12 +60,6 @@ export class GridViewComponent {
     this.configItem.next(item);
   }
 
-
-  getDataAsModules() {
-    return this.data as IModule[];
-  }
-
-
   closeModal() {
     if (this.ngbModal.hasOpenModals()) {
       this.ngbModal.dismissAll();
@@ -73,5 +71,11 @@ export class GridViewComponent {
     this.ngbModal.open(this.navigatorModal);
   }
 
-  
+  getParentModuleName(item: ITable | IModule) {
+    if (this.moduleName) {
+      return this.moduleName;
+    }
+    return item.name ? item.name : '';
+  }
+
 }

@@ -6,5 +6,6 @@ export interface IModule {
     description: string,
     tables: any[],
     route?: string,
+    owner?: string,
     permissions: IPermission
 }

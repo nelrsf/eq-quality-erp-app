@@ -84,6 +84,11 @@ export class TablesService {
     return this.http.get(encodeURI(urlRequest));
   }
 
+  getRowsByColumnAndValue(moduleName: string, tableName: string, column: string, value: string) {
+    const urlRequest = environment.apiUrl + this.endpointRows + "/filter/" + moduleName + "/" + tableName + "/" + column + '/' + value;
+    return this.http.get(encodeURI(urlRequest));
+  }
+
   createRow(moduleName: string, tableName: string, rowData: any) {
     const urlRequest = environment.apiUrl + this.endpointRows + this.endpointCreate + "/" + moduleName + "/" + tableName;
     return this.http.post(encodeURI(urlRequest), rowData);

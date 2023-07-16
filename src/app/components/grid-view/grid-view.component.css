@@ -13,3 +13,7 @@
 p {
     min-height: 1.2rem;
 }
+
+.card-header {
+    height: 3.5rem;
+}
