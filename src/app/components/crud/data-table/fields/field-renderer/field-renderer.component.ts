@@ -51,7 +51,7 @@ export class FieldRendererComponent implements AfterViewInit, OnDestroy {
 
   subscribeToDataRestrictionChanges() {
     this.rowsRestriction.restrictionsDataSubject
-      .pipe(filter(m => m.column?.columnName === this.column?.columnName))
+      .pipe(filter(m => m.column?._id === this.column?._id))
       .subscribe(
         (columnRestriction: IColumnRestriction) => {
           this.restrictions = columnRestriction.restrictions;
