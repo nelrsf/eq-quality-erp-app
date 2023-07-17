@@ -58,7 +58,6 @@
                             </div>
                         </label>
                         <eq-file-field [(files)]="this.imagesFormData[getAsColumn(column.value).columnName]"></eq-file-field>
-                        <!-- <input type="file" class="form-control" placeholder="" formControlName="{{column.key}}"> -->
                     </div>
                 </div>
 
@@ -91,7 +90,7 @@
                                 <fa-icon [icon]="icons.cog"></fa-icon>
                             </div>
                         </label>
-                        <eq-list-field [listData]="listFormData[getAsColumn(column.value).columnName]"></eq-list-field>
+                        <eq-list-field [listData]="listFormData[getAsColumn(column.value)._id]"></eq-list-field>
                     </div>
                 </div>
             </div>

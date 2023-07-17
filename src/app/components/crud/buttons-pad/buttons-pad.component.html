@@ -8,7 +8,7 @@
         </div>
         <div class="p-1 buttons-wrapper d-none d-md-block">
             <div class="button-div" *ngIf="isDisabled('add-folder')">
-                <button type="button" [eqTooltip]="'Añadir Folder'" class="btn btn-outline-secondary" (click)="addFolder()">
+                <button type="button" [eqTooltip]="'Añadir folder'" class="btn btn-outline-secondary" (click)="addFolder()">
                     <fa-icon [icon]="icons.addFolder"></fa-icon>
                 </button>
             </div>
@@ -24,7 +24,7 @@
                 </button>
             </div>
             <div class="button-div" *ngIf="isDisabled('save')">
-                <button type="button" [eqTooltip]="'Editar'"
+                <button type="button" [eqTooltip]="'Guardar cambios'"
                     class="btn btn-outline-secondary" (click)="editRows()">
                     <fa-icon [icon]="icons.update"></fa-icon>
                 </button>

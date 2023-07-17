@@ -4,6 +4,10 @@ input {
     background-color: transparent;
 }
 
+.eidt-subline {
+    border-bottom: solid 0.1px var(--bs-border-color);
+}
+
 .invalid-field {
     border: 1px solid red;
     border-radius: 5px;

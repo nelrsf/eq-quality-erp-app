@@ -4,6 +4,10 @@ input {
     color: var(--bs-emphasis-color);
 }
 
+.eidt-subline {
+    border-bottom: solid 0.1px var(--bs-border-color);
+}
+
 input:focus {
     border-style: none;
 }

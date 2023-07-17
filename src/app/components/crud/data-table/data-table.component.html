@@ -83,7 +83,7 @@
                                                     [column]="getColumnProperties(column._id)"
                                                     [restriction]="getCellRestriction(column, row['_id'])"
                                                     [restrictions]="getRestrictionsByColumnId(column._id)"
-                                                    (openModal)="openModal($event, row[column._id])"
+                                                    (openModal)="openModal($event, row, column._id)"
                                                     (onListChange)="setRowRestriction($event, row._id, column)">
                                                 </eq-field-renderer>
                                             </ng-template>

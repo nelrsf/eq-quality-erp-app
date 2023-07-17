@@ -209,13 +209,16 @@ export class DataTableComponent implements OnInit, AfterViewInit {
     }
   }
 
-  openModal(event: ColumnTypes, data: any) {
+  openModal(event: ColumnTypes, row: any, columnId: string) {
+    if(!row[columnId]){
+      row[columnId] = [];
+    }
     switch (event) {
       case ColumnTypes.image:
-        this.openImageViewer(data);
+        this.openImageViewer(row[columnId]);
         break;
       case ColumnTypes.list:
-        this.openListViewer(data);
+        this.openListViewer(row[columnId]);
         break;
     }
   }

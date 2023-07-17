@@ -100,6 +100,7 @@ export class RowsRestrictionsService {
     }
     delete restrictions.data[cellRestrictedIndex].rowIdRestriction;
     delete restrictions.data[cellRestrictedIndex].deleteMode;
+    restrictions.data[cellRestrictedIndex].value = '';
     let row = rows.find(
       (r: any) => {
         return r._id === rowId
@@ -108,7 +109,7 @@ export class RowsRestrictionsService {
     if (!row) {
       return
     }
-    row[column.columnName] = "";
+    row[column._id] = "";
   }
 
   findRestrictionByRowAndColumn(restrictions: ICellRestriction[], rowId: string, columnId: string): ICellRestriction | undefined {

@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-center align-items-center">
     <div>
-        <input #autocompleteInput class="text-input" [ngClass]="[!didValueMatchRestrictions()? 'invalid-field': '']" [disabled]="isDisabled"
+        <input #autocompleteInput class="text-input" [ngClass]="[!didValueMatchRestrictions()? 'invalid-field': '', !value ? 'eidt-subline' : '']" [disabled]="isDisabled"
             [matAutocomplete]="auto" (focus)="onFocus($event)" [(ngModel)]="value" (ngModelChange)="checkValue()">
         <span *ngIf="!didValueMatchRestrictions()" class="mx-1 text-danger">
             <fa-icon [icon]="icons.invalid"></fa-icon>

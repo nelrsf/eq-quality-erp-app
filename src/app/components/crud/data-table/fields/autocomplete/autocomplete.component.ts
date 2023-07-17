@@ -74,7 +74,8 @@ export class AutocompleteComponent implements OnInit, AfterViewInit {
   checkValue() {
     if (this.didValueMatchRestrictions()) {
       if (this.value === "") {
-        this.previousRestriction.deleteMode = true;
+        this.previousRestriction = this.previousRestriction ? this.previousRestriction : {};
+        this.previousRestriction.deleteMode = true
         this.onListChange.emit(this.previousRestriction);
         return;
       }

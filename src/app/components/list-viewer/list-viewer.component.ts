@@ -34,18 +34,6 @@ export class ListViewerComponent implements OnInit {
     if(!this.listData){
       this.listData = [];
     }
-    // this.route.params.subscribe(params => {
-    //   let listData;
-    //   const listDataStr = params['listData'];
-    //   try {
-    //     listData = JSON.parse(listDataStr);
-    //   } catch (e) {
-    //     console.log("error parsing json");
-    //   }
-    //   if (listData) {
-    //     this.listData = listData;
-    //   }
-    // });
   }
 
 

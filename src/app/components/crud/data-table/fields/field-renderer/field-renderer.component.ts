@@ -183,10 +183,10 @@ export class FieldRendererComponent implements AfterViewInit, OnDestroy {
     )
       .subscribe(
         (foreignRestriction: Partial<ICellRestriction>) => {
-          if (!this.restriction) {
+        if (!this.restriction) {
             return;
           }
-          if(this.restriction.column.columnName === foreignRestriction.column?.columnName){
+          if(this.restriction.column._id === foreignRestriction.column?._id){
             return;
           }
           this.restriction.rowIdRestriction = foreignRestriction.rowIdRestriction;

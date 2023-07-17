@@ -2,10 +2,10 @@
 
 
 <ng-template #restrictedFieldTemplate>
-    <eq-autocomplete [data]="dataRestrictions" [(value)]="value" (valueChange)="onChangeByRestricted($event)" (onListChange)="listChange($event)" [isDisabled]="isDisabled" [restriction]="restriction"></eq-autocomplete>
+    <eq-autocomplete [ngClass]="[!value ? 'eidt-subline' : '']" [data]="dataRestrictions" [(value)]="value" (valueChange)="onChangeByRestricted($event)" (onListChange)="listChange($event)" [isDisabled]="isDisabled" [restriction]="restriction"></eq-autocomplete>
 </ng-template>
 
 
 <ng-template #unrestrictedFieldTemplate>
-    <input type="text" [(ngModel)]="value" [disabled]="isDisabled" (change)="onChangeByText($event)">
+    <input [ngClass]="[!value ? 'eidt-subline' : '']" type="text" [(ngModel)]="value" [disabled]="isDisabled" (change)="onChangeByText($event)">
 </ng-template>

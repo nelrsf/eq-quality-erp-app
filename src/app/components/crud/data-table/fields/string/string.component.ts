@@ -1,9 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Subject } from 'rxjs';
 import { ICellRestriction } from 'src/app/Model/interfaces/ICellRestrictions';
-import { RowsRestrictionsService } from 'src/app/services/rows-restrictions.service';
 import { AutocompleteComponent } from '../autocomplete/autocomplete.component';
 
 @Component({

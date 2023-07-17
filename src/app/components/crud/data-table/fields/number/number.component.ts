@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -7,7 +8,8 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./number.component.css'],
   standalone: true,
   imports: [
-    FormsModule
+    FormsModule,
+    CommonModule
   ]
 })
 export class NumberComponent {
