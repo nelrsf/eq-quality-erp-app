@@ -59,16 +59,22 @@ export class TablePermissionsComponent implements AfterViewInit {
   checkPermissions(data: Array<any>) {
     data.forEach(
       (item: any) => {
-        if (this.tableData?.permissions?.read.includes(item._id)) {
+        if (this.tableData?.permissions?.read?.includes(item._id)) {
           item['Ver'] = true;
         } else {
           item['Ver'] = false;
         }
 
-        if (this.tableData?.permissions?.edit.includes(item._id)) {
+        if (this.tableData?.permissions?.edit?.includes(item._id)) {
           item['Editar'] = true;
         } else {
           item['Editar'] = false;
+        }
+
+        if (this.tableData?.permissions?.delete?.includes(item._id)) {
+          item['Eliminar'] = true;
+        } else {
+          item['Eliminar'] = false;
         }
       }
     )
@@ -80,34 +86,46 @@ export class TablePermissionsComponent implements AfterViewInit {
 
   savePermissionsByItem(item: any) {
     let permissions = this.tableData?.permissions;
-    if(!permissions){
-      permissions = {
-        edit: [],
-        read: []
-      }
+    permissions = {
+      edit: permissions?.edit ? permissions.edit : [],
+      read: permissions?.read ? permissions.read : [],
+      delete: permissions?.delete ? permissions.delete : []
     }
+
     const edit = permissions.edit;
     const read = permissions.read;
+    const deletePermissions = permissions.delete;
     if (item.Ver) {
-      if (!read.includes(item._id)) {
+      if (!read?.includes(item._id)) {
         read.push(item._id);
       };
     } else {
-      const indx = read.findIndex(r => r == item._id);
+      const indx = read?.findIndex(r => r == item._id);
       if (indx > -1) {
         read.splice(indx, 1);
       }
     }
     if (item.Editar) {
-      if (!edit.includes(item._id)) {
+      if (!edit?.includes(item._id)) {
         edit.push(item._id);
       }
     } else {
-      const indx = edit.findIndex(e => e == item._id);
+      const indx = edit?.findIndex(e => e == item._id);
       if (indx > -1) {
         edit.splice(indx, 1);
       }
     }
+    if (item.Eliminar) {
+      if (!deletePermissions?.includes(item._id)) {
+        deletePermissions.push(item._id);
+      }
+    } else {
+      const indx = deletePermissions?.findIndex(e => e == item._id);
+      if (indx > -1) {
+        deletePermissions.splice(indx, 1);
+      }
+    }
+    this.tableData.permissions = permissions;
   }
 
   savePermissions() {
@@ -116,7 +134,8 @@ export class TablePermissionsComponent implements AfterViewInit {
     if (!this.tableData?.permissions) {
       this.tableData.permissions = {
         edit: [],
-        read: []
+        read: [],
+        delete: []
       }
     }
     data.forEach(

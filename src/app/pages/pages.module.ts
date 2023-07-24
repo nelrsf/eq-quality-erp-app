@@ -27,7 +27,7 @@ import { ErrorNotFoundComponent } from './error/404/error-page.component';
 import { ErrorUnauthorizedPageComponent } from './error/401/error-unauthorized.component';
 import { ApiDocsComponent } from './api-docs/api-docs.component';
 import { BreadcrumbComponent } from '../components/breadcrumb/breadcrumb.component';
-import { LogoComponent } from '../components/layout/logo/logo.component';
+import { GridModuleViewComponent } from '../components/grid-module-view/grid-module-view.component';
 
 
 
@@ -78,6 +78,7 @@ const routes: Routes = [
     ButtonsPadComponent,
     FormComponent,
     GridViewComponent,
+    GridModuleViewComponent,
     FormsModule,
     FontAwesomeModule,
     ErrorComponent,

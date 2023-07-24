@@ -1,0 +1,19 @@
+.grid-element {
+    width: 24rem;
+    display: inline-block;
+    box-shadow: -2px 1px 14px 0px var(--bs-primary-bg-subtle);
+}
+
+.btn {
+    min-width: 2rem;
+    font-size: smaller;
+    color: var(--bs-emphasis-color-rgb);
+}
+
+p {
+    min-height: 1.2rem;
+}
+
+.card-header {
+    height: 3.5rem;
+}

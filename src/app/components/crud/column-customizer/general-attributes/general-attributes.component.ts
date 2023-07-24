@@ -58,7 +58,8 @@ export class GeneralAttributesComponent {
       moduleRestriction: "",
       permissions: {
         edit: [],
-        read: []
+        read: [],
+        delete: []
     }
     }
   }

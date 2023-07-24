@@ -250,7 +250,8 @@ export class TablesComponent implements OnInit, AfterViewInit {
       isRestricted: false,
       permissions: {
         edit: [],
-        read: []
+        read: [],
+        delete: []
       }
     }
     this.editColumnName = true;

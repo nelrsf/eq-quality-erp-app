@@ -14,7 +14,8 @@ export const permissionsColumns: IColumn[] = [
         width: 100,
         permissions: {
             edit: [],
-            read: []
+            read: [],
+            delete: []
         }
     },
     {
@@ -30,7 +31,8 @@ export const permissionsColumns: IColumn[] = [
         width: 100,
         permissions: {
             edit: [],
-            read: []
+            read: [],
+            delete: []
         }
     },
     {
@@ -46,7 +48,25 @@ export const permissionsColumns: IColumn[] = [
         width: 100,
         permissions: {
             edit: [],
-            read: []
+            read: [],
+            delete: []
         }
-    }
+    },
+    {
+        _id: 'Eliminar',
+        columnName: 'Eliminar',
+        hidden: true,
+        isRestricted: false,
+        module: '',
+        required: false,
+        table: '',
+        type: ColumnTypes.boolean,
+        unique: true,
+        width: 100,
+        permissions: {
+            edit: [],
+            read: [],
+            delete: []
+        }
+    },
 ]

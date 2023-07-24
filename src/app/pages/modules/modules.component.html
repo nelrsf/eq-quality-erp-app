@@ -2,7 +2,7 @@
     <eq-loading></eq-loading>
 </div>
 <eq-buttons-pad [buttonsList]="['add']" (_newRow)="openCreateModal()"></eq-buttons-pad>
-<eq-grid-view [disableNavigator]="true" [linkGetterFuntion]="getLinkFunction" [data]="modules" (delete)="openDeleteModal($event)" (configItem)="openConfigModal($event)"></eq-grid-view>
+<eq-grid-module-view [linkGetterFuntion]="getLinkFunction" [data]="modules" (delete)="openDeleteModal($event)" (configItem)="openConfigModal($event)"></eq-grid-module-view>
 
 
 <!-- Form Module -->

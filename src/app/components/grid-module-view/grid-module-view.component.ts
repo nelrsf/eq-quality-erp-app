@@ -13,9 +13,9 @@ import { ShowIfCanDelete } from 'src/app/directives/permissions/show-if-can-dele
 
 
 @Component({
-  selector: 'eq-grid-view',
-  templateUrl: './grid-view.component.html',
-  styleUrls: ['./grid-view.component.css'],
+  selector: 'eq-grid-module-view',
+  templateUrl: './grid-module-view.component.html',
+  styleUrls: ['./grid-module-view.component.css'],
   standalone: true,
   imports: [
     CommonModule,
@@ -27,7 +27,7 @@ import { ShowIfCanDelete } from 'src/app/directives/permissions/show-if-can-dele
     ShowIfCanDelete
   ]
 })
-export class GridViewComponent {
+export class GridModuleViewComponent {
 
   constructor(private ngbModal: NgbModal) { }
 
@@ -77,13 +77,6 @@ export class GridViewComponent {
       return this.moduleName;
     }
     return item.name ? item.name : '';
-  }
-
-  getTableData(item: ITable) {
-    return {
-      table: item.name ? item.name : '',
-      module: this.moduleName
-    };
   }
 
 }

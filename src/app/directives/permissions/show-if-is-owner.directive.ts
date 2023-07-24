@@ -1,10 +1,6 @@
 import { Directive, ElementRef, Input, OnInit } from "@angular/core";
-import { filter } from "rxjs";
 import { IModule } from "src/app/Model/interfaces/IModule";
-import { ITable } from "src/app/Model/interfaces/ITable";
 import { IUser } from "src/app/Model/interfaces/IUser";
-import { ModulesService } from "src/app/pages/modules/modules.service";
-import { TablesService } from "src/app/pages/tables/tables.service";
 import { PermissionsService } from "src/app/services/permissions.service";
 import { UserService } from "src/app/services/user.service";
 
@@ -12,7 +8,7 @@ import { UserService } from "src/app/services/user.service";
     selector: '[showIfIsOwner]',
     standalone: true
 })
-export class showIfIsOwner implements OnInit {
+export class ShowIfIsOwner implements OnInit {
 
     @Input() showIfIsOwner!: string;
 

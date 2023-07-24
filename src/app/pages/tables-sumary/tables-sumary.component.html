@@ -4,7 +4,7 @@
 
 <eq-breadcrumb [linkGetterFuntion]="getLinkFunction" [module]="module" [mainRoute]="mainRoute"></eq-breadcrumb>
 
-<eq-buttons-pad [buttonsList]="['add', 'add-folder']" (_newRow)="openCreateModal()"
+<eq-buttons-pad [buttonsList]="buttonsList" (_newRow)="openCreateModal()"
     (_addFolder)="openCreateFolder()"></eq-buttons-pad>
 <eq-grid-view [linkGetterFuntion]="getLinkFunction" [data]="data" (delete)="openDeleteModal($event)"
     (configItem)="openCustomizerTable($event)" [moduleName]="module"></eq-grid-view>

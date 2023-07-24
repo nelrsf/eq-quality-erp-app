@@ -16,6 +16,7 @@
     width: 100%;
     flex-direction: unset;
     justify-content: space-between;
+    min-height: 2.8rem;
 }
 
 .buttons-wrapper {

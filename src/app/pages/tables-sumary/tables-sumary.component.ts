@@ -3,7 +3,11 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { ITable } from 'src/app/Model/interfaces/ITable';
 import { TablesService } from '../tables/tables.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, forkJoin, takeUntil } from 'rxjs';
+import { PermissionsService } from 'src/app/services/permissions.service';
+import { buttonType } from 'src/app/components/crud/buttons-pad/buttons-pad.component';
+import { UserService } from 'src/app/services/user.service';
+import { IUser } from 'src/app/Model/interfaces/IUser';
 
 @Component({
   selector: 'eq-tables-sumary',
@@ -28,12 +32,13 @@ export class TablesSumaryComponent implements OnInit, OnDestroy {
   tableData!: ITable;
   mainRoute: string = "";
   errorMessage!: string;
+  buttonsList: buttonType[] = [];
 
   newTableName!: string;
 
   private unsubscribeAll = new Subject<void>();
 
-  constructor(private activatedRoute: ActivatedRoute, private tableService: TablesService, private ngbModal: NgbModal, private router: Router) { }
+  constructor(private activatedRoute: ActivatedRoute, private tableService: TablesService, private ngbModal: NgbModal, private permissionsService: PermissionsService, private userService: UserService) { }
 
 
   ngOnDestroy(): void {
@@ -44,9 +49,57 @@ export class TablesSumaryComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.activatedRoute.params.subscribe((params) => {
       this.getDataFromServer(params);
+      this.initializePermissions();
     })
   }
-  
+
+  initializePermissions() {
+    this.userService.getUserSubject()
+      .subscribe(
+        (_user: IUser | null) => {
+          this.setButtonsFunctions(this.module);
+        }
+      )
+  }
+
+  setButtonsFunctions(module: string) {
+    const subscriberCallback = () => {
+      if (!this.buttonsList.includes('add')) {
+        this.buttonsList.push('add');
+      }
+      if (!this.buttonsList.includes('add-folder')) {
+        this.buttonsList.push('add-folder');
+      }
+    }
+
+    this.permissionsService.canEditTable(module, this.route)
+    .subscribe({
+      next: (canEdit: boolean) => {
+        if (canEdit) {
+          subscriberCallback();
+        }
+      }
+    });
+
+    this.permissionsService.canEdit(module)
+      .subscribe({
+        next: (canEdit: boolean) => {
+          if (canEdit) {
+            subscriberCallback();
+          }
+        }
+      });
+
+    this.permissionsService.isOwner(module)
+      .subscribe({
+        next: (isOwner: boolean) => {
+          if (isOwner) {
+            subscriberCallback();
+          }
+        }
+      })
+  }
+
 
   getDataFromServer(params: any,) {
     this.module = params['module'];
@@ -69,7 +122,7 @@ export class TablesSumaryComponent implements OnInit, OnDestroy {
       {
         next: (result: any) => {
           this.data = result;
-          if (this.data.length > 0){
+          if (this.data.length > 0) {
             this.mainRoute = this.data[0].route ? this.data[0].route : '';
           }
           this.loading = false;
@@ -95,7 +148,7 @@ export class TablesSumaryComponent implements OnInit, OnDestroy {
         },
         error: (error: any) => {
           this.loading = false;
-          this.errorMessage = error.error;
+          this.errorMessage = error.message ? error.message : 'Error desconocido';
           this.openErrorModal();
           console.log(error);
         }
@@ -123,7 +176,7 @@ export class TablesSumaryComponent implements OnInit, OnDestroy {
           },
           error: (error: any) => {
             this.loading = false;
-            this.errorMessage = error.error;
+            this.errorMessage = error.message ? error.message : 'Error desconocido';
             this.openErrorModal();
             console.log(error);
           }
@@ -156,7 +209,7 @@ export class TablesSumaryComponent implements OnInit, OnDestroy {
           },
           error: (error: any) => {
             this.loading = false;
-            this.errorMessage = error.error;
+            this.errorMessage = error.message ? error.message : 'Error desconocido';
             this.openErrorModal();
             console.log(error);
           }
@@ -181,7 +234,7 @@ export class TablesSumaryComponent implements OnInit, OnDestroy {
 
   openCustomizerTable(table: ITable) {
     this.tableData = table;
-    this.ngbModal.open(this.customizeTable, {size: 'xl'});
+    this.ngbModal.open(this.customizeTable, { size: 'xl' });
   }
 
   onCustomizeTable(table: ITable) {
@@ -191,7 +244,8 @@ export class TablesSumaryComponent implements OnInit, OnDestroy {
         {
           next: (response) => {
             console.log(response)
-            this.getTableData(this.module);
+            const params = { module: this.module, route: this.route };
+            this.getDataFromServer(params);
           },
           error: (error) => {
             console.log(error)
@@ -208,7 +262,7 @@ export class TablesSumaryComponent implements OnInit, OnDestroy {
             console.log(response)
             const segments = this.mainRoute.split('/');
             let lastSegment;
-            if(segments.length>0){
+            if (segments.length > 0) {
               lastSegment = segments[segments.length - 1];
             } else {
               lastSegment = '/';

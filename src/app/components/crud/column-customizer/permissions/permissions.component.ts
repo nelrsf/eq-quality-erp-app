@@ -107,7 +107,8 @@ export class PermissionsComponent implements AfterViewInit {
     if (!this.columnData.permissions) {
       this.columnData.permissions = {
         edit: [],
-        read: []
+        read: [],
+        delete: []
       }
     }
     data.forEach(

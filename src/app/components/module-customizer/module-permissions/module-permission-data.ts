@@ -14,7 +14,8 @@ export const permissionsColumns: IColumn[] = [
         width: 100,
         permissions: {
             edit: [],
-            read: []
+            read: [],
+            delete: []
         }
     },
     {
@@ -30,7 +31,8 @@ export const permissionsColumns: IColumn[] = [
         width: 100,
         permissions: {
             edit: [],
-            read: []
+            read: [],
+            delete: []
         }
     },
     {
@@ -46,7 +48,8 @@ export const permissionsColumns: IColumn[] = [
         width: 100,
         permissions: {
             edit: [],
-            read: []
+            read: [],
+            delete: []
         }
     }
 ]

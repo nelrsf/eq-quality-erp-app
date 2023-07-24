@@ -70,6 +70,12 @@ export class ModulePermissionsComponent implements AfterViewInit {
         } else {
           item['Editar'] = false;
         }
+
+        if (this.moduleData?.permissions?.delete?.includes(item._id)) {
+          item['Eliminar'] = true;
+        } else {
+          item['Eliminar'] = false;
+        }
       }
     )
   }
@@ -82,21 +88,21 @@ export class ModulePermissionsComponent implements AfterViewInit {
     const edit = this.moduleData.permissions.edit;
     const read = this.moduleData.permissions.read;
     if (item.Ver) {
-      if (!read.includes(item._id)) {
+      if (!read?.includes(item._id)) {
         read.push(item._id);
       };
     } else {
-      const indx = read.findIndex(r => r == item._id);
+      const indx = read?.findIndex(r => r == item._id);
       if (indx > -1) {
         read.splice(indx, 1);
       }
     }
     if (item.Editar) {
-      if (!this.moduleData.permissions.edit.includes(item._id)) {
-        this.moduleData.permissions.edit.push(item._id);
+      if (!edit?.includes(item._id)) {
+        edit.push(item._id);
       }
     } else {
-      const indx = edit.findIndex(e => e == item._id);
+      const indx = edit?.findIndex(e => e == item._id);
       if (indx > -1) {
         edit.splice(indx, 1);
       }
@@ -106,12 +112,11 @@ export class ModulePermissionsComponent implements AfterViewInit {
   savePermissions() {
     this.loading = true;
     const data = this.dataTable.data.getValue();
-    if (!this.moduleData.permissions) {
       this.moduleData.permissions = {
-        edit: [],
-        read: []
+        edit: this.moduleData.permissions.edit ? this.moduleData.permissions.edit : [],
+        read: this.moduleData.permissions.read ? this.moduleData.permissions.read : [],
+        delete: this.moduleData.permissions.delete ? this.moduleData.permissions.delete : [],
       }
-    }
     data.forEach(
       (item: any) => {
         this.savePermissionsByItem(item);
