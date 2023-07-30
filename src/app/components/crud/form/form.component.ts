@@ -12,6 +12,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TablesService } from 'src/app/pages/tables/tables.service';
 import { ListFieldComponent } from './listField/list-field.component';
 import { FileFieldComponent } from './fileField/file-field.component';
+import { ShowIfIsAdmin } from 'src/app/directives/permissions/show-if-is-admin.directive';
+import { ShowIfIsOwner } from 'src/app/directives/permissions/show-if-is-owner.directive';
 
 
 @Component({
@@ -30,7 +32,9 @@ import { FileFieldComponent } from './fileField/file-field.component';
     FileFieldComponent,
     ListFieldComponent,
     DropTargetDirective,
-    DragDirective
+    DragDirective,
+    ShowIfIsAdmin,
+    ShowIfIsOwner
   ]
 })
 export class FormComponent implements OnInit {
@@ -192,6 +196,7 @@ export class FormComponent implements OnInit {
             this.loading = false;
             this.hasError = true;
             this.errorMessage = error.error;
+            this.formOperationEnd.emit();
             console.log(error)
           }
         }

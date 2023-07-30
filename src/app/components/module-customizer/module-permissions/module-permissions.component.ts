@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
 import { DataTableComponent } from '../../crud/data-table/data-table.component';
 import { IModule } from 'src/app/Model/interfaces/IModule';
 import { ModulesService } from 'src/app/pages/modules/modules.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'eq-module-permissions',
@@ -38,7 +39,7 @@ export class ModulePermissionsComponent implements AfterViewInit {
 
 
   ngAfterViewInit(): void {
-    this.tablesService.getAllRows(this.moduleData.name, "__profiles_module_table__")
+    this.tablesService.getAllRows(this.moduleData.name, environment.adminTables.profile)
       .subscribe(
         {
           next: (result: any) => {
@@ -113,9 +114,9 @@ export class ModulePermissionsComponent implements AfterViewInit {
     this.loading = true;
     const data = this.dataTable.data.getValue();
       this.moduleData.permissions = {
-        edit: this.moduleData.permissions.edit ? this.moduleData.permissions.edit : [],
-        read: this.moduleData.permissions.read ? this.moduleData.permissions.read : [],
-        delete: this.moduleData.permissions.delete ? this.moduleData.permissions.delete : [],
+        edit: this.moduleData?.permissions?.edit ? this.moduleData.permissions.edit : [],
+        read: this.moduleData?.permissions?.read ? this.moduleData.permissions.read : [],
+        delete: this.moduleData?.permissions?.delete ? this.moduleData.permissions.delete : [],
       }
     data.forEach(
       (item: any) => {

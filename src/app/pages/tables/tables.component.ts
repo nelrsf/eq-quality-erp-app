@@ -9,6 +9,8 @@ import { TablesService } from './tables.service';
 
 import { PermissionsService } from 'src/app/services/permissions.service';
 import { buttonType } from 'src/app/components/crud/buttons-pad/buttons-pad.component';
+import { UserService } from 'src/app/services/user.service';
+import { IUser } from 'src/app/Model/interfaces/IUser';
 
 @Component({
   selector: 'eq-tables',
@@ -37,18 +39,20 @@ export class TablesComponent implements OnInit, AfterViewInit {
   editColumnName: boolean = true;
   columnsMetadata!: any;
   rowsBackup!: any;
-  buttonsList: Array<buttonType> = ['add', 'delete', 'save'];
+  buttonsList: Array<buttonType> = [];
 
 
-  constructor(private tableService: TablesService, private activatedRoute: ActivatedRoute, private cdRef: ChangeDetectorRef, private permissionsService: PermissionsService, private ngbModal: NgbModal, private changesTracker: ChangesTrackerService) { }
+  constructor(private tableService: TablesService, private activatedRoute: ActivatedRoute, private cdRef: ChangeDetectorRef, private permissionsService: PermissionsService, private ngbModal: NgbModal, private changesTracker: ChangesTrackerService, private userService: UserService) { }
 
   ngAfterViewInit(): void {
     this.activatedRoute.params.subscribe((params) => {
       if (this.getRowsFromServer(params)) {
+        this.initializePermissions();
         this.cdRef.detectChanges();
         return;
       }
       if (this.getDataFromServer(params)) {
+        this.initializePermissions();
         this.cdRef.detectChanges();
         return;
       }
@@ -358,6 +362,70 @@ export class TablesComponent implements OnInit, AfterViewInit {
 
     return colFunctionsArray;
 
+  }
+
+  initializePermissions() {
+    this.userService.getUserSubject()
+      .subscribe(
+        (_user: IUser | null) => {
+          this.setButtonsFunctions();
+        }
+      )
+  }
+
+
+  setButtonsFunctions() {
+    const subscriberEditCallback = () => {
+      if (!this.buttonsList.includes('add')) {
+        this.buttonsList.push('add');
+      }
+      if (!this.buttonsList.includes('save')) {
+        this.buttonsList.push('save');
+      }
+    }
+
+    const subscriberDeleteCallback = () => {
+      if (!this.buttonsList.includes('delete')) {
+        this.buttonsList.push('delete');
+      }
+    }
+
+    this.permissionsService.canEditTable(this.module, this.table)
+      .subscribe({
+        next: (canEdit: boolean) => {
+          if (canEdit) {
+            subscriberEditCallback();
+          }
+        }
+      });
+
+    this.permissionsService.canEdit(this.module)
+      .subscribe({
+        next: (canEdit: boolean) => {
+          if (canEdit) {
+            subscriberEditCallback();
+          }
+        }
+      });
+
+    this.permissionsService.canDeleteTable(this.module, this.table)
+      .subscribe({
+        next: (isOwner: boolean) => {
+          if (isOwner) {
+            subscriberDeleteCallback();
+          }
+        }
+      })
+
+    this.permissionsService.isOwner(this.module)
+      .subscribe({
+        next: (isOwner: boolean) => {
+          if (isOwner) {
+            subscriberEditCallback();
+            subscriberDeleteCallback();
+          }
+        }
+      })
   }
 
 }

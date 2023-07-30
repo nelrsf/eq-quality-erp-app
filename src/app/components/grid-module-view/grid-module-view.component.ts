@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faArrowUpRightFromSquare, faCogs, faEdit, faFolderTree, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faArrowUpRightFromSquare, faCogs, faEdit, faFolderTree, faInfo, faInfoCircle, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IModule } from 'src/app/Model/interfaces/IModule';
 import { ITable } from 'src/app/Model/interfaces/ITable';
@@ -32,6 +32,7 @@ export class GridModuleViewComponent {
   constructor(private ngbModal: NgbModal) { }
 
   @ViewChild('navigatorModal') navigatorModal!: ElementRef;
+  @ViewChild('infoModal') infoModal!: ElementRef;
 
   @Input() data!: Array<IModule | ITable>;
   @Input() moduleName!: string;
@@ -47,8 +48,12 @@ export class GridModuleViewComponent {
     edit: faArrowUpRightFromSquare,
     delete: faTrash,
     cogs: faCogs,
-    move: faFolderTree
+    move: faFolderTree,
+    info: faInfoCircle
   }
+
+  infoTitle!: string;
+  infoText!: string;
 
   onDeleteItem(name: string | undefined) {
     if (!name) {
@@ -77,6 +82,12 @@ export class GridModuleViewComponent {
       return this.moduleName;
     }
     return item.name ? item.name : '';
+  }
+
+  showInfo(item: ITable){
+    this.infoText = item.description ? item.description: '';
+    this.infoTitle = item.label ? item.label: '';
+    this.ngbModal.open(this.infoModal);
   }
 
 }

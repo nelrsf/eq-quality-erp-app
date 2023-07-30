@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faArrowUpRightFromSquare, faCogs, faEdit, faFolderTree, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faArrowUpRightFromSquare, faCogs, faEdit, faFolderTree, faInfoCircle, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IModule } from 'src/app/Model/interfaces/IModule';
 import { ITable } from 'src/app/Model/interfaces/ITable';
@@ -10,6 +10,7 @@ import { NavigatorComponent } from '../navigator/navigator.component';
 import { ShowIfIsAdmin } from 'src/app/directives/permissions/show-if-is-admin.directive';
 import { ShowIfIsOwner } from 'src/app/directives/permissions/show-if-is-owner.directive';
 import { ShowIfCanDelete } from 'src/app/directives/permissions/show-if-can-delete.directive';
+import { TooltipDirective } from 'src/app/directives/tooltip.directive';
 
 
 @Component({
@@ -24,7 +25,8 @@ import { ShowIfCanDelete } from 'src/app/directives/permissions/show-if-can-dele
     NavigatorComponent,
     ShowIfIsAdmin,
     ShowIfIsOwner,
-    ShowIfCanDelete
+    ShowIfCanDelete,
+    TooltipDirective
   ]
 })
 export class GridViewComponent {
@@ -32,6 +34,7 @@ export class GridViewComponent {
   constructor(private ngbModal: NgbModal) { }
 
   @ViewChild('navigatorModal') navigatorModal!: ElementRef;
+  @ViewChild('infoModal') infoModal!: ElementRef;
 
   @Input() data!: Array<IModule | ITable>;
   @Input() moduleName!: string;
@@ -43,11 +46,16 @@ export class GridViewComponent {
 
   currentSelectedItem!: ITable;
 
+
+  infoTitle!: string;
+  infoText!: string;
+
   icons = {
     edit: faArrowUpRightFromSquare,
     delete: faTrash,
     cogs: faCogs,
-    move: faFolderTree
+    move: faFolderTree,
+    info: faInfoCircle
   }
 
   onDeleteItem(name: string | undefined) {
@@ -84,6 +92,12 @@ export class GridViewComponent {
       table: item.name ? item.name : '',
       module: this.moduleName
     };
+  }
+
+  showInfo(item: ITable){
+    this.infoText = item.description ? item.description: '';
+    this.infoTitle = item.label ? item.label: '';
+    this.ngbModal.open(this.infoModal);
   }
 
 }

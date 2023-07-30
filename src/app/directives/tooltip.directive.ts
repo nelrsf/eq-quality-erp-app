@@ -25,17 +25,21 @@ export class TooltipDirective implements AfterViewInit {
 
   @HostListener('mouseenter', ['$event'])
   onMouseEnter(event: any) {
+    this.showTooltip(event);
+  }
+
+  showTooltip(event: any) {
     this.tooltip.style.position = 'fixed';
-    const offsetx = 30;
-    const offsety = 30;
+    const offsetx = 10;
+    const offsety = 10;
     this.tooltip.style.left = event.x + offsetx + 'px';
     this.tooltip.style.top = event.y + offsety + 'px';
-    if(!this.urlImage){
+    if (!this.urlImage) {
       this.tooltip.innerHTML = this.eqTooltip;
     } else {
       this.tooltip.innerHTML = `<img src='${this.eqTooltip}' width='200rem'/>`;
     }
-    this.tooltip.style.display = "flex";
+    this.tooltip.style.display = "block";
   }
 
   @HostListener('mouseleave', ['$event'])

@@ -8,7 +8,11 @@ export const environment = {
   apiUrl: 'http://localhost:3000',
   authUrl: 'http://localhost:3001',
   filesUrl: 'http://localhost:3002',
-  recoveryCodeKey: "EQ_ADMIN_RECOVERY"
+  recoveryCodeKey: "EQ_ADMIN_RECOVERY",
+  adminTables: {
+    profile: 'Perfiles',
+    users: 'Usuarios'
+  }
 };
 
 /*

@@ -1,0 +1,5 @@
+li a, li {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: initial;
+}

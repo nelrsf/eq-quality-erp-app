@@ -5,11 +5,16 @@ import { TablesService } from "../pages/tables/tables.service";
 import { Observable, Subscriber } from "rxjs";
 import { ModulesService } from "../pages/modules/modules.service";
 import { IModule } from "../Model/interfaces/IModule";
+import { environment } from "src/environments/environment";
 
 @Injectable({
     providedIn: 'root'
 })
 export class PermissionsService {
+
+    usersTable: string = environment.adminTables.users;
+    profilesTable: string = environment.adminTables.profile;
+
     constructor(private userService: UserService, private tablesService: TablesService, private modulesService: ModulesService) { }
 
     canEditTable(module: string, table: string): Observable<boolean> {
@@ -34,6 +39,41 @@ export class PermissionsService {
                                     return;
                                 }
                                 if (tableEditPermissions?.includes(profile._id)) {
+                                    subscriber.next(true);
+                                    return;
+                                } else {
+                                    subscriber.next(false);  
+                                    return;
+                                }
+                            }
+                        )
+                    });
+            }
+        )
+    }
+
+    canDeleteTable(module: string, table: string): Observable<boolean> {
+        return new Observable<boolean>(
+            (subscriber: Subscriber<unknown>) => {
+                if (!table) {
+                    subscriber.next(false);
+                    return;
+                }
+                const user = this.userService.getUser();
+                if (!user) {
+                    subscriber.next(false);
+                    return;
+                }
+                this.getUserProfile(module, user,
+                    (profile: any) => {
+                        this.getTableData(table, module, profile,
+                            (_user: IUser, table: any) => {
+                                const tableDeletePermissions = table?.table_metadata?.permissions.delete;
+                                if (!tableDeletePermissions) {
+                                    subscriber.next(false);
+                                    return;
+                                }
+                                if (tableDeletePermissions?.includes(profile._id)) {
                                     subscriber.next(true);
                                     return;
                                 } else {
@@ -118,7 +158,7 @@ export class PermissionsService {
     }
 
     getUserProfile(module: string, user: IUser, callback: (...data: any) => void) {
-        this.tablesService.getRowsByColumnAndValue(module, '__users_module_table__', 'Email', user.email)
+        this.tablesService.getRowsByColumnAndValue(module, this.usersTable, 'Email', user.email)
             .subscribe(
                 (data: any) => {
                     if (data.length !== 0) {
@@ -129,7 +169,7 @@ export class PermissionsService {
     }
 
     getProfileData(module: string, profile: string, callback: (...args: any) => void) {
-        this.tablesService.getRowsByColumnAndValue(module, '__profiles_module_table__', 'Nombre', profile)
+        this.tablesService.getRowsByColumnAndValue(module, this.profilesTable, 'Nombre', profile)
             .subscribe({
                 next: (data: any) => {
                     if (data.length > 0) {

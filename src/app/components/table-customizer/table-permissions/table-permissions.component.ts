@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import { DataTableComponent } from '../../crud/data-table/data-table.component';
 import { ModulesService } from 'src/app/pages/modules/modules.service';
 import { ITable } from 'src/app/Model/interfaces/ITable';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'eq-table-permissions',
@@ -38,7 +39,7 @@ export class TablePermissionsComponent implements AfterViewInit {
 
 
   ngAfterViewInit(): void {
-    this.tablesService.getAllRows(this.module, "__profiles_module_table__")
+    this.tablesService.getAllRows(this.module, environment.adminTables.profile)
       .subscribe(
         {
           next: (result: any) => {

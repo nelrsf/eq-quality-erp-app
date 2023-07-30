@@ -4,7 +4,7 @@
             <a href="#"><fa-icon [icon]="icons.home"></fa-icon></a>
         </li>
         <li class="breadcrumb-item">
-            <a [href]="'tables/' + module">{{module}}</a>
+            <a [href]="'tables/' + module">{{moduleLabel ? moduleLabel : module}}</a>
         </li>
         <li class="breadcrumb-item" *ngFor="let segment of getRouteSegments(); let i = index">
             <ng-container *ngIf="i !== getRouteSegments().length - 1 then nsegment; else lastSegment"></ng-container>

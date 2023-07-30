@@ -7,6 +7,7 @@ import { ErrorComponent } from 'src/app/components/alerts/error/error.component'
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LoadingComponent } from 'src/app/components/miscelaneous/loading/loading.component';
 import { CommonModule } from '@angular/common';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'eq-permissions',
@@ -36,7 +37,7 @@ export class PermissionsComponent implements AfterViewInit {
 
 
   ngAfterViewInit(): void {
-    this.tablesService.getAllRows(this.columnData.module, "__profiles_module_table__")
+    this.tablesService.getAllRows(this.columnData.module, environment.adminTables.profile)
       .subscribe(
         {
           next: (result: any) => {

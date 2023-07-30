@@ -3,7 +3,7 @@
         <div>
             {{column.value.columnName}}
         </div>
-        <div class="config-field-menu">
+        <div [showIfIsAdmin]="module" [showIfIsOwner]="module" class="config-field-menu">
             <fa-icon [icon]="icons.cog"></fa-icon>
         </div>
     </label>

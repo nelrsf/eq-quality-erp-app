@@ -28,6 +28,7 @@ nav {
     color: var(--bs-emphasis-color-rgb);
     display: inline-block;
     vertical-align: top;
+    margin: 0.25px;
 }
 
 .breadcrumb.breadcrumb-custom .breadcrumb-item:before {

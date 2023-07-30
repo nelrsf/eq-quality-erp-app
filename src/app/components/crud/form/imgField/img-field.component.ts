@@ -5,6 +5,8 @@ import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCamera, faCirclePlus, faCog, faUpDownLeftRight, faUpload } from '@fortawesome/free-solid-svg-icons';
 import { FileUploaderComponent } from 'src/app/components/miscelaneous/file-uploader/file-uploader.component';
+import { ShowIfIsAdmin } from 'src/app/directives/permissions/show-if-is-admin.directive';
+import { ShowIfIsOwner } from 'src/app/directives/permissions/show-if-is-owner.directive';
 
 @Component({
   selector: 'eq-img-field',
@@ -16,7 +18,9 @@ import { FileUploaderComponent } from 'src/app/components/miscelaneous/file-uplo
     HttpClientModule,
     CommonModule,
     FontAwesomeModule,
-    FileUploaderComponent
+    FileUploaderComponent,
+    ShowIfIsAdmin,
+    ShowIfIsOwner
   ]
 })
 export class ImgFieldComponent implements OnInit{
@@ -25,6 +29,7 @@ export class ImgFieldComponent implements OnInit{
 
   @Input() column: any;
   @Input() images!: Array<string>
+  @Input() module!: string;
   @Output() imagesChange = new EventEmitter<Array<string>>();
 
   icons = {

@@ -4,3 +4,7 @@
     right: 1rem;
     padding: 0 2%;
 }
+
+.error-message-text {
+    word-wrap: break-word;
+}

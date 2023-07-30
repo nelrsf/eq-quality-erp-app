@@ -2,15 +2,16 @@
     <div #DnDContainer class="fields-container d-flex w-100">
         <div *ngFor="let column of columns | keyvalue; let i = index" class="field d-flex align-items-center"
             [style.width]="getWidth(column.value)" eqDrag [eqDragKey]="column.key" [(eqDropTarget)]="columns">
-            <div [ngSwitch]="getAsColumn(column.value).type" class="draggable-card" *ngIf="!getAsColumn(column.value).isRestricted">
-                
+            <div [ngSwitch]="getAsColumn(column.value).type" class="draggable-card"
+                *ngIf="!getAsColumn(column.value).isRestricted">
+
                 <div *ngSwitchCase="'string'">
                     <div class="m-2 form-group">
                         <label class="my-1 control-label">
                             <div>
                                 {{getColumnName(column.value)}}
                             </div>
-                            <div class="config-field-menu">
+                            <div [showIfIsAdmin]="module" [showIfIsOwner]="module" class="config-field-menu">
                                 <fa-icon [icon]="icons.cog"></fa-icon>
                             </div>
                         </label>
@@ -24,11 +25,12 @@
                             <div>
                                 {{getColumnName(column.value)}}
                             </div>
-                            <div class="config-field-menu">
+                            <div [showIfIsAdmin]="module" [showIfIsOwner]="module" class="config-field-menu">
                                 <fa-icon [icon]="icons.cog"></fa-icon>
                             </div>
                         </label>
-                        <input [style.colorScheme]="getColorScheme()" type="datetime-local" class="form-control" placeholder="" formControlName="{{column.key}}">
+                        <input [style.colorScheme]="getColorScheme()" type="datetime-local" class="form-control"
+                            placeholder="" formControlName="{{column.key}}">
                     </div>
                 </div>
 
@@ -38,7 +40,7 @@
                             <div>
                                 {{getColumnName(column.value)}}
                             </div>
-                            <div class="config-field-menu">
+                            <div [showIfIsAdmin]="module" [showIfIsOwner]="module" class="config-field-menu">
                                 <fa-icon [icon]="icons.cog"></fa-icon>
                             </div>
                         </label>
@@ -53,27 +55,30 @@
                             <div>
                                 {{getColumnName(column.value)}}
                             </div>
-                            <div class="config-field-menu">
+                            <div [showIfIsAdmin]="module" [showIfIsOwner]="module" class="config-field-menu">
                                 <fa-icon [icon]="icons.cog"></fa-icon>
                             </div>
                         </label>
-                        <eq-file-field [(files)]="this.imagesFormData[getAsColumn(column.value).columnName]"></eq-file-field>
+                        <eq-file-field
+                            [(files)]="this.imagesFormData[getAsColumn(column.value).columnName]"></eq-file-field>
                     </div>
                 </div>
 
 
                 <div *ngSwitchCase="'image'">
-                    <eq-img-field [column]="column" [(images)]="this.imagesFormData[getAsColumn(column.value).columnName]"></eq-img-field>
+                    <eq-img-field [column]="column" [module]="module"
+                        [(images)]="this.imagesFormData[getAsColumn(column.value).columnName]"></eq-img-field>
                 </div>
 
                 <div *ngSwitchCase="'boolean'">
                     <div class="form-check m-2">
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" formControlName="{{column.key}}">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"
+                            formControlName="{{column.key}}">
                         <label class="form-check-label control-label" for="flexCheckDefault">
                             <div>
                                 {{getColumnName(column.value)}}
                             </div>
-                            <div class="config-field-menu">
+                            <div [showIfIsAdmin]="module" [showIfIsOwner]="module" class="config-field-menu">
                                 <fa-icon [icon]="icons.cog"></fa-icon>
                             </div>
                         </label>
@@ -86,7 +91,7 @@
                             <div>
                                 {{getColumnName(column.value)}}
                             </div>
-                            <div class="config-field-menu">
+                            <div [showIfIsAdmin]="module" [showIfIsOwner]="module" class="config-field-menu">
                                 <fa-icon [icon]="icons.cog"></fa-icon>
                             </div>
                         </label>
@@ -102,7 +107,7 @@
     <div *ngIf="hasError" class="my-3 text-danger">
         {{errorMessage}}
     </div>
-    
+
     <div class="buttons d-flex justify-content-between align-items-center w-100">
         <button type="submit" class="btn btn-primary d-flex align-items-center" [disabled]="loading">
             <div *ngIf="loading" class="spinner-border mx-1 spinner" role="status">
@@ -110,13 +115,12 @@
             </div>
             <span class="mx-1">Guardar cambios</span>
         </button>
-        <button type="button" class="btn btn-primary d-flex align-items-center" [disabled]="loading" (click)="submitConfiguration($event)">
-            <fa-icon [icon]="icons.cogs"></fa-icon>
-        </button>
+        <div [showIfIsAdmin]="module" [showIfIsOwner]="module">
+            <button type="button" class="btn btn-primary d-flex align-items-center" [disabled]="loading"
+                (click)="submitConfiguration($event)">
+                <fa-icon [icon]="icons.cogs"></fa-icon>
+            </button>
+        </div>
     </div>
 
 </form>
-
-
-
-
