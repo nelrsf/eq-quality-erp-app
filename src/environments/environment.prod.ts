@@ -8,7 +8,11 @@ export const environment = {
   apiUrl: 'https://eco-quality-erp-crud-service.vercel.app',
   authUrl: 'https://eco-quality-auth.vercel.app',
   filesUrl: 'https://eq-files.onrender.com',
-  recoveryCodeKey: "210_SANTI_Y_3_SILVIA_2_LOS_AMO_1"
+  recoveryCodeKey: "210_SANTI_Y_3_SILVIA_2_LOS_AMO_1",
+  adminTables: {
+    profile: 'Perfiles',
+    users: 'Usuarios'
+  }
 };
 
 
