@@ -54,7 +54,7 @@
   }
 
   .brand {
-    transform: scale(2) translateX(-5%);
+    /* transform: scale(2) translateX(-5%); */
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -64,9 +64,9 @@
     .text-center {
         padding: 5% 30%;
       }
-      form .brand {
+      /* form .brand {
         width: 300px!important;
-    }
+    } */
   }
 
 
@@ -74,10 +74,10 @@
     .text-center {
         padding: 5% 12%;
       }
-    form .brand {
+    /* form .brand {
         transform: scale(1.5) translateX(-5%);
         width: 180px!important;
-    }
+    } */
   }
 
   .invalid-text {

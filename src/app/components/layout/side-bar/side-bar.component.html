@@ -1,4 +1,4 @@
-<div class="side-bar-header">
+<div class="side-bar-header mt-1">
     <div class="side-bar-toggler">
         <button class="btn" (click)="toggleSideBar($event)">
             <fa-icon [icon]="icons.bars"></fa-icon>
@@ -6,7 +6,7 @@
     </div>
     <div class="side-bar-brand">
         <!-- <img src="../../../../assets/logo/logo_black-removebg.png" alt=""> -->
-        <eq-logo></eq-logo>
+        <eq-logo [width]="45" [fontSize]="'0.6em'"></eq-logo>
     </div>
 </div>
 <div #sideBarWrapper class="side-bar-wrapper" (blur)="hideSideBar()">

@@ -3,12 +3,12 @@
 </div>
 <div class="text-center">
     <form class="form-signin w-100 m-auto" [formGroup]="getForm()" (submit)="onSubmit()">
-        <div class="mb-4 brand text-center">
-            <eq-logo></eq-logo>
+        <div class="brand w-100">
+            <eq-logo [width]="80"></eq-logo>
         </div>
-        <h5 class="h5 mb-3 fw-normal">Inicia con tus credenciales</h5>
+        <span class="mb-3 fw-normal h6">Inicia con tus credenciales</span>
 
-        <div class="form-floating">
+        <div class="form-floating mt-4">
             <input type="email" class="fs-8 form-control" formControlName="email"
                 [ngClass]="[isInvalidField('email')?'is-invalid':'']">
             <label class="fs-8" for="floatingInput">E-mail</label>
