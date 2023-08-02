@@ -52,6 +52,7 @@ export class UserProfileComponent implements OnInit {
     if (!this.user) {
       return
     }
+    console.log(this.imageFile)
     this.user.image = this.imageFile[0];
   }
 
