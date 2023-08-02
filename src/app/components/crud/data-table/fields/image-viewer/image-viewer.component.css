@@ -5,6 +5,7 @@ img{
 
 button {
     opacity: 0.5;
+    color: var(--bs-emphasis-color-rgb);
 }
 
 .img-preview {
