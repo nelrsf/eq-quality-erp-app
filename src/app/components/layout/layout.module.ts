@@ -8,6 +8,7 @@ import { FooterComponent } from './footer/footer.component';
 import { PageRendererComponent } from './page-renderer/page-renderer/page-renderer.component';
 import { PageRendererDirective } from './page-renderer/page-renderer.directive';
 import { LogoComponent } from './logo/logo.component';
+import { UserProfileComponent } from '../user-profile/user-profile.component';
 
 
 
@@ -22,7 +23,8 @@ import { LogoComponent } from './logo/logo.component';
   ],
   imports: [
     CommonModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    UserProfileComponent
   ],
   exports: [
     SideBarComponent,

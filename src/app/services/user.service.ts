@@ -4,6 +4,7 @@ import { BehaviorSubject } from "rxjs";
 import { IUser } from "../Model/interfaces/IUser";
 import { AuthService } from "../pages/auth/auth.service";
 import { TablesService } from "../pages/tables/tables.service";
+import { environment } from "src/environments/environment";
 
 @Injectable({
     providedIn: 'root'
@@ -47,11 +48,24 @@ export class UserService {
                         {
                             _id: data._id,
                             email: data.Email,
-                            name: data.Nombre
+                            name: data.Nombre,
+                            image: data.Imagen ? data.Imagen : 'https://bootdey.com/img/Content/avatar/avatar7.png'
                         }
                     )
                 })
             )
+    }
+
+    saveUser(user: IUser){
+        const module = environment.adminTables.mainUsersModule;
+        const table = environment.adminTables.mainUsersTable;
+        const userRow = {
+            _id: user._id,
+            Email: user.email,
+            Nombre: user.name,
+            Imagen: user.image
+        }
+        return this.tableService.updateRows(module, table, [userRow]);
     }
 
 }

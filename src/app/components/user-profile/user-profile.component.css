@@ -1,0 +1,16 @@
+.image-container {
+    position: relative;
+}
+
+.file-uploader {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+input {
+    background-color: transparent;
+    border-style: none;
+    outline: none;
+    text-align: center;
+}

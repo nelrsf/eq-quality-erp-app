@@ -14,7 +14,7 @@
             <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
                 <div class="nav-profile">
                     <div class="profile-img">
-                        <img src="https://images.unsplash.com/photo-1511367461989-f85a21fda167?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvZmlsZXxlbnwwfHwwfHw%3D&w=1000&q=80"
+                        <img src="{{userData?.image ? userData.image : ''}}"
                             alt="">
                     </div>
                 </div>
@@ -29,8 +29,24 @@
                 <li>
                     <hr class="dropdown-divider">
                 </li>
+                <li><a class="dropdown-item" role="button" (click)="openUserCustomizer()">Perfil</a></li>
                 <li><a class="dropdown-item" role="button" (click)="loguot()">Cerrar sesión</a></li>
             </ul>
         </li>
     </ul>
 </nav>
+
+
+<!-- User Modal -->
+<ng-template #userModal let-modal>
+    <div class="m-0 modal-dialog mw-100">
+        <div class="modal-content">
+            <div class="modal-header px-3 py-2">
+                Perfil de Usuario
+            </div>
+            <div class="modal-body">
+                <eq-user-profile></eq-user-profile>
+            </div>
+        </div>
+    </div>
+</ng-template>

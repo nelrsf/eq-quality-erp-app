@@ -11,7 +11,9 @@ export const environment = {
   recoveryCodeKey: "EQ_ADMIN_RECOVERY",
   adminTables: {
     profile: 'Perfiles',
-    users: 'Usuarios'
+    users: 'Usuarios',
+    mainUsersModule: '_eq__admin_manager',
+    mainUsersTable: 'users'
   }
 };
 

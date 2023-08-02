@@ -11,7 +11,9 @@ export const environment = {
   recoveryCodeKey: "210_SANTI_Y_3_SILVIA_2_LOS_AMO_1",
   adminTables: {
     profile: 'Perfiles',
-    users: 'Usuarios'
+    users: 'Usuarios',
+    mainUsersModule: '_eq__admin_manager',
+    mainUsersTable: 'users'
   }
 };
 

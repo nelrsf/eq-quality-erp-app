@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { docsData } from './docs-data';
 
 @Component({
   selector: 'eq-api-docs',
@@ -6,5 +7,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./api-docs.component.css']
 })
 export class ApiDocsComponent {
+
+  public docsData = docsData;
 
 }

@@ -1,7 +1,10 @@
-import { AfterViewInit, ChangeDetectorRef, Component } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { IUser } from 'src/app/Model/interfaces/IUser';
 import { AuthService } from 'src/app/pages/auth/auth.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'eq-nav-bar',
@@ -10,22 +13,26 @@ import { AuthService } from 'src/app/pages/auth/auth.service';
 })
 export class NavBarComponent implements AfterViewInit {
 
+  @ViewChild('userModal') userModal!: ElementRef;
+
   theme: 'dark' | 'light' = 'light';
+  userData!: IUser;
 
   icons = {
     lightTheme: faSun,
     darkTheme: faMoon
   }
 
-  constructor(private authService: AuthService, private router: Router, private cdr: ChangeDetectorRef) { }
+  constructor(private authService: AuthService, private router: Router, private ngbModal: NgbModal, private cdr: ChangeDetectorRef, private userService: UserService) { }
 
   ngAfterViewInit(): void {
     const theme = localStorage.getItem('theme');
     if (theme === 'dark') {
       this.theme = 'dark';
-    } else if(theme === 'light'){
+    } else if (theme === 'light') {
       this.theme = 'light';
     }
+    this.getUserData();
     this.cdr.detectChanges();
   }
 
@@ -52,6 +59,23 @@ export class NavBarComponent implements AfterViewInit {
       default:
         return 'Tema Oscuro'
     }
+  }
+
+  openUserCustomizer() {
+    this.ngbModal.open(this.userModal);
+  }
+
+  getUserData() {
+    this.userService.getUserSubject()
+      .subscribe(
+        (user: IUser | null) => {
+          if (!user) {
+            return;
+          }
+          this.userData = user;
+          console.log(this.userData)
+        }
+      )
   }
 
 }

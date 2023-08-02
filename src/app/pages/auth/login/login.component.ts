@@ -86,7 +86,8 @@ export class LoginComponent implements OnInit {
             this.userService.setUser({
               _id: data._id,
               email: data.email,
-              name: data.name
+              name: data.name,
+              image: data.image ? data.image : 'https://bootdey.com/img/Content/avatar/avatar7.png'
             })
             this.router.navigate(['/']);
             this.loading = false;

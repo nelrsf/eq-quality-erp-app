@@ -28,6 +28,7 @@ import { ErrorUnauthorizedPageComponent } from './error/401/error-unauthorized.c
 import { ApiDocsComponent } from './api-docs/api-docs.component';
 import { BreadcrumbComponent } from '../components/breadcrumb/breadcrumb.component';
 import { GridModuleViewComponent } from '../components/grid-module-view/grid-module-view.component';
+import { UserProfileComponent } from '../components/user-profile/user-profile.component';
 
 
 
