@@ -62,22 +62,23 @@
 
   @media (max-width: 1200px) {
     .text-center {
-        padding: 5% 30%;
+        padding: 8% 30%;
       }
       /* form .brand {
         width: 300px!important;
     } */
   }
 
-
   @media (max-width: 750px) {
     .text-center {
-        padding: 5% 12%;
+        padding: 16% 12%;
       }
-    /* form .brand {
-        transform: scale(1.5) translateX(-5%);
-        width: 180px!important;
-    } */
+  }
+
+  @media (max-width: 550px) {
+    .text-center {
+        padding: 30% 12%;
+      }
   }
 
   .invalid-text {

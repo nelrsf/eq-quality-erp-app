@@ -14,12 +14,17 @@ export class UserService {
     private currentUserSubject = new BehaviorSubject<IUser | null>(null);
 
     constructor(private authService: AuthService, private tableService: TablesService) {
+        this.loadUser();
+    }
+
+    public loadUser(){
         const token = this.authService.getToken();
         if (token && !this.getUser()) {
             const id = this.getUserIdFromLocalStorage(token);
             this.getUserFromServer(id);
         }
     }
+
 
     private getUserIdFromLocalStorage(token: string) {
         const payload: any = atob(token.split('.')[1]);
@@ -36,7 +41,7 @@ export class UserService {
         return this.currentUserSubject.getValue();
     }
 
-    setUser(user: IUser) {
+    setUser(user: IUser | null) {
         this.currentUserSubject.next(user);
     }
 

@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -11,7 +11,7 @@ import { UserService } from 'src/app/services/user.service';
   templateUrl: './nav-bar.component.html',
   styleUrls: ['./nav-bar.component.css']
 })
-export class NavBarComponent implements AfterViewInit {
+export class NavBarComponent implements AfterViewInit, OnDestroy {
 
   @ViewChild('userModal') userModal!: ElementRef;
 
@@ -24,6 +24,10 @@ export class NavBarComponent implements AfterViewInit {
   }
 
   constructor(private authService: AuthService, private router: Router, private ngbModal: NgbModal, private cdr: ChangeDetectorRef, private userService: UserService) { }
+  
+  ngOnDestroy(): void {
+    this.userService.setUser(null);
+  }
 
   ngAfterViewInit(): void {
     const theme = localStorage.getItem('theme');
@@ -38,7 +42,8 @@ export class NavBarComponent implements AfterViewInit {
 
   loguot() {
     this.authService.logout();
-    this.router.navigate(['/auth/login'])
+    this.userService.setUser(null);
+    this.router.navigate(['/auth/login']);
   }
 
   switchTheme() {
@@ -73,9 +78,12 @@ export class NavBarComponent implements AfterViewInit {
             return;
           }
           this.userData = user;
-          console.log(this.userData)
         }
       )
+  }
+
+  getProfileImage(){
+    return this.userData?.image ? this.userData.image : '../../../../assets/images/previews/1.jpg'
   }
 
 }
