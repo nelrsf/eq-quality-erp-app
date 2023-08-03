@@ -7,7 +7,7 @@ export const environment = {
   hmr: false,
   apiUrl: 'http://localhost:3000',
   authUrl: 'http://localhost:3001',
-  filesUrl: 'http://localhost:3002',
+  filesUrl: 'https://eq-files.onrender.com',
   recoveryCodeKey: "EQ_ADMIN_RECOVERY",
   adminTables: {
     profile: 'Perfiles',

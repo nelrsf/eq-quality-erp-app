@@ -67,7 +67,7 @@
 
                 <div *ngSwitchCase="'image'">
                     <eq-img-field [column]="column" [module]="module"
-                        [(images)]="this.imagesFormData[getAsColumn(column.value).columnName]"></eq-img-field>
+                        [(images)]="this.imagesFormData[getAsColumn(column.value)._id]"></eq-img-field>
                 </div>
 
                 <div *ngSwitchCase="'boolean'">

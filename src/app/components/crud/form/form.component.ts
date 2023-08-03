@@ -177,8 +177,8 @@ export class FormComponent implements OnInit {
     this.errorMessage = "";
     let newRow: any = {};
     Object.keys(this.columns).forEach(
-      (columnName) => {
-        newRow[columnName] = this.form.controls[columnName].value;
+      (columnId) => {
+        newRow[columnId] = this.form.controls[columnId].value;
       }
     )
     this.asignImagesFormData(newRow);
