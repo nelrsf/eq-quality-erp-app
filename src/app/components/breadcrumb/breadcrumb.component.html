@@ -4,17 +4,19 @@
             <a href="#"><fa-icon [icon]="icons.home"></fa-icon></a>
         </li>
         <li class="breadcrumb-item">
-            <a [href]="'tables/' + module">{{moduleLabel ? moduleLabel : module}}</a>
+            <a [href]="'tables/' + module">{{moduleLabel ? moduleLabel : ''}}</a>
         </li>
         <li class="breadcrumb-item" *ngFor="let segment of getRouteSegments(); let i = index">
             <ng-container *ngIf="i !== getRouteSegments().length - 1 then nsegment; else lastSegment"></ng-container>
             <ng-template #nsegment>
-                <a [routerLink]="linkGetterFuntion('',{isFolder:true, routeParam: segment})">{{segment}}</a>
+                <a [routerLink]="linkGetterFuntion('',{isFolder:true, routeParam: segment})">
+                    {{labels[segment]}}
+                </a>
             </ng-template>
             <ng-template #lastSegment>
                 <span class="mx-3">
                     <a [routerLink]="linkGetterFuntion('',{isFolder:true, routeParam: segment})">
-                        {{segment}}
+                        {{labels[segment]}}
                     </a>
                 </span>
             </ng-template>

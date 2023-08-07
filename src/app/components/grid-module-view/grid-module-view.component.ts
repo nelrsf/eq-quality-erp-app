@@ -39,7 +39,7 @@ export class GridModuleViewComponent {
 
   @Input() linkGetterFuntion!: (value: string | undefined, object?: any) => string
 
-  @Output() delete = new EventEmitter<string>();
+  @Output() delete = new EventEmitter<IModule | ITable>();
   @Output() configItem = new EventEmitter<IModule | ITable>();
 
   currentSelectedItem!: ITable;
@@ -55,11 +55,11 @@ export class GridModuleViewComponent {
   infoTitle!: string;
   infoText!: string;
 
-  onDeleteItem(name: string | undefined) {
-    if (!name) {
+  onDeleteItem(module: IModule | ITable) {
+    if (!module) {
       return;
     }
-    this.delete.emit(name);
+    this.delete.emit(module);
   }
 
   onConfigItem(item: IModule | ITable) {

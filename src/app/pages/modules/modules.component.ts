@@ -22,7 +22,7 @@ export class ModulesComponent implements OnInit, AfterViewInit {
   modules!: IModule[];
   newModuleName!: string;
   confirmDeleteModuleText!: string;
-  currentModule!: string;
+  currentModule!: IModule;
   linkedFields: IMapAsUrl[] = [];
   loading: boolean = false;
   errorMessage!: string;
@@ -116,15 +116,15 @@ export class ModulesComponent implements OnInit, AfterViewInit {
       );
   }
 
-  openDeleteModal(module: string) {
-    this.currentModule = module;
-    this.confirmDeleteModuleText = "";
+  openDeleteModal(module: IModule | ITable) {
+    this.currentModule = (module as IModule);
+    this.confirmDeleteModuleText = this.currentModule.label ? this.currentModule.label : 'Delete my module';
     this.ngbModal.open(this.deleteModule);
   }
 
   deleteCurrentModule() {
     this.closeModal();
-    this.modulesService.deleteModule(this.currentModule)
+    this.modulesService.deleteModule(this.currentModule.name)
       .subscribe(
         {
           next: (response) => {

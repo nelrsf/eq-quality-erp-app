@@ -33,7 +33,7 @@ export class PermissionsService {
                     (profile: any) => {
                         this.getTableData(table, module, profile,
                             (_user: IUser, table: any) => {
-                                const tableEditPermissions = table?.table_metadata?.permissions.edit;
+                                const tableEditPermissions = table?.table_metadata?.permissions?.edit;
                                 if (!tableEditPermissions) {
                                     subscriber.next(false);
                                     return;
@@ -68,7 +68,7 @@ export class PermissionsService {
                     (profile: any) => {
                         this.getTableData(table, module, profile,
                             (_user: IUser, table: any) => {
-                                const tableDeletePermissions = table?.table_metadata?.permissions.delete;
+                                const tableDeletePermissions = table?.table_metadata?.permissions?.delete;
                                 if (!tableDeletePermissions) {
                                     subscriber.next(false);
                                     return;

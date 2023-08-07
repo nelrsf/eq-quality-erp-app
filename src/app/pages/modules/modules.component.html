@@ -43,14 +43,14 @@
                 <form (submit)="deleteCurrentModule()">
                     <div class="form-group">
                         <p for="exampleInputEmail1">Está a punto de eliminar el módulo <b
-                                class="text-danger">{{currentModule}}</b>, para confirmar digite
-                            <b>{{currentModule}}</b> en la caja de texto
+                                class="text-danger">{{currentModule.label}}</b>, para confirmar digite
+                            <b>{{currentModule.label}}</b> en la caja de texto
                         </p>
                         <input type="text" class="form-control" placeholder="" name="newModule"
                             [(ngModel)]="confirmDeleteModuleText" autocomplete="off">
                     </div>
                     <hr>
-                    <button [disabled]="currentModule!==confirmDeleteModuleText" type="submit"
+                    <button [disabled]="currentModule.label!==confirmDeleteModuleText" type="submit"
                         class="btn btn-danger">Eliminar módulo</button>
                 </form>
             </div>

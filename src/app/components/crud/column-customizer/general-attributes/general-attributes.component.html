@@ -10,11 +10,11 @@
     <input type="text" class="form-control mb-3" [(ngModel)]="columnData.columnName"
       [name]="'fieldName'">
   
-    <label class="form-label mb-3">Nombre de tabla</label>
-    <input type="text" [disabled]="true" class="form-control mb-3" [value]="columnData.table">
+    <!-- <label class="form-label mb-3">Nombre de tabla</label> -->
+    <input type="text" [hidden]="true" class="form-control mb-3" [value]="columnData.table">
   
-    <label class="form-label mb-3">Nombre de módulo</label>
-    <input type="text" [disabled]="true" class="form-control mb-3" [value]="columnData.module">
+    <!-- <label class="form-label mb-3">Nombre de módulo</label> -->
+    <input type="text" [hidden]="true" class="form-control mb-3" [value]="columnData.module">
   
     <label class="form-label mb-3">Tipo de columna</label>
     <select class="form-select mb-3" [(ngModel)]="columnData['type']" name="typeColumn" [disabled]="columnData.isRestricted">
@@ -34,18 +34,18 @@
       <select class="form-select mb-3" name="restrictedModule" [(ngModel)]="columnData.moduleRestriction"
         (change)="changeModule()">
         <option *ngIf="!columnData.moduleRestriction"></option>
-        <option *ngFor="let module of modulesForRestriction">
-          {{module.name}}
+        <option *ngFor="let module of modulesForRestriction" [value]="module.name">
+          {{module.label}}
         </option>
       </select>
-  
+
       <div *ngIf="tablesForRestriction.length !== 0">
         <label class="form-label mb-3">Tabla</label>
         <select class="form-select mb-3" name="restrictedTable" [(ngModel)]="columnData.tableRestriction"
           (change)="searchColumns()">
           <option *ngIf="!columnData.tableRestriction"></option>
-          <option *ngFor="let table of tablesForRestriction">
-            {{table.name}}
+          <option *ngFor="let table of tablesForRestriction" [value]="table.name">
+            {{table.label}}
           </option>
         </select>
       </div>

@@ -25,7 +25,7 @@ import { TablesService } from 'src/app/pages/tables/tables.service';
 })
 export class GeneralAttributesComponent {
 
-  icons={
+  icons = {
     alert: faExclamationCircle
   }
   uniqueRestrictionMessage = "Antes de declarar esta columna como única debe asegurarse que no existan valores duplicados, de lo contrario perderá información en las busquedas de datos"
@@ -60,7 +60,7 @@ export class GeneralAttributesComponent {
         edit: [],
         read: [],
         delete: []
-    }
+      }
     }
   }
 
@@ -86,7 +86,7 @@ export class GeneralAttributesComponent {
       this.searchModules();
     }
   }
-  
+
 
 
   getObjToStr() {
@@ -111,14 +111,14 @@ export class GeneralAttributesComponent {
       );
   }
 
-  changeModule(){
+  changeModule() {
     this.columnData.tableRestriction = "";
     this.columnData.columnRestriction = "";
     this.searchTables();
   }
 
   searchModules() {
-    if(this.columnData.isRestricted){
+    if (this.columnData.isRestricted) {
       this.columnData.type = ColumnTypes.string;
     }
     this.moduleService.getAllModules().subscribe(
@@ -136,7 +136,7 @@ export class GeneralAttributesComponent {
     this.tableService.getTablesAndFolders(this.columnData.moduleRestriction).subscribe(
       (data: any) => {
         this.tablesForRestriction = data.filter(
-          (table:any)=>{
+          (table: any) => {
             return table.name !== this.columnData.table && !table.isFolder;
           }
         );
