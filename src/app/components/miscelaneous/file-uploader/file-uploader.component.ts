@@ -70,6 +70,9 @@ export class FileUploaderComponent implements AfterViewInit {
     this.fileService.uploadFile(formData)
       .subscribe({
         next: (data: any) => {
+          if(!this.files){
+            this.files = [];
+          }
           this.files.push(...data.urls);
           this.filesChange.emit(this.files);
           this.loading = false;
