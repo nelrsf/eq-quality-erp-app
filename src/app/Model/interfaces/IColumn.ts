@@ -24,5 +24,6 @@ export enum ColumnTypes {
     boolean = 'boolean',
     image = 'image',
     file = 'file',
-    list = 'list'
+    list = 'list',
+    table = 'table'
 }

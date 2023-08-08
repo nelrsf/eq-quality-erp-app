@@ -62,6 +62,9 @@ export class AutocompleteComponent implements OnInit, AfterViewInit {
   }
 
   filterData = (name: string) => {
+    if(!this.data){
+      return [];
+    }
     return this.data.filter(d =>
       d.value.toLowerCase().indexOf(name.toLowerCase()) !== -1);
   }

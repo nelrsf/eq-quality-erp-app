@@ -162,6 +162,22 @@ export class RowsRestrictionsService {
     );
     return isUniqueObserver;
   }
+
+  getColumnRestrictionData(column: IColumn){
+    const module = column.moduleRestriction;
+    if (!module) {
+      return;
+    }
+    const table = column.tableRestriction;
+    if (!table) {
+      return;
+    }
+    const colunnId = column.columnRestriction;
+    if (!colunnId) {
+      return;
+    }
+    return this.tableService.getColumnData(module, table, colunnId);
+  }
 }
 
 

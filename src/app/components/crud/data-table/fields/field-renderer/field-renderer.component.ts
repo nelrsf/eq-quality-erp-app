@@ -11,6 +11,8 @@ import { ImageViewerComponent } from '../image-viewer/image-viewer.component';
 import { ListComponent } from '../list/list.component';
 import { NumberComponent } from '../number/number.component';
 import { StringComponent } from '../string/string.component';
+import { TableViewerButtonComponent } from '../table-viewer/table-viewer.component';
+
 
 @Component({
   selector: 'eq-field-renderer',
@@ -39,7 +41,7 @@ export class FieldRendererComponent implements AfterViewInit, OnDestroy {
   constructor(private cdr: ChangeDetectorRef, private rowsRestriction: RowsRestrictionsService) { }
 
   ngAfterViewInit(): void {
-    this.selectComponent();
+    this.selectComponentByRestriction();
     this.subscribeToDataRestrictionChanges();
     this.cdr.detectChanges();
   }
@@ -55,7 +57,7 @@ export class FieldRendererComponent implements AfterViewInit, OnDestroy {
       .subscribe(
         (columnRestriction: IColumnRestriction) => {
           this.restrictions = columnRestriction.restrictions;
-          if(!this.component){
+          if (!this.component) {
             return
           }
           this.component.instance.dataRestrictions = this.restrictions;
@@ -64,66 +66,112 @@ export class FieldRendererComponent implements AfterViewInit, OnDestroy {
   }
 
 
-  createStringComponent() {
+  initializeForeignRestriction() {
+    if (!this.column?.isRestricted) {
+      return;
+    }
     const checkRestrictionsObserver = this.checkRestriction();
     if (checkRestrictionsObserver) {
       checkRestrictionsObserver.subscribe(
         (value: any) => {
           this.value = value;
           this.valueChange.emit(this.value);
-          this.component = this.createComponent(StringComponent);
-          this.component.instance.dataRestrictions = this.restrictions;
-          this.component.instance.isRestricted = this.column?.isRestricted;
-          this.component.instance.restriction = this.restriction;
-          this.isFieldDisabledByRestrictions();
-          this.subscribeToDataListChange();
-          this.subscribeToForeignRestrictionChange();
         }
       );
-    } else {
-      this.component = this.createComponent(StringComponent);
-      this.isFieldDisabledByRestrictions();
-      this.subscribeToDataListChange();
-      if (this.column?.isRestricted) {
-        this.component.instance.isRestricted = this.column?.isRestricted;
-        this.subscribeToForeignRestrictionChange();
-      }
     }
+    this.component.instance.dataRestrictions = this.restrictions;
+    this.component.instance.isRestricted = this.column?.isRestricted;
+    this.component.instance.restriction = this.restriction;
+    this.isFieldDisabledByRestrictions();
+    this.subscribeToDataListChange();
+    this.subscribeToForeignRestrictionChange();
   }
 
-  selectComponent() {
-    switch (this.column?.type) {
-      case "string":
-        this.createStringComponent()
+
+  // createStringComponent() {
+  //   const checkRestrictionsObserver = this.checkRestriction();
+  //   if (checkRestrictionsObserver) {
+  //     checkRestrictionsObserver.subscribe(
+  //       (value: any) => {
+  //         this.value = value;
+  //         this.valueChange.emit(this.value);
+  //         this.component = this.createComponent(StringComponent);
+  //         this.component.instance.dataRestrictions = this.restrictions;
+  //         this.component.instance.isRestricted = this.column?.isRestricted;
+  //         this.component.instance.restriction = this.restriction;
+  //         this.isFieldDisabledByRestrictions();
+  //         this.subscribeToDataListChange();
+  //         this.subscribeToForeignRestrictionChange();
+  //       }
+  //     );
+  //   } else {
+  //     this.component = this.createComponent(StringComponent);
+  //     this.isFieldDisabledByRestrictions();
+  //     this.subscribeToDataListChange();
+  //     if (this.column?.isRestricted) {
+  //       this.component.instance.isRestricted = this.column?.isRestricted;
+  //       this.subscribeToForeignRestrictionChange();
+  //     }
+  //   }
+  // }
+
+  selectComponentByRestriction() {
+    if (!this.column) {
+      return;
+    }
+    if (this.column?.isRestricted) {
+      this.rowsRestriction.getColumnRestrictionData(this.column)
+        ?.subscribe(
+          (col: any) => {
+            this.selectComponent(col);
+          }
+        )
+      return;
+    }
+    this.selectComponent(this.column);
+  }
+
+  selectComponent(column: IColumn) {
+    switch (column?.type) {
+      case ColumnTypes.string:
+        this.component = this.createComponent(StringComponent);
         break
-      case "image":
-        const imgComponent = this.createComponent(ImageViewerComponent);
-        this.susbscribeToOpenModal(imgComponent);
+      case ColumnTypes.image:
+        this.component = this.createComponent(ImageViewerComponent);
+        this.susbscribeToOpenModal(this.component);
         break
-      case "boolean":
-        this.createComponent(BooleanComponent);
+      case ColumnTypes.boolean:
+        this.component = this.createComponent(BooleanComponent);
         break
-      case "date":
-        this.createComponent(DateComponent);
+      case ColumnTypes.date:
+        this.component = this.createComponent(DateComponent);
         break
-      case "number":
-        this.createComponent(NumberComponent);
+      case ColumnTypes.number:
+        this.component = this.createComponent(NumberComponent);
         break
-      case "file":
-        this.createComponent(FileComponent);
+      case ColumnTypes.file:
+        this.component = this.createComponent(FileComponent);
         break
-      case "list":
-        const listComponent = this.createComponent(ListComponent);
-        this.susbscribeToOpenModal(listComponent);
+      case ColumnTypes.list:
+        this.component = this.createComponent(ListComponent);
+        this.susbscribeToOpenModal(this.component);
+        break
+      case ColumnTypes.table:
+        this.component = this.createComponent(TableViewerButtonComponent);
+        this.susbscribeToOpenModal(this.component);
         break
       default:
-        this.createComponent(StringComponent)
+        this.component = this.createComponent(StringComponent)
         break
     }
+    this.initializeForeignRestriction();
   }
 
 
   subscribeToDataListChange() {
+    if (!this.component.instance.onListChange) {
+      return;
+    }
     this.component.instance.onListChange.subscribe(
       (data: Partial<ICellRestriction>) => {
         if (!data) {
@@ -183,10 +231,10 @@ export class FieldRendererComponent implements AfterViewInit, OnDestroy {
     )
       .subscribe(
         (foreignRestriction: Partial<ICellRestriction>) => {
-        if (!this.restriction) {
+          if (!this.restriction) {
             return;
           }
-          if(this.restriction.column._id === foreignRestriction.column?._id){
+          if (this.restriction.column._id === foreignRestriction.column?._id) {
             return;
           }
           this.restriction.rowIdRestriction = foreignRestriction.rowIdRestriction;
@@ -200,6 +248,7 @@ export class FieldRendererComponent implements AfterViewInit, OnDestroy {
           this.checkRestriction()?.subscribe(
             (value: any) => {
               this.component.instance.value = value;
+              this.valueChange.emit(value);
             }
           )
         }

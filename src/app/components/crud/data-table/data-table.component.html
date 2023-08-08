@@ -151,3 +151,17 @@
         </div>
     </div>
 </ng-template>
+
+<ng-template #tableViewer let-modal>
+    <div class="m-0 modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title">Tabla enlazada</span>
+                <button type="button" class="btn-close mx-2" aria-label="Close" (click)="closeModal()"></button>
+            </div>
+            <div class="modal-body">
+                <eq-data-table></eq-data-table>
+            </div>
+        </div>
+    </div>
+</ng-template>

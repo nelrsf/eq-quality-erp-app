@@ -18,6 +18,7 @@ import { ShowIfIsAdmin } from 'src/app/directives/permissions/show-if-is-admin.d
 import { ShowIfIsOwner } from 'src/app/directives/permissions/show-if-is-owner.directive';
 
 
+
 export interface IMapAsUrl {
   columnId: string,
   urlMapFunction: (fieldName: string, row: object) => string;
@@ -65,6 +66,7 @@ export class DataTableComponent implements OnInit, AfterViewInit {
   @ViewChild("modalContextMenu") modalContextMenu!: ElementRef;
   @ViewChild("imgViewer") imgViewer!: ElementRef;
   @ViewChild("listViewer") listViewer!: ElementRef;
+  @ViewChild("tableViewer") tableViewer!: ElementRef;
 
   @Input('mapAsUrl') mapAsUrl: IMapAsUrl[] = [];
 
@@ -78,6 +80,7 @@ export class DataTableComponent implements OnInit, AfterViewInit {
   rows: Array<any> = [];
   images: Array<string> = [];
   list: Array<string> = [];
+  tableModalRows: Array<string> = [];
   rowsChecked: IRowChecked[] = [];
   columnsFunctions: IColumnFunctions[] = [];
   columnsRestrictions: IColumnRestriction[] = [];
@@ -210,7 +213,10 @@ export class DataTableComponent implements OnInit, AfterViewInit {
   }
 
   openModal(event: ColumnTypes, row: any, columnId: string) {
-    if(!row[columnId]){
+    if (!row[columnId]) {
+      row[columnId] = [];
+    }
+    if(!Array.isArray(row[columnId])){
       row[columnId] = [];
     }
     switch (event) {
@@ -220,12 +226,20 @@ export class DataTableComponent implements OnInit, AfterViewInit {
       case ColumnTypes.list:
         this.openListViewer(row[columnId]);
         break;
+      case ColumnTypes.table:
+        this.openTableViewer(row[columnId]);
+        break;
     }
   }
 
   openImageViewer(images: Array<any>) {
     this.images = images;
     this.ngbModal.open(this.imgViewer);
+  }
+
+  openTableViewer(rows: Array<string>) {
+    this.tableModalRows = rows;
+    this.ngbModal.open(this.tableViewer, { size: 'lg' });
   }
 
   openListViewer(list: Array<any>) {

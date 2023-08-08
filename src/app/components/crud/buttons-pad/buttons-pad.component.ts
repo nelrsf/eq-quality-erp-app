@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, EventEmitter, Input, NgModule, Output, ViewChild } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faPlus, faPencil, faTrash, faSearch, faRulerVertical, faBars, faFolderPlus, faSave } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faPencil, faTrash, faSearch, faRulerVertical, faBars, faFolderPlus, faSave, faTableList } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TooltipDirective } from 'src/app/directives/tooltip.directive';
 
@@ -25,7 +25,7 @@ export class ButtonsPadComponent {
     update: faSave,
     delete: faTrash,
     search: faSearch,
-    newColumn: faRulerVertical,
+    newColumn: faTableList,
     bars: faBars,
     addFolder: faFolderPlus
   }

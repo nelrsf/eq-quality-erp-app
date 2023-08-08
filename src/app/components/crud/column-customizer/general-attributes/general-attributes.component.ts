@@ -32,6 +32,7 @@ export class GeneralAttributesComponent {
 
   @Input() columnData!: IColumn;
   COLUMN_TYPES = Object.values(ColumnTypes);
+  COLUMN_TYPES_ENUM = ColumnTypes;
 
   @Output() columnOperationEnd = new EventEmitter<void>();
 
@@ -160,7 +161,7 @@ export class GeneralAttributesComponent {
           this.columnsForRestriction = [];
           const keys = Object.keys(data).filter(
             (colKey) => {
-              return data[colKey].type === ColumnTypes.string || data[colKey].type === ColumnTypes.list;
+              return true;
             });
           keys.forEach(key => {
             this.columnsForRestriction.push(data[key]);

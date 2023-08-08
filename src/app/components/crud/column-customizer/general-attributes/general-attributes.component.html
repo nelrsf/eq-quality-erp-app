@@ -22,10 +22,10 @@
         {{columnType}}
       </option>
     </select>
-  
+
     <input class="form-check-input mb-3" type="checkbox" [(ngModel)]="columnData.isRestricted" [name]="'restricted'" (change)="searchModules()">
     <label class="form-check-label mb-3">
-      Aplicar restricción
+      Aplicar restricción 
     </label>
   
     <div class="card p-2 mb-3" *ngIf="columnData.isRestricted">
@@ -83,13 +83,16 @@
       Oculto
     </label>
   
-    <input class="form-check-input mb-3" type="checkbox" [(ngModel)]="columnData.unique" [name]="'hidden'">
-    <label class="form-check-label mb-3">
-      Valor único 
-      <fa-icon [eqTooltip]="uniqueRestrictionMessage" [eqTooltipWidth]="'16rem'"  class="text-warning" [icon]="icons.alert">
-  
-      </fa-icon>
-    </label>
+    <div *ngIf="columnData.type === COLUMN_TYPES_ENUM.string || columnData.type === COLUMN_TYPES_ENUM.number">
+      <input class="form-check-input mb-3" type="checkbox" [(ngModel)]="columnData.unique" [name]="'unique'">
+      <label class="form-check-label mb-3">
+        Valor único 
+        <fa-icon [eqTooltip]="uniqueRestrictionMessage" [eqTooltipWidth]="'16rem'"  class="text-warning" [icon]="icons.alert">
+    
+        </fa-icon>
+      </label>
+    </div>
+
   
     <hr>
   

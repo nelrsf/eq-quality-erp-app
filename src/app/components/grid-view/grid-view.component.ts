@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faArrowUpRightFromSquare, faCogs, faEdit, faFolderTree, faInfoCircle, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faArrowUpRightFromSquare, faCogs, faEdit, faFileImport, faFolderTree, faInfoCircle, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IModule } from 'src/app/Model/interfaces/IModule';
 import { ITable } from 'src/app/Model/interfaces/ITable';
@@ -54,7 +54,7 @@ export class GridViewComponent {
     edit: faArrowUpRightFromSquare,
     delete: faTrash,
     cogs: faCogs,
-    move: faFolderTree,
+    move: faFileImport,
     info: faInfoCircle
   }
 
