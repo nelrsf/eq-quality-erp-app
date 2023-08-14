@@ -55,6 +55,9 @@ export class SubtableComponent implements AfterViewInit {
         {
           next: (result: any) => {
             console.log(result);
+            if(!result){
+              result = [];
+            }
             this.dataTable.data.next(result);
             this.tableRows = this.dataTable.data.getValue();
             this.cdr.detectChanges();
