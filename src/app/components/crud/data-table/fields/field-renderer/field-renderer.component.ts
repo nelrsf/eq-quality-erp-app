@@ -88,33 +88,6 @@ export class FieldRendererComponent implements AfterViewInit, OnDestroy {
   }
 
 
-  // createStringComponent() {
-  //   const checkRestrictionsObserver = this.checkRestriction();
-  //   if (checkRestrictionsObserver) {
-  //     checkRestrictionsObserver.subscribe(
-  //       (value: any) => {
-  //         this.value = value;
-  //         this.valueChange.emit(this.value);
-  //         this.component = this.createComponent(StringComponent);
-  //         this.component.instance.dataRestrictions = this.restrictions;
-  //         this.component.instance.isRestricted = this.column?.isRestricted;
-  //         this.component.instance.restriction = this.restriction;
-  //         this.isFieldDisabledByRestrictions();
-  //         this.subscribeToDataListChange();
-  //         this.subscribeToForeignRestrictionChange();
-  //       }
-  //     );
-  //   } else {
-  //     this.component = this.createComponent(StringComponent);
-  //     this.isFieldDisabledByRestrictions();
-  //     this.subscribeToDataListChange();
-  //     if (this.column?.isRestricted) {
-  //       this.component.instance.isRestricted = this.column?.isRestricted;
-  //       this.subscribeToForeignRestrictionChange();
-  //     }
-  //   }
-  // }
-
   selectComponentByRestriction() {
     if (!this.column) {
       return;

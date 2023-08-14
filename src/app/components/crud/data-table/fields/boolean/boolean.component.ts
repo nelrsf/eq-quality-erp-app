@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
   ]
 })
 export class BooleanComponent {
+  @Input() isRestricted!: boolean;
   @Input() value!: boolean;
   @Output() valueChange = new EventEmitter<boolean>();
 

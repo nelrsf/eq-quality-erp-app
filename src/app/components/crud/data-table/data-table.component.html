@@ -83,7 +83,7 @@
                                                     [column]="getColumnProperties(column._id)"
                                                     [restriction]="getCellRestriction(column, row['_id'])"
                                                     [restrictions]="getRestrictionsByColumnId(column._id)"
-                                                    (openModal)="openModal($event, row, column._id)"
+                                                    (openModal)="openModal($event, row, column)"
                                                     (onListChange)="setRowRestriction($event, row._id, column)">
                                                 </eq-field-renderer>
                                             </ng-template>
@@ -132,7 +132,7 @@
                 <button type="button" class="btn-close mx-2" aria-label="Close" (click)="closeModal()"></button>
             </div>
             <div class="modal-body">
-                <eq-gallery-view [(images)]="images" (imagesChange)="closeModal()"></eq-gallery-view>
+                <eq-gallery-view [disabled]="modalDisabled"  [(images)]="images" (imagesChange)="closeModal()"></eq-gallery-view>
             </div>
         </div>
     </div>
@@ -146,22 +146,9 @@
                 <button type="button" class="btn-close mx-2" aria-label="Close" (click)="closeModal()"></button>
             </div>
             <div class="modal-body">
-                <eq-list-viewer [(listData)]="list" (listDataChange)="closeModal()"></eq-list-viewer>
+                <eq-list-viewer [disabled]="modalDisabled" [(listData)]="list" (listDataChange)="closeModal()"></eq-list-viewer>
             </div>
         </div>
     </div>
 </ng-template>
 
-<ng-template #tableViewer let-modal>
-    <div class="m-0 modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span class="modal-title">Tabla enlazada</span>
-                <button type="button" class="btn-close mx-2" aria-label="Close" (click)="closeModal()"></button>
-            </div>
-            <div class="modal-body">
-                <eq-data-table></eq-data-table>
-            </div>
-        </div>
-    </div>
-</ng-template>

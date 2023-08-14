@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faAngleLeft, faAngleRight, IconDefinition, faCogs } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -16,6 +16,8 @@ import { ListFieldComponent } from '../form/listField/list-field.component';
 import { FieldsModule } from './fields/fields.module';
 import { ShowIfIsAdmin } from 'src/app/directives/permissions/show-if-is-admin.directive';
 import { ShowIfIsOwner } from 'src/app/directives/permissions/show-if-is-owner.directive';
+import { SubtableComponent } from '../../subtable/subtable.component';
+import { ISubtableValue } from 'src/app/Model/interfaces/ISubtableValue';
 
 
 
@@ -35,7 +37,7 @@ export interface IColumnFunction {
   columnFunction: () => void;
 }
 
-interface IRowChecked {
+export interface IRowChecked {
   _id: string,
   checked: boolean
 }
@@ -57,7 +59,8 @@ interface IRowChecked {
     GalleryViewComponent,
     ListViewerComponent,
     ShowIfIsAdmin,
-    ShowIfIsOwner
+    ShowIfIsOwner,
+    SubtableComponent
   ]
 })
 export class DataTableComponent implements OnInit, AfterViewInit {
@@ -69,6 +72,7 @@ export class DataTableComponent implements OnInit, AfterViewInit {
   @ViewChild("tableViewer") tableViewer!: ElementRef;
 
   @Input('mapAsUrl') mapAsUrl: IMapAsUrl[] = [];
+  @Output() rowsSelectionChange = new EventEmitter<Array<IRowChecked>>();
 
   icons = {
     angleLeft: faAngleLeft,
@@ -80,14 +84,15 @@ export class DataTableComponent implements OnInit, AfterViewInit {
   rows: Array<any> = [];
   images: Array<string> = [];
   list: Array<string> = [];
-  tableModalRows: Array<string> = [];
+  subtableData!: ISubtableValue;
   rowsChecked: IRowChecked[] = [];
   columnsFunctions: IColumnFunctions[] = [];
   columnsRestrictions: IColumnRestriction[] = [];
   contextMenuModal: boolean = false;
   columnsProperties!: IColumn[];
+  modalDisabled: boolean = false;
 
-  constructor(private ngbModal: NgbModal, private rowsRestrictionService: RowsRestrictionsService) { }
+  constructor(private ngbModal: NgbModal, private rowsRestrictionService: RowsRestrictionsService, private router: Router) { }
 
   ngAfterViewInit(): void {
     this.subscribeToOnResizeTable();
@@ -212,13 +217,9 @@ export class DataTableComponent implements OnInit, AfterViewInit {
     }
   }
 
-  openModal(event: ColumnTypes, row: any, columnId: string) {
-    if (!row[columnId]) {
-      row[columnId] = [];
-    }
-    if(!Array.isArray(row[columnId])){
-      row[columnId] = [];
-    }
+  openModal(event: ColumnTypes, row: any, column: IColumn) {
+    const columnId = column._id;
+    this.modalDisabled = column.isRestricted;
     switch (event) {
       case ColumnTypes.image:
         this.openImageViewer(row[columnId]);
@@ -227,22 +228,48 @@ export class DataTableComponent implements OnInit, AfterViewInit {
         this.openListViewer(row[columnId]);
         break;
       case ColumnTypes.table:
-        this.openTableViewer(row[columnId]);
+        this.openTableViewer(row[columnId], row._id, column);
         break;
     }
   }
 
   openImageViewer(images: Array<any>) {
+    if (!images) {
+      images = [];
+    }
+    if (!Array.isArray(images)) {
+      images = [];
+    }
     this.images = images;
     this.ngbModal.open(this.imgViewer);
   }
 
-  openTableViewer(rows: Array<string>) {
-    this.tableModalRows = rows;
-    this.ngbModal.open(this.tableViewer, { size: 'lg' });
+  openTableViewer(subtableData: any, rowId: string, column: IColumn) {
+    if (!Array.isArray(subtableData?.rows)) {
+      (subtableData as ISubtableValue) = {
+        column: column.linkedTable?.column ? column.linkedTable?.column : '',
+        module: column.linkedTable?.module ? column.linkedTable?.module : '',
+        table: column.linkedTable?.table ? column.linkedTable?.table : '',
+        rows: [],
+        rowId: rowId,
+        valueHost: {
+          column: column._id,
+          module: column.module,
+          table: column.table
+        }
+      }
+    }
+    this.subtableData = subtableData;
+    this.router.navigate(['./subtable'], { state: { data: subtableData } })
   }
 
   openListViewer(list: Array<any>) {
+    if (!list) {
+      list = [];
+    }
+    if (!Array.isArray(list)) {
+      list = [];
+    }
     this.list = list;
     this.ngbModal.open(this.listViewer);
   }
@@ -306,6 +333,7 @@ export class DataTableComponent implements OnInit, AfterViewInit {
     if (rowCheck) {
       rowCheck.checked = !rowCheck.checked;
     }
+    this.rowsSelectionChange.emit(this.rowsChecked);
   }
 
   setRowRestriction(data: any, rowId: string, column: IColumn) {

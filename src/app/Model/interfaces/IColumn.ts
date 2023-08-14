@@ -1,4 +1,5 @@
 import { IPermission } from "./IPermission"
+import { ISubtable } from "./ISubtableValue"
 
 export interface IColumn {
     _id: any,
@@ -14,7 +15,8 @@ export interface IColumn {
     moduleRestriction?: string,
     tableRestriction?: string,
     columnRestriction?: string,
-    permissions: IPermission
+    permissions: IPermission,
+    linkedTable?: ISubtable
 }
 
 export enum ColumnTypes {

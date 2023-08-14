@@ -1,0 +1,29 @@
+<div>
+    <label class="form-label mb-1">Módulo</label>
+    <select class="form-select mb-3" name="restrictedModule" [(ngModel)]="module" (change)="changeModule()">
+        <option *ngIf="!module"></option>
+        <option *ngFor="let moduleItem of modulesForRestriction" [ngValue]="moduleItem">
+            {{moduleItem.label}}
+        </option>
+    </select>
+</div>
+
+<div *ngIf="tablesForRestriction?.length !== 0">
+    <label class="form-label mb-1">Tabla</label>
+    <select class="form-select mb-3" name="restrictedTable" [(ngModel)]="table" (change)="changeTable()">
+        <option *ngIf="!table"></option>
+        <option *ngFor="let tableItem of tablesForRestriction" [ngValue]="tableItem">
+            {{tableItem.label}}
+        </option>
+    </select>
+</div>
+
+<div *ngIf="columnsForRestriction?.length !== 0">
+    <label class="form-label mb-1">Columna</label>
+    <select class="form-select mb-3" name="restrictedColumn" [(ngModel)]="column" (change)="changeColumn()">
+        <option *ngIf="!column"></option>
+        <option *ngFor="let columnItem of columnsForRestriction" [ngValue]="columnItem">
+            {{columnItem.columnName}}
+        </option>
+    </select>
+</div>

@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { LoadingComponent } from '../../miscelaneous/loading/loading.component';
-import { IColumn } from 'src/app/Model/interfaces/IColumn';
+import { ColumnTypes, IColumn } from 'src/app/Model/interfaces/IColumn';
 import { GeneralAttributesComponent } from './general-attributes/general-attributes.component';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { PermissionsComponent } from './permissions/permissions.component';
+import { SubtableCustomizerComponent } from './subtable-customizer/subtable-customizer.component';
 
 
 @Component({
@@ -18,13 +19,16 @@ import { PermissionsComponent } from './permissions/permissions.component';
     GeneralAttributesComponent,
     PermissionsComponent,
     NgbNavModule,
-    PermissionsComponent
+    PermissionsComponent,
+    SubtableCustomizerComponent
   ]
 })
 export class ColumnCustomizerComponent {
 
   @Input() columnData!: IColumn;
   @Output() columnOperationEnd = new EventEmitter<void>();
+
+  COLUMN_TYPES_ENUM = ColumnTypes;
 
   public active: string = 'general';
 

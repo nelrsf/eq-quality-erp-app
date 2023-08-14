@@ -9,6 +9,10 @@ import { LoadingComponent } from 'src/app/components/miscelaneous/loading/loadin
 import { TooltipDirective } from 'src/app/directives/tooltip.directive';
 import { ModulesService } from 'src/app/pages/modules/modules.service';
 import { TablesService } from 'src/app/pages/tables/tables.service';
+import { ColumnSelector } from '../columnSelector/column-selector.component';
+import { IModule } from 'src/app/Model/interfaces/IModule';
+import { ITable } from 'src/app/Model/interfaces/ITable';
+import { ISubtable } from 'src/app/Model/interfaces/ISubtableValue';
 
 @Component({
   selector: 'eq-general-attributes',
@@ -20,7 +24,8 @@ import { TablesService } from 'src/app/pages/tables/tables.service';
     FormsModule,
     FontAwesomeModule,
     LoadingComponent,
-    TooltipDirective
+    TooltipDirective,
+    ColumnSelector
   ]
 })
 export class GeneralAttributesComponent {
@@ -84,7 +89,7 @@ export class GeneralAttributesComponent {
 
   getRestrictions() {
     if (this.columnData.isRestricted) {
-      this.searchModules();
+      // this.searchModules();
     }
   }
 
@@ -115,59 +120,37 @@ export class GeneralAttributesComponent {
   changeModule() {
     this.columnData.tableRestriction = "";
     this.columnData.columnRestriction = "";
-    this.searchTables();
+    // this.searchTables();
   }
 
-  searchModules() {
-    if (this.columnData.isRestricted) {
+  onRestrictionChange(event: any) {
+    const checked = event?.target?.checked;
+    if (checked) {
       this.columnData.type = ColumnTypes.string;
     }
-    this.moduleService.getAllModules().subscribe(
-      (data: any) => {
-        this.modulesForRestriction = data;
-        this.searchTables();
-      }
-    )
   }
 
-  searchTables() {
-    if (!this.columnData?.moduleRestriction) {
-      return
-    }
-    this.tableService.getTablesAndFolders(this.columnData.moduleRestriction).subscribe(
-      (data: any) => {
-        this.tablesForRestriction = data.filter(
-          (table: any) => {
-            return table.name !== this.columnData.table && !table.isFolder;
-          }
-        );
-        this.searchColumns();
-      }
-    );
+  moduleRestrictionChange(module: IModule) {
+    this.columnData.moduleRestriction = module.name;
   }
 
-  searchColumns() {
-    if (!this.columnData?.tableRestriction) {
-      return
-    }
-    if (!this.columnData?.moduleRestriction) {
-      return
-    }
-    this.tableService.getAllColumns(
-      this.columnData.moduleRestriction,
-      this.columnData.tableRestriction)
-      .subscribe(
-        (data: any) => {
-          this.columnsForRestriction = [];
-          const keys = Object.keys(data).filter(
-            (colKey) => {
-              return true;
-            });
-          keys.forEach(key => {
-            this.columnsForRestriction.push(data[key]);
-          })
-        }
-      )
+  tableRestrictionChange(table: ITable) {
+    this.columnData.tableRestriction = table.name;
   }
 
+  columnRestrictionChange(column: IColumn) {
+    this.columnData.columnRestriction = column._id;
+  }
+
+  getColumnSelectorData() {
+    return { 
+      module: this.columnData.moduleRestriction ? this.columnData.moduleRestriction : '', 
+      table: this.columnData.tableRestriction ? this.columnData.tableRestriction : '', 
+      column: this.columnData.columnRestriction ? this.columnData.columnRestriction : '' 
+    }
+  }
+
+  getTableFilterCallback(table: ITable, columnData?: IColumn){
+    return table.name !== columnData?.table && !table.isFolder;
+  }
 }

@@ -28,6 +28,7 @@ interface IImageLoadingState {
 })
 export class GalleryViewComponent {
 
+  @Input() disabled: boolean = false;
   @Input() images: Array<string> = [];
   @Output() imagesChange = new EventEmitter<Array<string>>();
 

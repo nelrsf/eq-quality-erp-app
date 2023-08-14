@@ -99,6 +99,12 @@ export class TablesService {
     return this.http.patch(encodeURI(urlRequest), rowData);
   }
 
+
+  updateRowByIdAndColumn(moduleName: string, tableName: string, column: string, rowId: string, row: any) {
+    const urlRequest = environment.apiUrl + this.endpointRows + this.endpointUpdate + "/" + moduleName + "/" + tableName + "/" + column + "/" + rowId;
+    return this.http.patch(encodeURI(urlRequest), row);
+  }
+
   deleteRows(moduleName: string, tableName: string, rowsChecked: any) {
     const urlRequest = environment.apiUrl + this.endpointRows + this.endpointDelete + "/" + moduleName + "/" + tableName;
     return this.http.post(encodeURI(urlRequest), rowsChecked);

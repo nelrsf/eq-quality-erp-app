@@ -5,7 +5,7 @@ import { faPlus, faPencil, faTrash, faSearch, faRulerVertical, faBars, faFolderP
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TooltipDirective } from 'src/app/directives/tooltip.directive';
 
-export type buttonType = 'delete' | 'save' | 'add' | 'add-column' | 'add-folder';
+export type buttonType = 'delete' | 'save' | 'add' | 'add-column' | 'add-folder' | 'add-row';
 
 @Component({
   selector: 'eq-buttons-pad',

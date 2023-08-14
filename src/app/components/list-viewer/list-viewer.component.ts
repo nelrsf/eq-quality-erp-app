@@ -18,6 +18,7 @@ import { faMinus, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 })
 export class ListViewerComponent implements OnInit {
 
+  @Input() disabled: boolean = false;
   @Input() listData: Array<any> = [];
   @Output() listDataChange = new EventEmitter<Array<any>>();
 

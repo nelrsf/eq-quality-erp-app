@@ -14,6 +14,7 @@ import { NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
 export class DateComponent {
 
   @Input() value!: string;
+  @Input() isRestricted!: boolean;
   @Output() valueChange = new EventEmitter<string>();
 
   onChange(event: any){

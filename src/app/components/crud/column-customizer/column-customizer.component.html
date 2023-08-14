@@ -20,6 +20,14 @@
 				<eq-permissions [columnData]="columnData" (columnOperationEnd)="onColumnOperationEnd()"></eq-permissions>
 			</ng-template>
 		</li>
+		<li *ngIf="this.columnData.type === COLUMN_TYPES_ENUM.table" ngbNavItem [ngbNavItem]="2">
+			<a ngbNavLink>
+				Tabla Enlazada
+			</a>
+			<ng-template ngbNavContent>
+				<eq-subtable-customizer (columnOperationEnd)="onColumnOperationEnd()" [columnData]="columnData"></eq-subtable-customizer>
+			</ng-template>
+		</li>
 	</ul>
 	<div [ngbNavOutlet]="navVertical">
 	</div>

@@ -17,6 +17,7 @@ import { FileUploaderComponent } from 'src/app/components/miscelaneous/file-uplo
 })
 export class FileComponent implements OnInit {
 
+  @Input() isRestricted: boolean = false;
   @Input() value!: string[];
   @Output() valueChange = new EventEmitter<string[]>();
 

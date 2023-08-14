@@ -1,0 +1,15 @@
+<div *ngIf="loading">
+    <eq-loading></eq-loading>
+  </div>
+<eq-breadcrumb [module]="getModule()"></eq-breadcrumb>
+<div class="d-inline-flex justify-content-end w-100">
+  <span class="badge bg-secondary">
+    <a class="nav-link" [routerLink]="getBackUrl()">
+      <fa-icon [icon]="icons.back"></fa-icon>
+      Regresar
+    </a>
+  </span>
+</div>
+<eq-buttons-pad [buttonsList]="['add', 'delete','save']" (_newRow)="createEmptyRow()"
+    (_deleteRows)="deleteRows()" (_updateRows)="saveRows()"></eq-buttons-pad>
+<eq-data-table (rowsSelectionChange)="rowsSelectionChange($event)"></eq-data-table>
