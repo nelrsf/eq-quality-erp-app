@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, EventEmitter, Input, NgModule, Output, ViewChild } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faPlus, faPencil, faTrash, faSearch, faRulerVertical, faBars, faFolderPlus, faSave, faTableList } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faPencil, faTrash, faSearch, faRulerVertical, faBars, faFolderPlus, faSave, faTableList, faRetweet } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TooltipDirective } from 'src/app/directives/tooltip.directive';
 
-export type buttonType = 'delete' | 'save' | 'add' | 'add-column' | 'add-folder' | 'add-row';
+export type buttonType = 'delete' | 'save' | 'add' | 'add-column' | 'add-folder' | 'add-row' | 'update-column';
 
 @Component({
   selector: 'eq-buttons-pad',
@@ -27,7 +27,8 @@ export class ButtonsPadComponent {
     search: faSearch,
     newColumn: faTableList,
     bars: faBars,
-    addFolder: faFolderPlus
+    addFolder: faFolderPlus,
+    refreshColumns: faRetweet
   }
 
   @ViewChild("buttonsModal") buttonsModal!: ElementRef;
@@ -40,6 +41,7 @@ export class ButtonsPadComponent {
   @Output() _updateRows = new EventEmitter<void>();
   @Output() _deleteRows = new EventEmitter<void>();
   @Output() _newColumn = new EventEmitter<void>();
+  @Output() _updateColumn = new EventEmitter<void>();
   @Output() _search = new EventEmitter<void>();
   @Output() _addFolder = new EventEmitter<void>();
 
@@ -60,6 +62,10 @@ export class ButtonsPadComponent {
 
   createColumn() {
     this._newColumn.emit();
+  }
+
+  updateColumn(){
+    this._updateColumn.emit();
   }
 
   search() {

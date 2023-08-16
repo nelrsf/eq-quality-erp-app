@@ -36,6 +36,12 @@
                     <fa-icon [icon]="icons.newColumn"></fa-icon>
                 </button>
             </div>
+
+            <div class="button-div" *ngIf="isDisabled('update-column')">
+                <button type="button" [eqTooltip]="'Actualizar Columnas'" class="btn btn-outline-secondary" (click)="updateColumn()">
+                    <fa-icon [icon]="icons.refreshColumns"></fa-icon>
+                </button>
+            </div>
         </div>
         <div *ngIf="buttonsList.length !== 0" class="p-1 buttons-wrapper d-block d-md-none">
             <div class="dropdown">
@@ -90,6 +96,14 @@
                                 <fa-icon [icon]="icons.newColumn"></fa-icon>
                             </div>
                             <span class="mx-2">Nueva columna</span>
+                        </a>
+                    </li>
+                    <li *ngIf="isDisabled('update-column')" class="list-group-item">
+                        <a role="button" class="d-flex nav-link" (click)="updateColumn()">
+                            <div class="opt-icon">
+                                <fa-icon [icon]="icons.refreshColumns"></fa-icon>
+                            </div>
+                            <span class="mx-2">Actualizar columnas</span>
                         </a>
                     </li>
                 </ul>

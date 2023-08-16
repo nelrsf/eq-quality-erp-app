@@ -19,8 +19,9 @@
                                                 (change)="toggleAll($event)">
                                         </div>
                                     </th>
-                                    <th eqDrag [eqDragKey]="column.columnName" [(eqDropTarget)]="column._id" scope="col"
-                                        *ngFor="let column of columnsProperties; let colIndex = index">
+                                    <th eqDrag [eqDragKey]="column._id" [(eqDropTarget)]="columnsPropertiesObj"
+                                        scope="col" (eqDropTargetChange)="onReorderColumns()"
+                                        *ngFor="let column of columnsProperties; let colIndex = index" [(ddOrder)]="column.columnOrder"> 
                                         <div class="col-header d-flex align-items-center">
                                             <span>
                                                 {{column.columnName}}
@@ -62,7 +63,8 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let row of filterRows(rows)" [ngClass]="[isRowChecked(row['_id'])?'row-selected':'']">
+                                <tr *ngFor="let row of filterRows(rows)"
+                                    [ngClass]="[isRowChecked(row['_id'])?'row-selected':'']">
                                     <td>
                                         <div class="form-check d-flex justify-content-center align-items-center">
                                             <input class="form-check-input" type="checkbox"
@@ -71,22 +73,22 @@
                                     </td>
                                     <td *ngFor="let column of columnsProperties">
                                         <div class="cell-value">
-                                            <ng-container
+                                            <!-- <ng-container
                                                 *ngIf="isLinkedField(column._id) then linkedField; else normalField"></ng-container>
                                             <ng-template #linkedField>
                                                 <a [href]="getLinkedText(column._id, row)">
                                                     {{row[column.columnName]}}
                                                 </a>
-                                            </ng-template>
-                                            <ng-template #normalField>
-                                                <eq-field-renderer [(value)]="row[column._id]"
-                                                    [column]="getColumnProperties(column._id)"
-                                                    [restriction]="getCellRestriction(column, row['_id'])"
-                                                    [restrictions]="getRestrictionsByColumnId(column._id)"
-                                                    (openModal)="openModal($event, row, column)"
-                                                    (onListChange)="setRowRestriction($event, row._id, column)">
-                                                </eq-field-renderer>
-                                            </ng-template>
+                                            </ng-template> -->
+                                            <!-- <ng-template #normalField> -->
+                                            <eq-field-renderer [(value)]="row[column._id]"
+                                                [column]="getColumnProperties(column._id)"
+                                                [restriction]="getCellRestriction(column, row['_id'])"
+                                                [restrictions]="getRestrictionsByColumnId(column._id)"
+                                                (openModal)="openModal($event, row, column)"
+                                                (onListChange)="setRowRestriction($event, row._id, column)">
+                                            </eq-field-renderer>
+                                            <!-- </ng-template> -->
                                         </div>
                                     </td>
                                 </tr>
@@ -132,7 +134,8 @@
                 <button type="button" class="btn-close mx-2" aria-label="Close" (click)="closeModal()"></button>
             </div>
             <div class="modal-body">
-                <eq-gallery-view [disabled]="modalDisabled"  [(images)]="images" (imagesChange)="closeModal()"></eq-gallery-view>
+                <eq-gallery-view [disabled]="modalDisabled" [(images)]="images"
+                    (imagesChange)="closeModal()"></eq-gallery-view>
             </div>
         </div>
     </div>
@@ -146,9 +149,9 @@
                 <button type="button" class="btn-close mx-2" aria-label="Close" (click)="closeModal()"></button>
             </div>
             <div class="modal-body">
-                <eq-list-viewer [disabled]="modalDisabled" [(listData)]="list" (listDataChange)="closeModal()"></eq-list-viewer>
+                <eq-list-viewer [disabled]="modalDisabled" [(listData)]="list"
+                    (listDataChange)="closeModal()"></eq-list-viewer>
             </div>
         </div>
     </div>
 </ng-template>
-

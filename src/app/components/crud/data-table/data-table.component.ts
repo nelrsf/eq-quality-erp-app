@@ -18,6 +18,7 @@ import { ShowIfIsAdmin } from 'src/app/directives/permissions/show-if-is-admin.d
 import { ShowIfIsOwner } from 'src/app/directives/permissions/show-if-is-owner.directive';
 import { SubtableComponent } from '../../subtable/subtable.component';
 import { ISubtableValue } from 'src/app/Model/interfaces/ISubtableValue';
+import { DnDOrderDirective } from 'src/app/directives/order.directive';
 
 
 
@@ -54,6 +55,7 @@ export interface IRowChecked {
     NgbModule,
     DragDirective,
     DropTargetDirective,
+    DnDOrderDirective,
     FieldsModule,
     ListFieldComponent,
     GalleryViewComponent,
@@ -73,6 +75,7 @@ export class DataTableComponent implements OnInit, AfterViewInit {
 
   @Input('mapAsUrl') mapAsUrl: IMapAsUrl[] = [];
   @Output() rowsSelectionChange = new EventEmitter<Array<IRowChecked>>();
+  @Output() columnsOrderChange = new EventEmitter<Array<IColumn>>();
 
   icons = {
     angleLeft: faAngleLeft,
@@ -90,6 +93,7 @@ export class DataTableComponent implements OnInit, AfterViewInit {
   columnsRestrictions: IColumnRestriction[] = [];
   contextMenuModal: boolean = false;
   columnsProperties!: IColumn[];
+  columnsPropertiesObj!: any;
   modalDisabled: boolean = false;
 
   constructor(private ngbModal: NgbModal, private rowsRestrictionService: RowsRestrictionsService, private router: Router) { }
@@ -138,6 +142,8 @@ export class DataTableComponent implements OnInit, AfterViewInit {
     this.columnsSubject.subscribe(
       (columns: IColumn[]) => {
         this.columnsProperties = columns;
+        this.columnsPropertiesObj = this.getColumnsAsOnject();
+        this.onReorderColumns(false);
       }
     )
   }
@@ -414,5 +420,28 @@ export class DataTableComponent implements OnInit, AfterViewInit {
       }
     );
     return colRestriction?.restrictions;
+  }
+
+  onReorderColumns(emitChange: boolean = true) {
+    this.columnsProperties = this.columnsProperties.sort(
+      (a: IColumn, b: IColumn) => { 
+        if(a.columnOrder === undefined || b.columnOrder === undefined){
+          return -1;
+        }
+        return a.columnOrder - b.columnOrder 
+      });
+      if(emitChange){
+        this.columnsOrderChange.emit(this.columnsProperties);
+      }
+  }
+
+  getColumnsAsOnject() {
+    const columnsObj: any = {};
+    this.columnsProperties.forEach(
+      (col: IColumn) => {
+        columnsObj[col._id] = col;
+      }
+    );
+    return columnsObj;
   }
 }

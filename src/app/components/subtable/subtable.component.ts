@@ -31,13 +31,14 @@ export class SubtableComponent implements AfterViewInit {
 
   @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
   @Output() dataChange = new EventEmitter<ISubtableValue>();
+  data!: ISubtableValue;
 
   tableRows: Array<any> = [];
   currentId: number = 0;
   rowsSelection: IRowChecked[] = [];
   loading: boolean = false;
 
-  data!: ISubtableValue;
+
   icons = {
     back: faArrowLeftLong
   }
@@ -109,7 +110,9 @@ export class SubtableComponent implements AfterViewInit {
             linkedTable: c.linkedTable,
             columnRestriction: c._id,
             moduleRestriction: data.module,
-            tableRestriction: data.table
+            tableRestriction: data.table,
+            columnOrder: c.columnOrder,
+            formOrder: c.formOrder
           }
         )
       }

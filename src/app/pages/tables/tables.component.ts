@@ -11,6 +11,7 @@ import { PermissionsService } from 'src/app/services/permissions.service';
 import { buttonType } from 'src/app/components/crud/buttons-pad/buttons-pad.component';
 import { UserService } from 'src/app/services/user.service';
 import { IUser } from 'src/app/Model/interfaces/IUser';
+import { concatMap, forkJoin, from } from 'rxjs';
 
 @Component({
   selector: 'eq-tables',
@@ -40,6 +41,7 @@ export class TablesComponent implements OnInit, AfterViewInit {
   columnsMetadata!: any;
   rowsBackup!: any;
   buttonsList: Array<buttonType> = [];
+  canConfig: boolean = false;
 
 
   constructor(private tableService: TablesService, private activatedRoute: ActivatedRoute, private cdRef: ChangeDetectorRef, private permissionsService: PermissionsService, private ngbModal: NgbModal, private changesTracker: ChangesTrackerService, private userService: UserService) { }
@@ -179,8 +181,6 @@ export class TablesComponent implements OnInit, AfterViewInit {
             return;
           }
           this.dataTable.data.next(result);
-          const headersNames = Object.keys(result[0]);
-          // this.dataTable.headersSubject.next(headersNames);
         },
         error: (error) => {
           console.error(error);
@@ -306,7 +306,7 @@ export class TablesComponent implements OnInit, AfterViewInit {
         console.log(response);
         this.getColumnsData(this.module, this.table);
       }
-    )
+    );
   }
 
   onCreatedRow() {
@@ -421,11 +421,58 @@ export class TablesComponent implements OnInit, AfterViewInit {
       .subscribe({
         next: (isOwner: boolean) => {
           if (isOwner) {
+            this.canConfig = true;
+            subscriberEditCallback();
+            subscriberDeleteCallback();
+          }
+        }
+      })
+
+    this.permissionsService.isAdmin(this.module)
+      .subscribe({
+        next: (isAdmin: boolean) => {
+          if (isAdmin) {
+            this.canConfig = true;
             subscriberEditCallback();
             subscriberDeleteCallback();
           }
         }
       })
   }
+
+  onColumnsOrderChange(_columns: IColumn[]) {
+    if (this.canConfig && !this.buttonsList.includes('update-column')) {
+      this.buttonsList.push('update-column');
+    }
+  }
+
+  updateColumns() {
+    const columns = this.dataTable.columnsSubject.getValue();
+    this.loading = true;
+
+    // Convierte el array de columnas en un Observable
+    const columnsObservable = from(columns);
+
+    columnsObservable.pipe(
+      concatMap((col: IColumn) => {
+        return this.tableService.upsertColumn(col);
+      })
+    ).subscribe({
+      next: (result: any) => {
+        console.log(result);
+        this.loading = false;
+      },
+      error: (error: any) => {
+        console.log(error);
+        this.loading = false;
+      },
+      complete: () => {
+        this.loading = false;
+        const indx = this.buttonsList.findIndex(b=>b=='update-column');
+        this.buttonsList.splice(indx, 1);
+      }
+    });
+  }
+
 
 }

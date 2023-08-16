@@ -1,7 +1,7 @@
 <form class="fields" (submit)="onSubmit()" [formGroup]="form">
     <div #DnDContainer class="fields-container d-flex w-100">
         <div *ngFor="let column of columns | keyvalue; let i = index" class="field d-flex align-items-center"
-            [style.width]="getWidth(column.value)" eqDrag [eqDragKey]="column.key" [(eqDropTarget)]="columns">
+            [style.width]="getWidth(column.value)" eqDrag [eqDragKey]="column.key" [(eqDropTarget)]="columns" (eqDropTargetChange)="onReorderColumns($event)">
             <div [ngSwitch]="getAsColumn(column.value).type" class="draggable-card"
                 *ngIf="!getAsColumn(column.value).isRestricted">
 

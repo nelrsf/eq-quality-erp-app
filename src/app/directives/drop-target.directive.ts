@@ -38,7 +38,7 @@ export class DropTargetDirective implements AfterViewInit {
     } else if (y > rect.height + rect.y - threshold) {
       this.renderer2.insertBefore(this.elementRef.nativeElement.parentNode, movingElement.nativeElement, this.elementRef.nativeElement)
     }
-
+    
     const newModel = this.dragDropServie.reOrderElements(this.elementRef.nativeElement.parentElement, this.eqDropTarget);
     this.eqDropTargetChange.emit(newModel);
   }

@@ -7,6 +7,8 @@ export interface IColumn {
     type: ColumnTypes,
     hidden: boolean,
     required: boolean,
+    formOrder?: number,
+    columnOrder?: number,
     table: string,
     module: string,
     width: number

@@ -210,4 +210,8 @@ export class FormComponent implements OnInit {
   getColumnName(column: any){
     return column.columnName;
   }
+
+  onReorderColumns(event: any){
+    console.log(event)
+  }
 }

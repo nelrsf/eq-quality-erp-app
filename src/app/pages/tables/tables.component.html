@@ -4,8 +4,8 @@
 
 <eq-breadcrumb [module]="module" [mainRoute]="mainRoute" [linkGetterFuntion]="getLinkFunction"></eq-breadcrumb>
 
-<eq-buttons-pad (_newColumn)="createColumn()" (_newRow)="createRow()" (_updateRows)="updateRows()" (_deleteRows)="deleteRows()" [buttonsList]="buttonsList"></eq-buttons-pad>
-<eq-data-table #tables [mapAsUrl]="linkedFields"></eq-data-table>
+<eq-buttons-pad (_newColumn)="createColumn()" (_newRow)="createRow()" (_updateRows)="updateRows()" (_deleteRows)="deleteRows()" [buttonsList]="buttonsList" (_updateColumn)="updateColumns()"></eq-buttons-pad>
+<eq-data-table #tables [mapAsUrl]="linkedFields" (columnsOrderChange)="onColumnsOrderChange($event)"></eq-data-table>
 
 
 <!-- Columns Customizer -->
