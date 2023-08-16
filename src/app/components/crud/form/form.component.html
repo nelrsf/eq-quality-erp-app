@@ -1,7 +1,8 @@
 <form class="fields" (submit)="onSubmit()" [formGroup]="form">
     <div #DnDContainer class="fields-container d-flex w-100">
         <div *ngFor="let column of columns | keyvalue; let i = index" class="field d-flex align-items-center"
-            [style.width]="getWidth(column.value)" eqDrag [eqDragKey]="column.key" [(eqDropTarget)]="columns" (eqDropTargetChange)="onReorderColumns($event)">
+            [style.width]="getWidth(column.value)" eqDrag [eqDragKey]="column.key" [(eqDropTarget)]="columns"
+            [(ddOrder)]="columns[getKeyAsString(column.key)].formOrder">
             <div [ngSwitch]="getAsColumn(column.value).type" class="draggable-card"
                 *ngIf="!getAsColumn(column.value).isRestricted">
 
@@ -59,8 +60,7 @@
                                 <fa-icon [icon]="icons.cog"></fa-icon>
                             </div>
                         </label>
-                        <eq-file-field
-                            [(files)]="this.imagesFormData[getAsColumn(column.value)._id]"></eq-file-field>
+                        <eq-file-field [(files)]="this.imagesFormData[getAsColumn(column.value)._id]"></eq-file-field>
                     </div>
                 </div>
 
@@ -113,13 +113,18 @@
             <div *ngIf="loading" class="spinner-border mx-1 spinner" role="status">
                 <span class="sr-only">Loading...</span>
             </div>
-            <span class="mx-1">Guardar cambios</span>
+            <span class="mx-1">Insertar Registro</span>
         </button>
         <div [showIfIsAdmin]="module" [showIfIsOwner]="module">
-            <button type="button" class="btn btn-primary d-flex align-items-center" [disabled]="loading"
-                (click)="submitConfiguration($event)">
-                <fa-icon [icon]="icons.cogs"></fa-icon>
-            </button>
+            <div ngbDropdown [container]="'body'">
+                <button ngbDropdownToggle type="button" class="btn btn-primary d-flex align-items-center"
+                    [disabled]="loading" (click)="submitConfiguration($event)">
+                    <fa-icon [icon]="icons.cogs"></fa-icon>
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownConfig">
+                    <button ngbDropdownItem (click)="updateColumns()">Guardar personalizacion del formulario</button>
+                </div>
+            </div>
         </div>
     </div>
 

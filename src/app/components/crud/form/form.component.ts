@@ -14,6 +14,9 @@ import { ListFieldComponent } from './listField/list-field.component';
 import { FileFieldComponent } from './fileField/file-field.component';
 import { ShowIfIsAdmin } from 'src/app/directives/permissions/show-if-is-admin.directive';
 import { ShowIfIsOwner } from 'src/app/directives/permissions/show-if-is-owner.directive';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { DnDOrderDirective } from 'src/app/directives/order.directive';
+import { concatMap, from } from 'rxjs';
 
 
 @Component({
@@ -33,8 +36,10 @@ import { ShowIfIsOwner } from 'src/app/directives/permissions/show-if-is-owner.d
     ListFieldComponent,
     DropTargetDirective,
     DragDirective,
+    DnDOrderDirective,
     ShowIfIsAdmin,
-    ShowIfIsOwner
+    ShowIfIsOwner,
+    NgbDropdownModule
   ]
 })
 export class FormComponent implements OnInit {
@@ -72,12 +77,15 @@ export class FormComponent implements OnInit {
     this.form = new FormGroup(this.createFormControl());
     this.createImagesFormData();
     this.createListFormData();
+    let orderedColumns = Object.keys(this.columns).sort((a, b) => this.columns[a].formOrder - this.columns[b].formOrder).map(k => this.columns[k]);
+    this.columns = orderedColumns;
   }
+
 
   createFilesFormData() {
     Object.keys(this.columns).forEach(
       (col: string) => {
-        if(this.columns[col].type === ColumnTypes.file){
+        if (this.columns[col].type === ColumnTypes.file) {
           this.imagesFormData[col] = [];
         }
       }
@@ -87,16 +95,16 @@ export class FormComponent implements OnInit {
   createImagesFormData() {
     Object.keys(this.columns).forEach(
       (col: string) => {
-        if(this.columns[col].type === ColumnTypes.image){
+        if (this.columns[col].type === ColumnTypes.image) {
           this.imagesFormData[col] = [];
         }
       }
     )
   }
 
-  getColorScheme(){
+  getColorScheme() {
     const theme = localStorage.getItem('theme');
-    if(theme=='dark'){
+    if (theme == 'dark') {
       return 'dark';
     } else {
       return 'unset';
@@ -106,7 +114,7 @@ export class FormComponent implements OnInit {
   createListFormData() {
     Object.keys(this.columns).forEach(
       (col: string) => {
-        if(this.columns[col].type === ColumnTypes.list){
+        if (this.columns[col].type === ColumnTypes.list) {
           this.listFormData[col] = [];
         }
       }
@@ -138,30 +146,30 @@ export class FormComponent implements OnInit {
     return JSON.stringify(Object.keys(this.columns))
   }
 
-  asignImagesFormData(rowData: any){
+  asignImagesFormData(rowData: any) {
     Object.keys(this.columns).forEach(
       (columnName) => {
-        if(this.columns[columnName].type === ColumnTypes.image){
+        if (this.columns[columnName].type === ColumnTypes.image) {
           rowData[columnName] = this.imagesFormData[columnName];
         }
       }
     )
   }
 
-  asignFilesFormData(rowData: any){
+  asignFilesFormData(rowData: any) {
     Object.keys(this.columns).forEach(
       (columnName) => {
-        if(this.columns[columnName].type === ColumnTypes.file){
+        if (this.columns[columnName].type === ColumnTypes.file) {
           rowData[columnName] = this.imagesFormData[columnName];
         }
       }
     )
   }
 
-  asignListFormData(rowData: any){
+  asignListFormData(rowData: any) {
     Object.keys(this.columns).forEach(
       (columnName) => {
-        if(this.columns[columnName].type === ColumnTypes.list){
+        if (this.columns[columnName].type === ColumnTypes.list) {
           rowData[columnName] = this.listFormData[columnName];
         }
       }
@@ -207,11 +215,37 @@ export class FormComponent implements OnInit {
     event.preventDefault();
   }
 
-  getColumnName(column: any){
+  getColumnName(column: any) {
     return column.columnName;
   }
 
-  onReorderColumns(event: any){
-    console.log(event)
+  updateColumns() {
+    const columns: IColumn[] = Object.keys(this.columns).map((k: string) => this.columns[k]);
+    this.loading = true;
+
+    // Convierte el array de columnas en un Observable
+    const columnsObservable = from(columns);
+
+    columnsObservable.pipe(
+      concatMap((col: IColumn) => {
+        return this.tableService.upsertColumn(col);
+      })
+    ).subscribe({
+      next: (result: any) => {
+        console.log(result);
+        this.loading = false;
+      },
+      error: (error: any) => {
+        console.log(error);
+        this.loading = false;
+      },
+      complete: () => {
+        this.loading = false;
+      }
+    });
+  }
+
+  getKeyAsString(key: any) {
+    return key as string
   }
 }
