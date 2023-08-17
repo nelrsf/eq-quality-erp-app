@@ -1,14 +1,14 @@
 <div class="card p-2 m-2 form-group">
     <label class="my-1 control-label">
         <div>
-            {{column.value.columnName}}
+            {{column.columnName}}
         </div>
         <div [showIfIsAdmin]="module" [showIfIsOwner]="module" class="config-field-menu">
             <fa-icon [icon]="icons.cog"></fa-icon>
         </div>
     </label>
     <div class="image-tools d-flex justify-content-end">
-        <button class="button-tool mx-1 btn btn-light" (click)="$event.preventDefault()">
+        <button class="button-tool mx-1 btn btn-light" (click)="startCamera($event)">
             <fa-icon [icon]="icons.camera"></fa-icon>
         </button>
         <eq-file-uploader [(files)]="images" [uploadButton]="uploadButton"></eq-file-uploader>

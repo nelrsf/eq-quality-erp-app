@@ -7,6 +7,8 @@ import { faCamera, faCirclePlus, faCog, faUpDownLeftRight, faUpload } from '@for
 import { FileUploaderComponent } from 'src/app/components/miscelaneous/file-uploader/file-uploader.component';
 import { ShowIfIsAdmin } from 'src/app/directives/permissions/show-if-is-admin.directive';
 import { ShowIfIsOwner } from 'src/app/directives/permissions/show-if-is-owner.directive';
+import { Camera, CameraResultType } from '@capacitor/camera';
+import { FileService } from 'src/app/services/file.service';
 
 @Component({
   selector: 'eq-img-field',
@@ -23,9 +25,9 @@ import { ShowIfIsOwner } from 'src/app/directives/permissions/show-if-is-owner.d
     ShowIfIsOwner
   ]
 })
-export class ImgFieldComponent implements OnInit{
+export class ImgFieldComponent implements OnInit {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private fileService: FileService) { }
 
   @Input() column: any;
   @Input() images!: Array<string>
@@ -78,6 +80,49 @@ export class ImgFieldComponent implements OnInit{
         }
       }
     )
-
   }
+
+  async startCamera(event: any) {
+    event.preventDefault();
+    const picture = await Camera.getPhoto(
+      {
+        resultType: CameraResultType.Base64
+      }
+    );
+    if (!picture.base64String) {
+      return;
+    }
+    this.uploadBase64File(picture.base64String, picture.path ? picture.path : 'unknownFile');
+  }
+
+  uploadBase64File(base64Data: string, fileName: string): void {
+    // Convertir el archivo base64 en un objeto Blob
+    const byteCharacters = atob(base64Data);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: 'application/octet-stream' });
+
+    // Crear un objeto FormData y agregar el archivo
+    const formData = new FormData();
+    formData.append('file', blob, fileName);
+
+    // Enviar el archivo al servidor utilizando el servicio uploadFile
+    this.fileService.uploadFile(formData).subscribe(
+      response => {
+        console.log('Archivo subido exitosamente', response);
+      },
+      error => {
+        console.error('Error al subir el archivo', error);
+      }
+    );
+  }
+
+
+
+
+
+
 }

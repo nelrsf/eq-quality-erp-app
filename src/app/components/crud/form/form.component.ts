@@ -60,6 +60,7 @@ export class FormComponent implements OnInit {
   loading: boolean = false;
   hasError: boolean = false;
   errorMessage: string = "";
+  columnsJson: any;
 
   form!: FormGroup;
 
@@ -79,6 +80,7 @@ export class FormComponent implements OnInit {
     this.createListFormData();
     let orderedColumns = Object.keys(this.columns).sort((a, b) => this.columns[a].formOrder - this.columns[b].formOrder).map(k => this.columns[k]);
     this.columns = orderedColumns;
+    this.columnsJson = this.getColumnsAsJson();
   }
 
 
@@ -130,17 +132,13 @@ export class FormComponent implements OnInit {
     return newControls;
   }
 
-  getWidth(data: any): string {
-    const column = this.getAsColumn(data);
+  getWidth(column: any): string {
     if (!column.width) {
       return '100%';
     }
     return column.width + "%"
   }
 
-  getAsColumn(data: any) {
-    return data as IColumn;
-  }
 
   getStr(data: any) {
     return JSON.stringify(Object.keys(this.columns))
@@ -215,12 +213,19 @@ export class FormComponent implements OnInit {
     event.preventDefault();
   }
 
-  getColumnName(column: any) {
-    return column.columnName;
+  getColumnsAsJson() {
+    const jsonCols: any = {};
+    this.columns.forEach(
+      (col: any) => {
+        jsonCols[col._id] = col;
+      }
+    );
+    return jsonCols;
   }
 
+
   updateColumns() {
-    const columns: IColumn[] = Object.keys(this.columns).map((k: string) => this.columns[k]);
+    const columns: IColumn[] = this.columns;
     this.loading = true;
 
     // Convierte el array de columnas en un Observable
@@ -245,7 +250,4 @@ export class FormComponent implements OnInit {
     });
   }
 
-  getKeyAsString(key: any) {
-    return key as string
-  }
 }

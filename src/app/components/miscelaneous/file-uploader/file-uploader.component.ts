@@ -45,7 +45,7 @@ export class FileUploaderComponent implements AfterViewInit {
       const clickEvent = fromEvent(this.uploadButton, "click");
       clickEvent.subscribe(
         (event: any) => {
-          this.openFileExplorer(event)
+          this.openFileExplorer(event);
         }
       );
     }

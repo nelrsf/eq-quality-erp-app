@@ -1,22 +1,19 @@
 <form class="fields" (submit)="onSubmit()" [formGroup]="form">
     <div #DnDContainer class="fields-container d-flex w-100">
-        <div *ngFor="let column of columns | keyvalue; let i = index" class="field d-flex align-items-center"
-            [style.width]="getWidth(column.value)" eqDrag [eqDragKey]="column.key" [(eqDropTarget)]="columns"
-            [(ddOrder)]="columns[getKeyAsString(column.key)].formOrder">
-            <div [ngSwitch]="getAsColumn(column.value).type" class="draggable-card"
-                *ngIf="!getAsColumn(column.value).isRestricted">
-
+        <div *ngFor="let column of columns; let i = index" class="field d-flex align-items-center"
+            [style.width]="getWidth(column)" eqDrag [eqDragKey]="column._id" [(eqDropTarget)]="columnsJson" [(ddOrder)]="column.formOrder">
+            <div [ngSwitch]="column.type" class="draggable-card" *ngIf="!column.isRestricted">
                 <div *ngSwitchCase="'string'">
                     <div class="m-2 form-group">
                         <label class="my-1 control-label">
                             <div>
-                                {{getColumnName(column.value)}}
+                                {{column.columnName}}
                             </div>
                             <div [showIfIsAdmin]="module" [showIfIsOwner]="module" class="config-field-menu">
                                 <fa-icon [icon]="icons.cog"></fa-icon>
                             </div>
                         </label>
-                        <input type="text" class="form-control" placeholder="" formControlName="{{column.key}}">
+                        <input type="text" class="form-control" placeholder="" formControlName="{{column._id}}">
                     </div>
                 </div>
 
@@ -24,14 +21,14 @@
                     <div class="m-2 form-group">
                         <label class="my-1 control-label">
                             <div>
-                                {{getColumnName(column.value)}}
+                                {{column.columnName}}
                             </div>
                             <div [showIfIsAdmin]="module" [showIfIsOwner]="module" class="config-field-menu">
                                 <fa-icon [icon]="icons.cog"></fa-icon>
                             </div>
                         </label>
                         <input [style.colorScheme]="getColorScheme()" type="datetime-local" class="form-control"
-                            placeholder="" formControlName="{{column.key}}">
+                            placeholder="" formControlName="{{column._id}}">
                     </div>
                 </div>
 
@@ -39,13 +36,13 @@
                     <div class="m-2 form-group">
                         <label class="my-1 control-label">
                             <div>
-                                {{getColumnName(column.value)}}
+                                {{column.columnName}}
                             </div>
                             <div [showIfIsAdmin]="module" [showIfIsOwner]="module" class="config-field-menu">
                                 <fa-icon [icon]="icons.cog"></fa-icon>
                             </div>
                         </label>
-                        <input type="number" class="form-control" placeholder="" formControlName="{{column.key}}">
+                        <input type="number" class="form-control" placeholder="" formControlName="{{column._id}}">
                     </div>
                 </div>
 
@@ -54,29 +51,29 @@
                     <div class="m-2 form-group">
                         <label class="my-1 control-label">
                             <div>
-                                {{getColumnName(column.value)}}
+                                {{column.columnName}}
                             </div>
                             <div [showIfIsAdmin]="module" [showIfIsOwner]="module" class="config-field-menu">
                                 <fa-icon [icon]="icons.cog"></fa-icon>
                             </div>
                         </label>
-                        <eq-file-field [(files)]="this.imagesFormData[getAsColumn(column.value)._id]"></eq-file-field>
+                        <eq-file-field [(files)]="this.imagesFormData[column._id]"></eq-file-field>
                     </div>
                 </div>
 
 
                 <div *ngSwitchCase="'image'">
                     <eq-img-field [column]="column" [module]="module"
-                        [(images)]="this.imagesFormData[getAsColumn(column.value)._id]"></eq-img-field>
+                        [(images)]="this.imagesFormData[column._id]"></eq-img-field>
                 </div>
 
                 <div *ngSwitchCase="'boolean'">
                     <div class="form-check m-2">
                         <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"
-                            formControlName="{{column.key}}">
+                            formControlName="{{column._id}}">
                         <label class="form-check-label control-label" for="flexCheckDefault">
                             <div>
-                                {{getColumnName(column.value)}}
+                                {{column.columnName}}
                             </div>
                             <div [showIfIsAdmin]="module" [showIfIsOwner]="module" class="config-field-menu">
                                 <fa-icon [icon]="icons.cog"></fa-icon>
@@ -89,13 +86,13 @@
                     <div class="m-2 form-group">
                         <label class="form-check-label my-1 control-label">
                             <div>
-                                {{getColumnName(column.value)}}
+                                {{column.columnName}}
                             </div>
                             <div [showIfIsAdmin]="module" [showIfIsOwner]="module" class="config-field-menu">
                                 <fa-icon [icon]="icons.cog"></fa-icon>
                             </div>
                         </label>
-                        <eq-list-field [listData]="listFormData[getAsColumn(column.value)._id]"></eq-list-field>
+                        <eq-list-field [listData]="listFormData[column._id]"></eq-list-field>
                     </div>
                 </div>
             </div>
