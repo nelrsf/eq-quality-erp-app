@@ -145,30 +145,30 @@ export class FormComponent implements OnInit {
   }
 
   asignImagesFormData(rowData: any) {
-    Object.keys(this.columns).forEach(
-      (columnName) => {
-        if (this.columns[columnName].type === ColumnTypes.image) {
-          rowData[columnName] = this.imagesFormData[columnName];
+    this.columns.forEach(
+      (col: any) => {
+        if (col.type === ColumnTypes.image) {
+          rowData[col._id] = this.imagesFormData[col._id];
         }
       }
     )
   }
 
   asignFilesFormData(rowData: any) {
-    Object.keys(this.columns).forEach(
-      (columnName) => {
-        if (this.columns[columnName].type === ColumnTypes.file) {
-          rowData[columnName] = this.imagesFormData[columnName];
+    this.columns.forEach(
+      (col: any) => {
+        if (col.type === ColumnTypes.file) {
+          rowData[col._id] = this.imagesFormData[col._id];
         }
       }
     )
   }
 
   asignListFormData(rowData: any) {
-    Object.keys(this.columns).forEach(
-      (columnName) => {
-        if (this.columns[columnName].type === ColumnTypes.list) {
-          rowData[columnName] = this.listFormData[columnName];
+    this.columns.forEach(
+      (col: any) => {
+        if (col.type === ColumnTypes.list) {
+          rowData[col._id] = this.listFormData[col._id];
         }
       }
     )
