@@ -9,6 +9,7 @@ import { ShowIfIsAdmin } from 'src/app/directives/permissions/show-if-is-admin.d
 import { ShowIfIsOwner } from 'src/app/directives/permissions/show-if-is-owner.directive';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { FileService } from 'src/app/services/file.service';
+import { table } from 'console';
 
 @Component({
   selector: 'eq-img-field',
@@ -86,13 +87,14 @@ export class ImgFieldComponent implements OnInit {
     event.preventDefault();
     const picture = await Camera.getPhoto(
       {
-        resultType: CameraResultType.Base64
+        resultType: CameraResultType.Base64,
       }
     );
     if (!picture.base64String) {
       return;
     }
-    this.uploadBase64File(picture.base64String, picture.path ? picture.path : 'unknownFile');
+    const fileName = this.generateRandomName(5) + '.' + picture.format;
+    this.uploadBase64File(picture.base64String, fileName);
   }
 
   uploadBase64File(base64Data: string, fileName: string): void {
@@ -105,24 +107,38 @@ export class ImgFieldComponent implements OnInit {
     const byteArray = new Uint8Array(byteNumbers);
     const blob = new Blob([byteArray], { type: 'application/octet-stream' });
 
-    // Crear un objeto FormData y agregar el archivo
+    // Crear un objeto FormData y agregar el archivo con el nombre 'file'
     const formData = new FormData();
-    formData.append('file', blob, fileName);
+    formData.append('files', blob, fileName);
 
     // Enviar el archivo al servidor utilizando el servicio uploadFile
     this.fileService.uploadFile(formData).subscribe(
-      response => {
-        console.log('Archivo subido exitosamente', response);
-      },
-      error => {
-        console.error('Error al subir el archivo', error);
+      {
+        next: (response: any) => {
+          console.log('Archivo subido exitosamente', response);
+          // this.images = [];
+          // this.images = response.urls;
+          this.imageUrl = response.urls[response.urls.length - 1];
+          // this.imagesChange.emit(this.images);
+        },
+        error: error => {
+          console.error('Error al subir el archivo', error);
+        }
       }
     );
   }
 
+  generateRandomName(length: number): string {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let randomName = '';
 
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      randomName += characters.charAt(randomIndex);
+    }
 
-
-
+    const timestamp = Date.now();
+    return `${randomName}_${timestamp}`;
+  }
 
 }

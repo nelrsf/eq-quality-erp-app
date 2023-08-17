@@ -50,3 +50,11 @@
     height: 1.2rem;
     width: 1.2rem;
 }
+
+.drop-down-menu {
+    max-width: 4rem;
+}
+
+.drop-down-menu button {
+    white-space: initial;
+}

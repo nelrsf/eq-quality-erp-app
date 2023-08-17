@@ -182,9 +182,9 @@ export class FormComponent implements OnInit {
     this.hasError = false;
     this.errorMessage = "";
     let newRow: any = {};
-    Object.keys(this.columns).forEach(
-      (columnId) => {
-        newRow[columnId] = this.form.controls[columnId].value;
+    this.columns.forEach(
+      (col: any) => {
+        newRow[col._id] = this.form.controls[col._id].value;
       }
     )
     this.asignImagesFormData(newRow);
@@ -202,7 +202,7 @@ export class FormComponent implements OnInit {
             this.loading = false;
             this.hasError = true;
             this.errorMessage = error.error;
-            this.formOperationEnd.emit();
+            // this.formOperationEnd.emit();
             console.log(error)
           }
         }
