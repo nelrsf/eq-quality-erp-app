@@ -8,18 +8,28 @@
         </div>
     </label>
     <div class="image-tools d-flex justify-content-end">
-        <button class="button-tool mx-1 btn btn-light" (click)="startCamera($event)">
+        <!-- <button *ngIf="device !== 'web'" class="button-tool mx-1 btn btn-light" (click)="startCamera($event)">
             <fa-icon [icon]="icons.camera"></fa-icon>
-        </button>
-        <eq-file-uploader [(files)]="images" [uploadButton]="uploadButton"></eq-file-uploader>
+        </button> -->
+        <div  *ngIf="device !== 'web'">
+            <!-- <eq-image-uploader [uploadButton]="uploadImageButton" ></eq-image-uploader> -->
+            <button #uploadImageButton class="button-tool btn btn-light mx-1" (click)="switchToCameraMode($event)">
+                <fa-icon [icon]="icons.camera"></fa-icon>
+            </button>
+        </div>
 
-            <button #uploadButton class="button-tool btn btn-light" (click)="$event.preventDefault()">
+        <div *ngIf="device === 'web'">
+            <eq-file-uploader [(files)]="images" [uploadButton]="uploadButton"></eq-file-uploader>
+            <button #uploadButton class="button-tool btn btn-light mx-1" (click)="$event.preventDefault()">
                 <fa-icon [icon]="icons.upload"></fa-icon>
             </button>
+        </div>
 
     </div>
     <div class="img-container">
         <img src="{{imageUrl}}" alt="" width="100%" class="my-1">
+        <eq-camera *ngIf="cameraMode" (filesChange)="onImagesChange($event)"
+            (dissmiss)="cameraMode=!cameraMode"></eq-camera>
     </div>
 
     <div *ngIf="images.length !== 0" class="img-gallery d-flex">

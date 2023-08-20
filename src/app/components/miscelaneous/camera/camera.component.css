@@ -1,0 +1,54 @@
+video {
+    width: 100%;
+}
+
+.container {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: black;
+    height: 100%;
+}
+
+.btn-close {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    color: white;
+    background-color: white;
+}
+
+.img-gallery {
+    overflow-x: auto;
+    column-gap: 0.2rem;
+}
+
+.img-item {
+    position: relative;
+    
+}
+
+.close-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.container-fluid {
+    background-color: black;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (orientation: landscape) {
+    .container-fluid {
+        height: 100vw;
+    }
+  }
+
+  @media (orientation: portrait) {
+    .container-fluid {
+        height: 100vh;
+    }
+  }

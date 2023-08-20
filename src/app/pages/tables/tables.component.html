@@ -37,3 +37,8 @@
     </div>
   </div>
 </ng-template>
+
+<ng-template #modalError let-modal>
+  <eq-error [errorMessage]="errorMessage" (close)="closeModal()"></eq-error>
+</ng-template>
+

@@ -7,9 +7,10 @@ import { faCamera, faCirclePlus, faCog, faUpDownLeftRight, faUpload } from '@for
 import { FileUploaderComponent } from 'src/app/components/miscelaneous/file-uploader/file-uploader.component';
 import { ShowIfIsAdmin } from 'src/app/directives/permissions/show-if-is-admin.directive';
 import { ShowIfIsOwner } from 'src/app/directives/permissions/show-if-is-owner.directive';
-import { Camera, CameraResultType } from '@capacitor/camera';
 import { FileService } from 'src/app/services/file.service';
-import { table } from 'console';
+import { ImageUploaderComponent } from 'src/app/components/miscelaneous/image-uploader/image-uploader.component';
+import { CameraComponent } from 'src/app/components/miscelaneous/camera/camera.component';
+import { DeviceDetectorService, DeviceType } from 'src/app/services/device-detector.service';
 
 @Component({
   selector: 'eq-img-field',
@@ -22,18 +23,21 @@ import { table } from 'console';
     CommonModule,
     FontAwesomeModule,
     FileUploaderComponent,
+    ImageUploaderComponent,
     ShowIfIsAdmin,
-    ShowIfIsOwner
+    ShowIfIsOwner,
+    CameraComponent
   ]
 })
 export class ImgFieldComponent implements OnInit {
 
-  constructor(private http: HttpClient, private fileService: FileService) { }
+  constructor(private http: HttpClient, private detectDeviceService: DeviceDetectorService) { }
 
   @Input() column: any;
   @Input() images!: Array<string>
   @Input() module!: string;
   @Output() imagesChange = new EventEmitter<Array<string>>();
+
 
   icons = {
     cog: faCog,
@@ -46,9 +50,12 @@ export class ImgFieldComponent implements OnInit {
   previousImageUrl: string = "";
 
   isValidImgUrl: boolean = false;
+  device!: DeviceType;
+  cameraMode: boolean = false;
 
   ngOnInit(): void {
     this.images = this.images ? this.images : [];
+    this.detectDevice()
   }
 
   isArray(data: any): data is Array<any> {
@@ -83,62 +90,27 @@ export class ImgFieldComponent implements OnInit {
     )
   }
 
-  async startCamera(event: any) {
+  detectDevice() {
+    this.detectDeviceService.detectDevice()
+    .then(
+      (value)=>{
+        this.device = value;
+      }
+    ).catch(
+      (error)=>{
+        console.log(error);
+      }
+    )
+  }
+
+  switchToCameraMode(event: Event) {
     event.preventDefault();
-    const picture = await Camera.getPhoto(
-      {
-        resultType: CameraResultType.Base64,
-      }
-    );
-    if (!picture.base64String) {
-      return;
-    }
-    const fileName = this.generateRandomName(5) + '.' + picture.format;
-    this.uploadBase64File(picture.base64String, fileName);
+    this.cameraMode = !this.cameraMode;
   }
 
-  uploadBase64File(base64Data: string, fileName: string): void {
-    // Convertir el archivo base64 en un objeto Blob
-    const byteCharacters = atob(base64Data);
-    const byteNumbers = new Array(byteCharacters.length);
-    for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
-    }
-    const byteArray = new Uint8Array(byteNumbers);
-    const blob = new Blob([byteArray], { type: 'application/octet-stream' });
-
-    // Crear un objeto FormData y agregar el archivo con el nombre 'file'
-    const formData = new FormData();
-    formData.append('files', blob, fileName);
-
-    // Enviar el archivo al servidor utilizando el servicio uploadFile
-    this.fileService.uploadFile(formData).subscribe(
-      {
-        next: (response: any) => {
-          console.log('Archivo subido exitosamente', response);
-          // this.images = [];
-          // this.images = response.urls;
-          this.imageUrl = response.urls[response.urls.length - 1];
-          // this.imagesChange.emit(this.images);
-        },
-        error: error => {
-          console.error('Error al subir el archivo', error);
-        }
-      }
-    );
-  }
-
-  generateRandomName(length: number): string {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let randomName = '';
-
-    for (let i = 0; i < length; i++) {
-      const randomIndex = Math.floor(Math.random() * characters.length);
-      randomName += characters.charAt(randomIndex);
-    }
-
-    const timestamp = Date.now();
-    return `${randomName}_${timestamp}`;
+  onImagesChange(images: Array<string>) {
+    this.cameraMode = !this.cameraMode;
+    this.images.push(...images);
   }
 
 }

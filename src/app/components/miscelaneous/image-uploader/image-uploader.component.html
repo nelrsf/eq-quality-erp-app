@@ -1,0 +1,22 @@
+<div class="uploader-container">
+    <ng-container *ngIf="!uploadButton then defaultButtonTemplate">
+
+    </ng-container>
+
+    <ng-template #defaultButtonTemplate>
+        <ng-container [ngTemplateOutlet]="loadingSpinner"></ng-container>
+        <button class="btn btn-outline-secondary" (click)="startCamera($event)">
+            <fa-icon [icon]="icons.camera"></fa-icon>
+        </button>
+    </ng-template>
+</div>
+
+
+<input #fileUploader type="button" [accept]="accept" style="display:none"
+    [multiple]="multiple">
+
+<ng-template #loadingSpinner>
+    <div *ngIf="loading">
+        <eq-loading [position]="'absolute'" [size]="''"></eq-loading>
+    </div>
+</ng-template>

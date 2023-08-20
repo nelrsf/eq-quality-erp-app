@@ -14,8 +14,12 @@
                                 <button #uploadImageButton type="button" class="btn btn-sm btn-outline-secondary">
                                     <fa-icon [icon]="icons.edit"></fa-icon>
                                 </button>
-                                <eq-file-uploader [multiple]="false" [uploadButton]="uploadImageButton"
-                                    (filesChange)="changeImg($event, i)" [files]="[]"></eq-file-uploader>
+                                <eq-image-uploader *ngIf="device!=='web'" [multiple]="false"
+                                    [uploadButton]="uploadImageButton" (filesChange)="changeImg($event, i)"
+                                    [files]="[]"></eq-image-uploader>
+                                <eq-file-uploader *ngIf="device==='web'" [multiple]="false"
+                                    [uploadButton]="uploadImageButton" (filesChange)="changeImg($event, i)"
+                                    [files]="[]"></eq-file-uploader>
                                 <button type="button" class="btn btn-sm btn-outline-danger"
                                     (click)="deleteFile(img, i)">
                                     <fa-icon [icon]="icons.delete"></fa-icon>
@@ -30,12 +34,21 @@
     <hr *ngIf="!disabled" class="hr" />
     <div *ngIf="!disabled">
         <div class="buttons d-flex justify-content-between align-items-center w-100 p-3">
-            <button #buttonAddImage type="button" class="btn btn-success d-flex align-items-center rounded-circle">
+            <button #buttonAddImage type="button" class="btn btn-success d-flex align-items-center rounded-circle"
+                (click)="startCamera()">
                 <fa-icon [icon]="icons.add"></fa-icon>
             </button>
         </div>
-        <eq-file-uploader  accept="image/*" [multiple]="false" [uploadButton]="buttonAddImage" [files]="[]"
-            (filesChange)="addImage($event)"></eq-file-uploader>
+        <eq-file-uploader *ngIf="device ==='web'" accept="image/*" [multiple]="true" [uploadButton]="buttonAddImage"
+            [files]="[]" (filesChange)="addImage($event)"></eq-file-uploader>
+        <!-- <div class="buttons d-flex justify-content-between align-items-center w-100 p-3">
+            <button #buttonAddImage type="button" class="btn btn-primary d-flex align-items-center" (click)="saveChanges()">
+                Guardar Cambios
+            </button>
+        </div> -->
     </div>
 
 </div>
+
+<eq-camera *ngIf="cameraActive && device !=='web'" (dissmiss)="cameraActive = false"
+    (filesChange)="onFilesAdded($event)"></eq-camera>

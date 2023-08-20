@@ -7,6 +7,9 @@ import { FileUploaderComponent } from '../miscelaneous/file-uploader/file-upload
 import { FileService } from 'src/app/services/file.service';
 import { environment } from 'src/environments/environment';
 import { LoadingComponent } from '../miscelaneous/loading/loading.component';
+import { DeviceDetectorService, DeviceType } from 'src/app/services/device-detector.service';
+import { CameraComponent } from '../miscelaneous/camera/camera.component';
+import { ImageUploaderComponent } from '../miscelaneous/image-uploader/image-uploader.component';
 
 
 interface IImageLoadingState {
@@ -23,7 +26,9 @@ interface IImageLoadingState {
     CommonModule,
     FontAwesomeModule,
     FileUploaderComponent,
-    LoadingComponent
+    LoadingComponent,
+    CameraComponent,
+    ImageUploaderComponent
   ]
 })
 export class GalleryViewComponent {
@@ -39,16 +44,28 @@ export class GalleryViewComponent {
   }
 
   imgsLoading: Array<IImageLoadingState> = [];
+  device!: DeviceType;
+  cameraActive: boolean = false;
 
 
-  constructor(private router: Router, private fileService: FileService) { }
+  constructor(private deviceDetector: DeviceDetectorService, private fileService: FileService) { }
 
   ngOnInit(): void {
+    this.getDevice();
     this.images.forEach(
-      (img, index)=>{
+      (img, index) => {
         this.setImgLoading(index);
       }
     )
+  }
+
+  getDevice() {
+    this.deviceDetector.detectDevice()
+      .then(
+        (value: DeviceType) => {
+          this.device = value;
+        }
+      )
   }
 
   setImgLoading(index: number) {
@@ -91,9 +108,17 @@ export class GalleryViewComponent {
     );
   }
 
-  addImage(event: any) {
-    this.images.push(event[event.length - 1]);
-    this.setImgLoading(this.images.length - 1)
+  addImage(event: Array<string>) {
+    this.images.push(...event);
+    event.forEach(
+      (img, index) => {
+        const imgInd = this.images.indexOf(img);
+        if (imgInd !== -1) {
+          this.setImgLoading(imgInd);
+        }
+      }
+    )
+
   }
 
   goToImage(imgUrl: string) {
@@ -106,23 +131,47 @@ export class GalleryViewComponent {
   }
 
   deleteFile(imgUrl: string, index: number) {
-    if (imgUrl.indexOf(environment.filesUrl) !== -1) {
-      const pathSplitted = imgUrl.split('/');
-      const fileName = pathSplitted[pathSplitted.length - 1];
-      this.fileService.deleteFile(fileName)
-        .subscribe(
-          {
-            next: (response) => {
-              console.log(response);
-            },
-            error: (error) => {
-              console.log(error)
-            }
-          }
-        );
-    }
+    // if (imgUrl.indexOf(environment.filesUrl) !== -1) {
+    //   const pathSplitted = imgUrl.split('/');
+    //   const fileName = pathSplitted[pathSplitted.length - 1];
+    //   this.fileService.deleteFile(fileName)
+    //     .subscribe(
+    //       {
+    //         next: (response) => {
+    //           console.log(response);
+    //         },
+    //         error: (error) => {
+    //           console.log(error)
+    //         }
+    //       }
+    //     );
+    // }
 
     this.images.splice(index, 1);
+  }
+
+  startCamera() {
+    if (this.device === 'web') {
+      return;
+    }
+    this.cameraActive = true;
+  }
+
+  onFilesAdded(files: Array<string>) {
+    this.cameraActive = false;
+    this.images.push(...files);
+    files.forEach(
+      (img, index) => {
+        const imgInd = this.images.indexOf(img);
+        if (imgInd !== -1) {
+          this.setImgLoading(imgInd);
+        }
+      }
+    )
+  }
+
+  saveChanges() {
+    this.imagesChange.emit(this.images);
   }
 
 }

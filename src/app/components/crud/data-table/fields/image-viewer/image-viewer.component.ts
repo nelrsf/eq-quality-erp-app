@@ -6,6 +6,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { TooltipDirective } from 'src/app/directives/tooltip.directive';
 import { ColumnTypes } from 'src/app/Model/interfaces/IColumn';
+import { DeviceDetectorService, DeviceType } from 'src/app/services/device-detector.service';
 
 @Component({
   selector: 'eq-image-viewer',
@@ -18,12 +19,13 @@ import { ColumnTypes } from 'src/app/Model/interfaces/IColumn';
     TooltipDirective
   ]
 })
-export class ImageViewerComponent implements OnInit{
+export class ImageViewerComponent implements OnInit {
 
   @Input() value!: any;
   @Output() valueChange = new EventEmitter<any>();
   @Output() openModal = new EventEmitter<ColumnTypes>();
 
+  device!: DeviceType;
   curentIndex: number = 0;
 
   thumbStr = "?thumb=true";
@@ -34,10 +36,16 @@ export class ImageViewerComponent implements OnInit{
   }
 
 
-  constructor(private router: Router) { }
+  constructor(private deviceDetectorService: DeviceDetectorService) { }
 
   ngOnInit(): void {
+    this.getDevice();
     this.value = this.value ? this.value : '../../../../../../assets/images/previews/1.jpg';
+  }
+
+  getDevice() {
+    this.deviceDetectorService.detectDevice()
+      .then((value) => this.device = value)
   }
 
 

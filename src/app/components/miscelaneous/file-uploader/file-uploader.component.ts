@@ -26,11 +26,13 @@ export class FileUploaderComponent implements AfterViewInit {
   @Input() files!: Array<string>;
   @Input() multiple: boolean = true;
   @Input() accept: string = "image/*";
+  @Input() returnBlob: boolean = false;
+  @Output() blobChange = new EventEmitter<any>();
   @Output() filesChange = new EventEmitter<Array<string>>();
 
   constructor(private fileService: FileService, private renderer: Renderer2, private viewContainerRef: ViewContainerRef, private cdr: ChangeDetectorRef) { }
- 
-  
+
+
   icons = {
     upload: faUpload,
   }
@@ -61,6 +63,11 @@ export class FileUploaderComponent implements AfterViewInit {
     event.preventDefault();
     this.loading = true;
     this.filesData = event.target.files;
+    if (this.returnBlob) {
+      this.blobChange.next(this.filesData);
+      this.loading = false;
+      return;
+    }
     const formData = new FormData();
     let filesLength = Array.from(this.filesData).length;
     filesLength = filesLength < 10 ? filesLength : 9;
@@ -70,7 +77,7 @@ export class FileUploaderComponent implements AfterViewInit {
     this.fileService.uploadFile(formData)
       .subscribe({
         next: (data: any) => {
-          if(!Array.isArray(this.files)){
+          if (!Array.isArray(this.files)) {
             this.files = [];
           }
           this.files.push(...data.urls);

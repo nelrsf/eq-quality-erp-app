@@ -12,6 +12,7 @@ import { buttonType } from 'src/app/components/crud/buttons-pad/buttons-pad.comp
 import { UserService } from 'src/app/services/user.service';
 import { IUser } from 'src/app/Model/interfaces/IUser';
 import { concatMap, forkJoin, from } from 'rxjs';
+import { error } from 'console';
 
 @Component({
   selector: 'eq-tables',
@@ -30,6 +31,7 @@ export class TablesComponent implements OnInit, AfterViewInit {
   @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
   @ViewChild("colCustomizerModal") colCustomizerModal!: ElementRef;
   @ViewChild("formModal") formModal!: ElementRef;
+  @ViewChild('modalError') modalError!: ElementRef;
 
   loading = false;
   linkedFields: IMapAsUrl[] = [];
@@ -42,6 +44,7 @@ export class TablesComponent implements OnInit, AfterViewInit {
   rowsBackup!: any;
   buttonsList: Array<buttonType> = [];
   canConfig: boolean = false;
+  errorMessage: string = '';
 
 
   constructor(private tableService: TablesService, private activatedRoute: ActivatedRoute, private cdRef: ChangeDetectorRef, private permissionsService: PermissionsService, private ngbModal: NgbModal, private changesTracker: ChangesTrackerService, private userService: UserService) { }
@@ -259,7 +262,7 @@ export class TablesComponent implements OnInit, AfterViewInit {
       }
     }
     this.editColumnName = true;
-    this.ngbModal.open(this.colCustomizerModal, { size: 'xl' });
+    this.ngbModal.open(this.colCustomizerModal, { size: 'xl', centered: true });
   }
 
   colunmOperationEnd() {
@@ -302,9 +305,16 @@ export class TablesComponent implements OnInit, AfterViewInit {
     const rowsChanged = this.changesTracker.trackChanges(this.rowsBackup, rows);
     this.loading = true;
     this.tableService.updateRows(this.module, this.table, rowsChanged).subscribe(
-      (response: any) => {
-        console.log(response);
-        this.getColumnsData(this.module, this.table);
+      {
+        next: (response: any) => {
+          console.log(response);
+          this.getColumnsData(this.module, this.table);
+        },
+        error: (error)=>{
+          this.errorMessage = error.error;
+          this.ngbModal.open(this.modalError);
+          this.loading = false;
+        }
       }
     );
   }
@@ -468,7 +478,7 @@ export class TablesComponent implements OnInit, AfterViewInit {
       },
       complete: () => {
         this.loading = false;
-        const indx = this.buttonsList.findIndex(b=>b=='update-column');
+        const indx = this.buttonsList.findIndex(b => b == 'update-column');
         this.buttonsList.splice(indx, 1);
       }
     });
