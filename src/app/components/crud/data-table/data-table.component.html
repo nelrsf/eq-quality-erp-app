@@ -21,7 +21,8 @@
                                     </th>
                                     <th eqDrag [eqDragKey]="column._id" [(eqDropTarget)]="columnsPropertiesObj"
                                         scope="col" (eqDropTargetChange)="onReorderColumns()"
-                                        *ngFor="let column of columnsProperties; let colIndex = index" [(ddOrder)]="column.columnOrder"> 
+                                        *ngFor="let column of columnsProperties; let colIndex = index"
+                                        [(ddOrder)]="column.columnOrder">
                                         <div class="col-header d-flex align-items-center">
                                             <span>
                                                 {{column.columnName}}
@@ -73,13 +74,27 @@
                                     </td>
                                     <td *ngFor="let column of columnsProperties">
                                         <div class="cell-value">
-                                            <eq-field-renderer [(value)]="row[column._id]"
+                                            <eq-field-renderer [rowId]="row['_id']" [(value)]="row[column._id]"
                                                 [column]="getColumnProperties(column._id)"
                                                 [restriction]="getCellRestriction(column, row['_id'])"
                                                 [restrictions]="getRestrictionsByColumnId(column._id)"
                                                 (openModal)="openModal($event, row, column)"
                                                 (onListChange)="setRowRestriction($event, row._id, column)">
                                             </eq-field-renderer>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="hasTableFooter()">
+                                    <td>
+                                    </td>
+                                    <td *ngFor="let column of columnsProperties">
+                                        <div *ngIf="column.hasFooter" class="cell-value d-inline-flex flex-column">
+                                            <span *ngIf="column.footer?.label" class="footer-label">
+                                                {{column.footer?.label}}
+                                            </span>
+                                            <span class="footer-value">
+                                                {{getFooterValue(column) | number:'1.2-2'}}
+                                            </span>
                                         </div>
                                     </td>
                                 </tr>

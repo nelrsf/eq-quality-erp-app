@@ -6,6 +6,7 @@ import { GeneralAttributesComponent } from './general-attributes/general-attribu
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { PermissionsComponent } from './permissions/permissions.component';
 import { SubtableCustomizerComponent } from './subtable-customizer/subtable-customizer.component';
+import { ColumnFormulaComponent } from './column-formula/column-formula.component';
 
 
 @Component({
@@ -20,7 +21,8 @@ import { SubtableCustomizerComponent } from './subtable-customizer/subtable-cust
     PermissionsComponent,
     NgbNavModule,
     PermissionsComponent,
-    SubtableCustomizerComponent
+    SubtableCustomizerComponent,
+    ColumnFormulaComponent
   ]
 })
 export class ColumnCustomizerComponent {

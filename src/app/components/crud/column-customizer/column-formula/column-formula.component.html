@@ -1,0 +1,51 @@
+<div *ngIf="loading">
+    <eq-loading></eq-loading>
+</div>
+
+<div class="formula-container">
+    <div class="d-inline-flex justify-content-between align-items-baseline mt-3">
+        <input class="form-check-input mb-3" type="checkbox" [(ngModel)]="columnData.hasFormula" [name]="'hasFormula'">
+        <label class="form-check-label mb-3 mx-2">
+            Aplicar fórmula
+        </label>
+    </div>
+
+    <div *ngIf="columnData.hasFormula">
+        <eq-formula-editor [(validFormula)]="validFormula" [columnData]="columnData"></eq-formula-editor>
+    </div>
+
+    <div class="d-inline-flex justify-content-start mt-2 flex-column align-items-start w-100">
+        <div class="d-inline-flex justify-content-between align-items-baseline mt-3">
+            <input class="form-check-input mb-3" type="checkbox" [(ngModel)]="columnData.hasFooter"
+                [name]="'hasFormula'">
+            <label class="form-check-label mb-3 mx-2">
+                Pie de columna
+            </label>
+        </div>
+
+        <div *ngIf="columnData.hasFooter">
+            <label class="form-label mb-3 me-2">
+                Operación
+            </label>
+            <select class="form-select" [(ngModel)]="footer.operationType">
+                <option *ngFor="let operation of footerOperations" [value]="operation.operation">
+                    {{operation.label}}
+                </option>
+            </select>
+        </div>
+
+        <div *ngIf="columnData.hasFooter" class="mt-2">
+            <label class="form-label">Etiqueta</label>
+            <input type="text" class="form-control mt-2" [(ngModel)]="footer.label">
+        </div>
+    </div>
+
+    <hr>
+    <button [disabled]="!validFormula && columnData.hasFormula" type="button" class="btn btn-primary"
+        (click)="saveFormula()">Guardar Cambios</button>
+</div>
+
+<!-- Error -->
+<ng-template #modalError let-modal>
+    <eq-error [errorMessage]="errorMessage" (close)="closeModal()"></eq-error>
+</ng-template>

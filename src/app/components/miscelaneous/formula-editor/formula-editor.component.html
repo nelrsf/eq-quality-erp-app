@@ -1,0 +1,20 @@
+<span class="text-muted fw-light fst-italic help-text">Presiona Ctrl + Espacio para añadir una variable</span>
+<div #inputFormula></div>
+<div class="d-inline-flex justify-content-between align-items-center w-100 mt-2">
+    <button class="btn btn-outline-primary py-0" (click)="checkFormula()">
+        Revisar fórmula
+    </button>
+    <div *ngIf="validFormula===false" class="d-inline-flex justify-content-end text-danger">
+        <fa-icon [icon]="icons.invalid"></fa-icon>
+        <span class="mx-2 text-danger">
+            Fórmula Incorrecta
+        </span>
+    </div>
+    <div *ngIf="validFormula" class="d-inline-flex justify-content-end text-success">
+        <fa-icon [icon]="icons.valid"></fa-icon>
+        <span class="mx-2 text-success">
+            Fórmula Correcta
+        </span>
+    </div>
+</div>
+

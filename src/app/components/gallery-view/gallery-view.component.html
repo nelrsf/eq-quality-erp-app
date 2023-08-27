@@ -11,19 +11,27 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div *ngIf="!disabled" class="btn-group">
-                                <button #uploadImageButton type="button" class="btn btn-sm btn-outline-secondary">
-                                    <fa-icon [icon]="icons.edit"></fa-icon>
-                                </button>
-                                <eq-image-uploader *ngIf="device!=='web'" [multiple]="false"
-                                    [uploadButton]="uploadImageButton" (filesChange)="changeImg($event, i)"
-                                    [files]="[]"></eq-image-uploader>
-                                <eq-file-uploader *ngIf="device==='web'" [multiple]="false"
-                                    [uploadButton]="uploadImageButton" (filesChange)="changeImg($event, i)"
-                                    [files]="[]"></eq-file-uploader>
+                                <div *ngIf="device!=='web'">
+                                    <button #uploadImageButton type="button" class="btn btn-sm btn-outline-secondary">
+                                        <fa-icon [icon]="icons.edit"></fa-icon>
+                                    </button>
+                                    <eq-image-uploader [multiple]="false" [uploadButton]="uploadImageButton"
+                                        (filesChange)="changeImg($event, i)" [files]="[]"></eq-image-uploader>
+                                </div>
+
+                                <div *ngIf="device==='web'">
+                                    <eq-file-uploader [multiple]="false" [uploadButton]="uploadFileButton"
+                                        (filesChange)="changeImg($event, i)" [files]="[]"></eq-file-uploader>
+                                    <button #uploadFileButton type="button" class="btn btn-sm btn-outline-secondary">
+                                        <fa-icon [icon]="icons.edit"></fa-icon>
+                                    </button>
+
+                                </div>
                                 <button type="button" class="btn btn-sm btn-outline-danger"
                                     (click)="deleteFile(img, i)">
                                     <fa-icon [icon]="icons.delete"></fa-icon>
                                 </button>
+
                             </div>
                         </div>
                     </div>

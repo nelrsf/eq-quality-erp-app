@@ -1,11 +1,22 @@
-<ng-container *ngIf="isRestricted then restrictedFieldTemplate; else unrestrictedFieldTemplate"></ng-container>
+<ng-container *ngIf="columnData.hasFormula then formulaTemplate; else noFormulaTemplate"></ng-container>
 
-
-<ng-template #restrictedFieldTemplate>
-    <eq-autocomplete [ngClass]="[!value ? 'eidt-subline' : '']" [data]="dataRestrictions" [(value)]="value" (valueChange)="onChangeByRestricted($event)" (onListChange)="listChange($event)" [isDisabled]="isDisabled" [restriction]="restriction"></eq-autocomplete>
+<ng-template #formulaTemplate>
+    <span class="text-color">{{valueFormula | number: '1.2-2'}}</span>
 </ng-template>
 
+<ng-template #noFormulaTemplate>
+    <ng-container *ngIf="isRestricted then restrictedFieldTemplate; else unrestrictedFieldTemplate"></ng-container>
 
-<ng-template #unrestrictedFieldTemplate>
-    <input [ngClass]="[!value ? 'eidt-subline' : '']" type="number" [(ngModel)]="value" [disabled]="isDisabled" (change)="onChangeByText($event)">
+
+    <ng-template #restrictedFieldTemplate>
+        <eq-autocomplete [ngClass]="[!value ? 'eidt-subline' : '']" [data]="dataRestrictions" [(value)]="value" (valueChange)="onChangeByRestricted($event)" (onListChange)="listChange($event)" [isDisabled]="isDisabled"
+            [restriction]="restriction"></eq-autocomplete>
+    </ng-template>
+
+
+    <ng-template #unrestrictedFieldTemplate>
+        <input *ngIf="editMode" #fieldEditable [ngClass]="[!value ? 'eidt-subline' : '']" type="number"
+            [(ngModel)]="value" [disabled]="isDisabled" (change)="onChangeByText($event)" (blur)="editMode=false">
+        <span class="text-color" *ngIf="!editMode" (click)="onClickField($event)">{{value | number: '1.2-2'}}</span>
+    </ng-template>
 </ng-template>

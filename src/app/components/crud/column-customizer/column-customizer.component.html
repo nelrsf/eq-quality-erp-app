@@ -28,6 +28,14 @@
 				<eq-subtable-customizer (columnOperationEnd)="onColumnOperationEnd()" [columnData]="columnData"></eq-subtable-customizer>
 			</ng-template>
 		</li>
+		<li *ngIf="this.columnData.type === COLUMN_TYPES_ENUM.number" ngbNavItem [ngbNavItem]="3">
+			<a ngbNavLink>
+				Fórmula
+			</a>
+			<ng-template ngbNavContent>
+				<eq-column-formula (columnOperationEnd)="onColumnOperationEnd()" [columnData]="columnData"></eq-column-formula>
+			</ng-template>
+		</li>
 	</ul>
 	<div [ngbNavOutlet]="navVertical">
 	</div>

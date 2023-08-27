@@ -26,6 +26,7 @@ import { TableViewerButtonComponent } from '../table-viewer/table-viewer.compone
 export class FieldRendererComponent implements AfterViewInit, OnDestroy {
 
   @Input() column!: IColumn | undefined;
+  @Input() rowId!: string;
   @Input() value!: string;
   @Input() restriction: ICellRestriction | undefined;
   @Input() restrictions: Array<Partial<ICellRestriction>> | undefined;
@@ -121,6 +122,7 @@ export class FieldRendererComponent implements AfterViewInit, OnDestroy {
         break
       case ColumnTypes.number:
         this.component = this.createComponent(NumberComponent);
+        this.setCustomNumberInputs();
         break
       case ColumnTypes.file:
         this.component = this.createComponent(FileComponent);
@@ -138,6 +140,12 @@ export class FieldRendererComponent implements AfterViewInit, OnDestroy {
         break
     }
     this.initializeForeignRestriction();
+  }
+
+
+  setCustomNumberInputs(){
+    this.component.instance.columnData = this.column;
+    this.component.instance.rowId = this.rowId;
   }
 
 

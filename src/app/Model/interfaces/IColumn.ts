@@ -1,3 +1,5 @@
+import { IColumnFooter } from "./IColumnFooter"
+import { IFormula } from "./IFormula"
 import { IPermission } from "./IPermission"
 import { ISubtable } from "./ISubtableValue"
 
@@ -9,6 +11,10 @@ export interface IColumn {
     required: boolean,
     formOrder?: number,
     columnOrder?: number,
+    hasFormula?: boolean,
+    hasFooter?: boolean,
+    footer?: IColumnFooter,
+    formula?: IFormula,
     table: string,
     module: string,
     width: number

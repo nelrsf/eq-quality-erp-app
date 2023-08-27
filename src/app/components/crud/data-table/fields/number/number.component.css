@@ -20,3 +20,7 @@ input:focus-visible {
 input:disabled {
     background-color: transparent;
 }
+
+.text-color {
+    color: var(--bs-emphasis-color);
+}

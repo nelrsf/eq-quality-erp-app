@@ -1513,3 +1513,15 @@ p {
 .page-item.active .page-link {
     z-index: 0;
 }
+
+.footer-label {
+    color: var(--bs-emphasis-color);
+    border-bottom: solid;
+    border-bottom-width: 0.1px;
+    margin-bottom: 0.5rem;
+}
+
+.footer-value {
+    color: var(--bs-emphasis-color);
+    font-weight: 400;
+}

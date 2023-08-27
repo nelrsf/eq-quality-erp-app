@@ -27,9 +27,12 @@
             "styles": [
               "@angular/material/prebuilt-themes/deeppurple-amber.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/prismjs/themes/prism.css",
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/prismjs/prism.js"
+            ]
           },
           "configurations": {
             "production": {

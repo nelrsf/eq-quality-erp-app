@@ -1,0 +1,28 @@
+.input-formula {
+    height: 3rem;
+    border: solid 0.5px var(--bs-border-color);
+    border-radius: 5px;
+    padding: 0.3rem;
+}
+
+.formula-menu {
+    display: none;
+    position: absolute;
+    height: 110px;
+    overflow: auto;
+}
+
+.formula-menu:empty {
+    display: none!important;
+}
+
+.formula-container {
+    position: relative;
+}
+
+.input-formula--hidden{
+    /* height: 0;
+    opacity: 0; */
+}
+
+

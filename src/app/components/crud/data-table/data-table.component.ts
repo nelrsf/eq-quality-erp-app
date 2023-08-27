@@ -19,6 +19,8 @@ import { ShowIfIsOwner } from 'src/app/directives/permissions/show-if-is-owner.d
 import { SubtableComponent } from '../../subtable/subtable.component';
 import { ISubtableValue } from 'src/app/Model/interfaces/ISubtableValue';
 import { DnDOrderDirective } from 'src/app/directives/order.directive';
+import { ColumnFooterOperation } from 'src/app/Model/interfaces/IColumnFooter';
+import * as math from 'mathjs';
 
 
 
@@ -424,15 +426,15 @@ export class DataTableComponent implements OnInit, AfterViewInit {
 
   onReorderColumns(emitChange: boolean = true) {
     this.columnsProperties = this.columnsProperties.sort(
-      (a: IColumn, b: IColumn) => { 
-        if(a.columnOrder === undefined || b.columnOrder === undefined){
+      (a: IColumn, b: IColumn) => {
+        if (a.columnOrder === undefined || b.columnOrder === undefined) {
           return -1;
         }
-        return a.columnOrder - b.columnOrder 
+        return a.columnOrder - b.columnOrder
       });
-      if(emitChange){
-        this.columnsOrderChange.emit(this.columnsProperties);
-      }
+    if (emitChange) {
+      this.columnsOrderChange.emit(this.columnsProperties);
+    }
   }
 
   getColumnsAsOnject() {
@@ -443,5 +445,32 @@ export class DataTableComponent implements OnInit, AfterViewInit {
       }
     );
     return columnsObj;
+  }
+
+  getFooterValue(column: IColumn) {
+    if (!column.hasFooter) {
+      return "";
+    }
+    if (column.footer?.operationType === undefined) {
+      return "";
+    }
+    if (column.type !== ColumnTypes.number) {
+      return "";
+    }
+    const columnValues = this.rows.map(r => parseFloat(r[column._id]));
+    switch (column.footer?.operationType) {
+      case ColumnFooterOperation.SUM:
+        return math.sum(columnValues);
+      case ColumnFooterOperation.AVG:
+        return math.sum(columnValues) / columnValues.length;
+      case ColumnFooterOperation.COUNT:
+        return columnValues.length;
+      default:
+        return "";
+    }
+  }
+
+  hasTableFooter() {
+    return this.columnsProperties.some((col) => col.hasFooter);
   }
 }
