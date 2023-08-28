@@ -1,5 +1,5 @@
 import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Output, ViewChild } from '@angular/core';
-import { ISubtable, ISubtableValue } from 'src/app/Model/interfaces/ISubtableValue';
+import { IColumnsOverrideData, ISubtable, ISubtableValue } from 'src/app/Model/interfaces/ISubtableValue';
 import { TablesService } from 'src/app/pages/tables/tables.service';
 import { DataTableComponent, IRowChecked } from '../crud/data-table/data-table.component';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -10,6 +10,7 @@ import { LoadingComponent } from '../miscelaneous/loading/loading.component';
 import { CommonModule } from '@angular/common';
 import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { generateObjectId } from 'src/app/functions/generateObjectId';
 
 
 @Component({
@@ -56,7 +57,7 @@ export class SubtableComponent implements AfterViewInit {
         {
           next: (result: any) => {
             console.log(result);
-            if(!result){
+            if (!result) {
               result = [];
             }
             this.dataTable.data.next(result);
@@ -70,49 +71,84 @@ export class SubtableComponent implements AfterViewInit {
       )
   }
 
-  initializeTable() {
-    this.data = history.state['data'];
-
-    this.tableService.getAllColumns(this.data.module, this.data.table)
-      .subscribe(
-        {
-          next: (result: any) => {
-            const columns = Object.keys(result).map(c => result[c]);
-            const replicatedColumns = this.replicateColumns(columns, this.data);
-            this.dataTable.columnsSubject.next(replicatedColumns);
-            this.dataTable.data.next(this.tableRows);
-            this.cdr.detectChanges();
-          },
-          error: (error) => {
-            console.log(error);
-          }
+  setColumnsOrder(columns: IColumn[]) {
+    columns.forEach(
+      (col: IColumn) => {
+        const colOverrideFounded = this.findColumn(col._id, this.data.valueHost.columnsOverrideData);
+        if (colOverrideFounded) {
+          col.columnOrder = colOverrideFounded.order;
         }
-      )
+      }
+    )
   }
 
-  replicateColumns(columns: IColumn[], data: ISubtable) {
-    const columnsReplicated: IColumn[] = [];
+  setColumnsVisivility(columns: IColumn[]) {
     columns.forEach(
-      (c: IColumn) => {
+      (col: IColumn) => {
+        const colOverrideFounded = this.findColumn(col._id, this.data.valueHost.columnsOverrideData);
+        if (colOverrideFounded) {
+          col.hidden = colOverrideFounded.hide;
+        }
+      }
+    )
+  }
+
+  findColumn(colId: string, columns: IColumnsOverrideData[]) {
+    return columns.find((col: IColumnsOverrideData) => col.columnId === colId);
+  }
+
+  initializeTable() {
+    this.data = history.state['data'];
+    const columns = this.replicateColumns(this.data);
+    this.setColumnsOrder(columns);
+    this.setColumnsVisivility(columns);
+    this.dataTable.columnsSubject.next(columns.filter(c => !c.hidden));
+    this.dataTable.data.next(this.tableRows);
+    this.cdr.detectChanges();
+    // this.tableService.getAllColumns(this.data.module, this.data.table)
+    //   .subscribe(
+    //     {
+    //       next: (result: any) => {
+    //         const columns = Object.keys(result).map(c => result[c]);
+    //         const replicatedColumns = this.replicateColumns(columns, this.data);
+    //         this.dataTable.columnsSubject.next(replicatedColumns);
+    //         this.dataTable.data.next(this.tableRows);
+    //         this.cdr.detectChanges();
+    //       },
+    //       error: (error) => {
+    //         console.log(error);
+    //       }
+    //     }
+    //   )
+  }
+
+  replicateColumns(data: ISubtableValue) {
+    const columnsReplicated: IColumn[] = [];
+    data.valueHost.columnsOverrideData.forEach(
+      (c: IColumnsOverrideData) => {
+        if (c.isVirtualColumn) {
+          columnsReplicated.push(c.virtualColumnData);
+          return;
+        }
         columnsReplicated.push(
           {
-            _id: c._id,
-            columnName: c.columnName,
-            hidden: c.hidden,
+            _id: c.columnId,
+            columnName: c.virtualColumnData.columnName,
+            hidden: c.virtualColumnData.hidden,
             isRestricted: true,
-            module: c.module,
-            permissions: c.permissions,
-            required: c.required,
-            table: c.table,
-            type: c.type,
-            unique: c._id === data.column,
-            width: c.width,
-            linkedTable: c.linkedTable,
-            columnRestriction: c._id,
+            module: c.virtualColumnData.module,
+            permissions: c.virtualColumnData.permissions,
+            required: c.virtualColumnData.required,
+            table: c.virtualColumnData.table,
+            type: c.virtualColumnData.type,
+            unique: c.virtualColumnData._id === data.column,
+            width: c.virtualColumnData.width,
+            linkedTable: c.virtualColumnData.linkedTable,
+            columnRestriction: c.virtualColumnData._id,
             moduleRestriction: data.module,
             tableRestriction: data.table,
-            columnOrder: c.columnOrder,
-            formOrder: c.formOrder
+            columnOrder: c.virtualColumnData.columnOrder,
+            formOrder: c.virtualColumnData.formOrder
           }
         )
       }
@@ -121,11 +157,11 @@ export class SubtableComponent implements AfterViewInit {
   }
 
   generateObjectId() {
-    const timestamp = (new Date().getTime() / 1000 | 0).toString(16);
-    const randomPart = Math.floor(Math.random() * 16777215).toString(16);
-    const increment = Math.floor(Math.random() * 16777215).toString(16);
+    // const timestamp = (new Date().getTime() / 1000 | 0).toString(16);
+    // const randomPart = Math.floor(Math.random() * 16777215).toString(16);
+    // const increment = Math.floor(Math.random() * 16777215).toString(16);
 
-    return timestamp + randomPart + increment;
+    return generateObjectId();
   }
 
   createEmptyRow() {

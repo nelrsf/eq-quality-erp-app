@@ -1,5 +1,58 @@
-<div class="mt-3 column-selector" columnSelector [data]="columnData.linkedTable" [(module)]="module" [(table)]="table" [(column)]="column" [columnData]="columnData" [tableFilterCallback]="getTablesFilterCallback"></div>
+<div class="mt-3 column-selector" columnSelector [data]="columnData.linkedTable" [(module)]="module" [(table)]="table"
+  [(column)]="column" [columnData]="columnData" [tableFilterCallback]="getTablesFilterCallback"
+  (onColumnsChange)="onColumnsChange($event)"></div>
+
+<div class="d-inline-flex justify-content-between align-items-center mb-2 w-100">
+  <div class="d-inline">
+    <label class="font-weight-bold">Listado de columnas</label>
+  </div>
+  <button class="btn btn-outline-success py-1" (click)="addVirtualColumn()">
+    <fa-icon [icon]="icons.add"></fa-icon>
+  </button>
+</div>
+<ul class="list-group">
+  <li *ngFor="let column of overrideColumns" eqDrag [(eqDropTarget)]="jsonColumns" 
+  [(ddOrder)]="column.order" class="list-group-item">
+    <div class="d-inline-flex justify-content-between align-items-center me-2 w-100">
+      <div class="d-inline">
+        {{column.virtualColumnData.columnName}}
+      </div>
+
+      <div class="d-inline">
+        <div *ngIf="column.isVirtualColumn" class="d-inline">
+          <button class="btn btn-outline-secondary py-1 me-2" (click)="openEditModal(column)">
+            <fa-icon [icon]="icons.edit"></fa-icon>
+          </button>
+          <button class="btn btn-outline-danger py-1 me-2" (click)="deleteColumn(column.columnId)">
+            <fa-icon [icon]="icons.delete"></fa-icon>
+          </button>
+        </div>
+        <button *ngIf="column.hide" class="btn btn-outline-secondary py-1" (click)="column.hide=false">
+          <fa-icon [icon]="icons.hide"></fa-icon>
+        </button>
+        <button *ngIf="!column.hide" class="btn btn-outline-secondary py-1" (click)="column.hide=true">
+          <fa-icon [icon]="icons.show"></fa-icon>
+        </button>
+      </div>
+    </div>
+  </li>
+</ul>
 
 <hr>
 
 <button type="button" class="btn btn-primary" (click)="submitSubtableData()">Guardar Cambios</button>
+
+<!-- Form -->
+<ng-template  #customizerColumn let-modal>
+  <div class="m-0 modal-dialog mw-100">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Nuevo registro</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.close()"></button>
+      </div>
+      <div class="modal-body">
+        <eq-general-attributes [submitButton]="false" [columnData]="currentColumn" (columnOperationEnd)="onEditColumnEnd()"></eq-general-attributes>
+      </div>
+    </div>
+  </div>
+</ng-template>

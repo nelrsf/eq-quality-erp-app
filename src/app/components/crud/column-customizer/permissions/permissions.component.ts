@@ -118,20 +118,22 @@ export class PermissionsComponent implements AfterViewInit {
       }
     );
 
-    this.tablesService.upsertColumn(this.columnData)
-      .subscribe(
-        {
-          next: (data: any) => {
-            console.log(data);
-            this.loading = false;
-            this.columnOperationEnd.emit();
-          },
-          error: (error: any) => {
-            this.loading = false;
-            console.log(error);
-          }
-        }
-      )
+    this.columnOperationEnd.emit();
+
+    // this.tablesService.upsertColumn(this.columnData)
+    //   .subscribe(
+    //     {
+    //       next: (data: any) => {
+    //         console.log(data);
+    //         this.loading = false;
+    //         this.columnOperationEnd.emit();
+    //       },
+    //       error: (error: any) => {
+    //         this.loading = false;
+    //         console.log(error);
+    //       }
+    //     }
+    //   )
   }
 
 }

@@ -36,6 +36,7 @@ export class GeneralAttributesComponent {
   uniqueRestrictionMessage = "Antes de declarar esta columna como única debe asegurarse que no existan valores duplicados, de lo contrario perderá información en las busquedas de datos"
 
   @Input() columnData!: IColumn;
+  @Input() submitButton: boolean = true;
   COLUMN_TYPES = Object.values(ColumnTypes);
   COLUMN_TYPES_ENUM = ColumnTypes;
 
@@ -46,6 +47,7 @@ export class GeneralAttributesComponent {
   columnsForRestriction: Array<any> = [];
 
   loading: boolean = false;
+
 
   constructor(private activedRoute: ActivatedRoute, private tableService: TablesService, private moduleService: ModulesService) {
     this.columnData = {
@@ -100,21 +102,22 @@ export class GeneralAttributesComponent {
   }
 
   onSubmit() {
-    this.loading = true;
-    this.tableService.upsertColumn(this.columnData)
-      .subscribe(
-        {
-          next: (data: any) => {
-            console.log(data);
-            this.loading = false;
-            this.columnOperationEnd.emit();
-          },
-          error: (error: any) => {
-            this.loading = false;
-            console.log(error);
-          }
-        }
-      );
+    // this.loading = true;
+    // this.tableService.upsertColumn(this.columnData)
+    //   .subscribe(
+    //     {
+    //       next: (data: any) => {
+    //         console.log(data);
+    //         this.loading = false;
+    //         this.columnOperationEnd.emit();
+    //       },
+    //       error: (error: any) => {
+    //         this.loading = false;
+    //         console.log(error);
+    //       }
+    //     }
+    //   );
+    this.columnOperationEnd.emit();
   }
 
   changeModule() {

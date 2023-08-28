@@ -263,7 +263,8 @@ export class DataTableComponent implements OnInit, AfterViewInit {
         valueHost: {
           column: column._id,
           module: column.module,
-          table: column.table
+          table: column.table,
+          columnsOverrideData: column.linkedTable?.columnsOverrideData ? column.linkedTable?.columnsOverrideData : []
         }
       }
     }

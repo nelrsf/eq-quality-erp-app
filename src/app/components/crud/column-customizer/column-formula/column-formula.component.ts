@@ -65,24 +65,25 @@ export class ColumnFormulaComponent implements OnInit, AfterViewInit {
   }
 
   saveFormula() {
-    this.loading = true;
+    // this.loading = true;
     this.setFooter();
-    this.tableService.upsertColumn(this.columnData)
-      .subscribe(
-        {
-          next: (result) => {
-            console.log(result);
-            this.loading = false;
-            this.columnOperationEnd.next();
-          },
-          error: (error) => {
-            console.log(error)
-            this.errorMessage = error.error;
-            this.ngbModal.open(this.modalError);
-            this.loading = false;
-          }
-        }
-      )
+    this.columnOperationEnd.emit();
+    // this.tableService.upsertColumn(this.columnData)
+    //   .subscribe(
+    //     {
+    //       next: (result) => {
+    //         console.log(result);
+    //         this.loading = false;
+    //         this.columnOperationEnd.next();
+    //       },
+    //       error: (error) => {
+    //         console.log(error)
+    //         this.errorMessage = error.error;
+    //         this.ngbModal.open(this.modalError);
+    //         this.loading = false;
+    //       }
+    //     }
+    //   )
   }
 
 }

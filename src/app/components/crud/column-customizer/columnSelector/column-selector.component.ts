@@ -30,6 +30,7 @@ export class ColumnSelector implements OnInit {
     @Output() moduleChange = new EventEmitter<IModule>();
     @Output() tableChange = new EventEmitter<ITable>();
     @Output() columnChange = new EventEmitter<IColumn>();
+    @Output() onColumnsChange = new EventEmitter<IColumn[]>();
 
     modulesForRestriction: Array<IModule> = [];
     tablesForRestriction: Array<ITable> = [];
@@ -132,7 +133,8 @@ export class ColumnSelector implements OnInit {
                     keys.forEach(key => {
                         this.columnsForRestriction.push(data[key]);
                     });
-                    this.findCurrentColumn()
+                    this.onColumnsChange.emit(this.columnsForRestriction);
+                    this.findCurrentColumn();
                 }
             )
     }

@@ -7,6 +7,7 @@ import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { PermissionsComponent } from './permissions/permissions.component';
 import { SubtableCustomizerComponent } from './subtable-customizer/subtable-customizer.component';
 import { ColumnFormulaComponent } from './column-formula/column-formula.component';
+import { TablesService } from 'src/app/pages/tables/tables.service';
 
 
 @Component({
@@ -33,9 +34,26 @@ export class ColumnCustomizerComponent {
   COLUMN_TYPES_ENUM = ColumnTypes;
 
   public active: string = 'general';
+  public loading: boolean = false;
+
+  constructor(private tableService: TablesService){}
 
   onColumnOperationEnd() {
-    this.columnOperationEnd.emit();
+    this.loading = true;
+    this.tableService.upsertColumn(this.columnData)
+      .subscribe(
+        {
+          next: (data: any) => {
+            console.log(data);
+            this.loading = false;
+            this.columnOperationEnd.emit();
+          },
+          error: (error: any) => {
+            this.loading = false;
+            console.log(error);
+          }
+        }
+      );
   }
 
 }

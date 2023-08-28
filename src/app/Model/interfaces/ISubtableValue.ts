@@ -1,3 +1,5 @@
+import { IColumn } from "./IColumn"
+
 export interface ISubtableValue {
     valueHost: ISubtable,
     table: string,
@@ -11,4 +13,13 @@ export interface ISubtable {
     table: string,
     module: string,
     column: string,
+    columnsOverrideData: Array<IColumnsOverrideData>
+}
+
+export interface IColumnsOverrideData {
+    columnId: string,
+    hide: boolean,
+    order: number | undefined,
+    isVirtualColumn: boolean,
+    virtualColumnData: IColumn
 }
