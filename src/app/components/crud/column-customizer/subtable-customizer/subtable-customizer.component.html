@@ -11,29 +11,15 @@
   </button>
 </div>
 <ul class="list-group">
-  <li *ngFor="let column of overrideColumns" eqDrag [(eqDropTarget)]="jsonColumns" 
-  [(ddOrder)]="column.order" class="list-group-item">
+  <li *ngFor="let column of overrideColumns" eqDrag [(eqDropTarget)]="jsonColumns" [(ddOrder)]="column.order"
+    class="list-group-item">
     <div class="d-inline-flex justify-content-between align-items-center me-2 w-100">
       <div class="d-inline">
         {{column.virtualColumnData.columnName}}
       </div>
-
-      <div class="d-inline">
-        <div *ngIf="column.isVirtualColumn" class="d-inline">
-          <button class="btn btn-outline-secondary py-1 me-2" (click)="openEditModal(column)">
-            <fa-icon [icon]="icons.edit"></fa-icon>
-          </button>
-          <button class="btn btn-outline-danger py-1 me-2" (click)="deleteColumn(column.columnId)">
-            <fa-icon [icon]="icons.delete"></fa-icon>
-          </button>
-        </div>
-        <button *ngIf="column.hide" class="btn btn-outline-secondary py-1" (click)="column.hide=false">
-          <fa-icon [icon]="icons.hide"></fa-icon>
-        </button>
-        <button *ngIf="!column.hide" class="btn btn-outline-secondary py-1" (click)="column.hide=true">
-          <fa-icon [icon]="icons.show"></fa-icon>
-        </button>
-      </div>
+      <ng-container [ngTemplateOutlet]="columnButtons" [ngTemplateOutletContext]="{column: column}"></ng-container>
+      <ng-container [ngTemplateOutlet]="columnButtonsDropDown"
+        [ngTemplateOutletContext]="{column: column}"></ng-container>
     </div>
   </li>
 </ul>
@@ -43,16 +29,98 @@
 <button type="button" class="btn btn-primary" (click)="submitSubtableData()">Guardar Cambios</button>
 
 <!-- Form -->
-<ng-template  #customizerColumn let-modal>
+<ng-template #customizerColumn let-modal>
   <div class="m-0 modal-dialog mw-100">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Nuevo registro</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.close()"></button>
+        <h5 class="modal-title" id="exampleModalLabel">Configurar Columna</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+          (click)="modal.close()"></button>
       </div>
       <div class="modal-body">
-        <eq-general-attributes [submitButton]="false" [columnData]="currentColumn" (columnOperationEnd)="onEditColumnEnd()"></eq-general-attributes>
+        <eq-general-attributes [submitButton]="false" [columnData]="currentColumn"
+          (columnOperationEnd)="onEditColumnEnd()"></eq-general-attributes>
       </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Form -->
+<ng-template #customizerFormula let-modal>
+  <div class="m-0 modal-dialog mw-100">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Configurar Fórmula</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+          (click)="modal.close()"></button>
+      </div>
+      <div class="modal-body">
+        <eq-column-formula [submitButton]="false" [columnData]="currentColumn" [columns]="columnsArray"></eq-column-formula>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #columnButtons let-column='column'>
+  <div class="d-none d-md-inline">
+    <div *ngIf="column.isVirtualColumn" class="d-inline">
+      <button class="btn btn-outline-secondary py-1 me-2" (click)="openEditModal(column)">
+        <fa-icon [icon]="icons.edit"></fa-icon>
+      </button>
+      <button *ngIf="column.virtualColumnData.type===COLUMN_TYPES.number" class="btn btn-outline-secondary py-1 me-2"
+        (click)="openEditFormulaModal(column)">
+        <fa-icon [icon]="icons.calculator"></fa-icon>
+      </button>
+      <button class="btn btn-outline-danger py-1 me-2" (click)="deleteColumn(column.columnId)">
+        <fa-icon [icon]="icons.delete"></fa-icon>
+      </button>
+    </div>
+    <button *ngIf="column.hide" class="btn btn-outline-secondary py-1" (click)="column.hide=false">
+      <fa-icon [icon]="icons.hide"></fa-icon>
+    </button>
+    <button *ngIf="!column.hide" class="btn btn-outline-secondary py-1" (click)="column.hide=true">
+      <fa-icon [icon]="icons.show"></fa-icon>
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #columnButtonsDropDown let-column='column'>
+  <div ngbDropdown class="d-inline-flex d-md-none">
+    <button type="button" class="btn btn-outline-secondary px-3 border-0" ngbDropdownToggle>
+      <fa-icon [icon]="icons.menu"></fa-icon>
+    </button>
+    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+      <button *ngIf="column.isVirtualColumn" ngbDropdownItem (click)="openEditModal(column)">
+        <div [style.width]="'1rem'" class="me-3 d-inline-flex">
+          <fa-icon [icon]="icons.edit"></fa-icon>
+        </div>
+        <span>Editar</span>
+      </button>
+      <button *ngIf="column.isVirtualColumn && column.virtualColumnData.type===COLUMN_TYPES.number" ngbDropdownItem
+        (click)="openEditFormulaModal(column)">
+        <div [style.width]="'1rem'" class="me-3 d-inline-flex">
+          <fa-icon [icon]="icons.calculator"></fa-icon>
+        </div>
+        <span>Fórmula</span>
+      </button>
+      <button *ngIf="column.isVirtualColumn" ngbDropdownItem (click)="deleteColumn(column.columnId)">
+        <div [style.width]="'1rem'" class="me-3 d-inline-flex text-danger">
+          <fa-icon [icon]="icons.delete"></fa-icon>
+        </div>
+        <span class="text-danger">Eliminar</span>
+      </button>
+      <button *ngIf="column.hide" ngbDropdownItem (click)="column.hide=false">
+        <div [style.width]="'1rem'" class="me-3 d-inline-flex">
+          <fa-icon [icon]="icons.show"></fa-icon>
+        </div>
+        <span>Mostrar</span>
+      </button>
+      <button *ngIf="!column.hide" ngbDropdownItem (click)="column.hide=true">
+        <div [style.width]="'1rem'" class="me-3 d-inline-flex">
+          <fa-icon [icon]="icons.hide"></fa-icon>
+        </div>
+        <span>Ocultar</span>
+      </button>
     </div>
   </div>
 </ng-template>

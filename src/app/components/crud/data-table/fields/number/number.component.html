@@ -9,14 +9,13 @@
 
 
     <ng-template #restrictedFieldTemplate>
-        <eq-autocomplete [ngClass]="[!value ? 'eidt-subline' : '']" [data]="dataRestrictions" [(value)]="value" (valueChange)="onChangeByRestricted($event)" (onListChange)="listChange($event)" [isDisabled]="isDisabled"
-            [restriction]="restriction"></eq-autocomplete>
+        <eq-autocomplete [ngClass]="[!value ? 'eidt-subline' : '']" [data]="dataRestrictions" [(value)]="value" (valueChange)="onChangeByRestricted($event)" (onListChange)="listChange($event)" [isDisabled]="isDisabled" [restriction]="restriction"></eq-autocomplete>
     </ng-template>
 
 
     <ng-template #unrestrictedFieldTemplate>
         <input *ngIf="editMode" #fieldEditable [ngClass]="[!value ? 'eidt-subline' : '']" type="number"
             [(ngModel)]="value" [disabled]="isDisabled" (change)="onChangeByText($event)" (blur)="editMode=false">
-        <span class="text-color" *ngIf="!editMode" (click)="onClickField($event)">{{value | number: '1.2-2'}}</span>
+        <span class="text-color static-field" *ngIf="!editMode" (click)="onClickField($event)">{{value | number: '1.2-2'}}</span>
     </ng-template>
 </ng-template>

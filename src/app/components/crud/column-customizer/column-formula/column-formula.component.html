@@ -11,7 +11,7 @@
     </div>
 
     <div *ngIf="columnData.hasFormula">
-        <eq-formula-editor [(validFormula)]="validFormula" [columnData]="columnData"></eq-formula-editor>
+        <eq-formula-editor [(validFormula)]="validFormula" [columnData]="columnData" [columns]="columns"></eq-formula-editor>
     </div>
 
     <div class="d-inline-flex justify-content-start mt-2 flex-column align-items-start w-100">
@@ -41,7 +41,7 @@
     </div>
 
     <hr>
-    <button [disabled]="!validFormula && columnData.hasFormula" type="button" class="btn btn-primary"
+    <button *ngIf="submitButton" [disabled]="!validFormula && columnData.hasFormula" type="button" class="btn btn-primary"
         (click)="saveFormula()">Guardar Cambios</button>
 </div>
 

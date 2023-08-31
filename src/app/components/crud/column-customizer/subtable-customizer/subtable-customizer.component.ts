@@ -5,7 +5,7 @@ import { ColumnTypes, IColumn } from 'src/app/Model/interfaces/IColumn';
 import { IModule } from 'src/app/Model/interfaces/IModule';
 import { ITable } from 'src/app/Model/interfaces/ITable';
 import { TablesService } from 'src/app/pages/tables/tables.service';
-import { faCogs, faEye, faEyeSlash, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCalculator, faCogs, faEllipsis, faEllipsisVertical, faEye, faEyeSlash, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { IColumnsOverrideData } from 'src/app/Model/interfaces/ISubtableValue';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { DnDOrderDirective } from 'src/app/directives/order.directive';
@@ -13,7 +13,8 @@ import { DragDirective } from 'src/app/directives/drag.directive';
 import { DropTargetDirective } from 'src/app/directives/drop-target.directive';
 import { generateObjectId } from 'src/app/functions/generateObjectId';
 import { GeneralAttributesComponent } from '../general-attributes/general-attributes.component';
-import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { ColumnFormulaComponent } from '../column-formula/column-formula.component';
 
 @Component({
   selector: 'eq-subtable-customizer',
@@ -27,7 +28,9 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
     DnDOrderDirective,
     DragDirective,
     DropTargetDirective,
-    GeneralAttributesComponent
+    GeneralAttributesComponent,
+    ColumnFormulaComponent,
+    NgbDropdownModule
   ]
 })
 export class SubtableCustomizerComponent implements OnInit {
@@ -35,14 +38,18 @@ export class SubtableCustomizerComponent implements OnInit {
   @Input() columnData!: IColumn;
   @Output() columnOperationEnd = new EventEmitter<void>();
   @ViewChild('customizerColumn') customizerColumn!: ElementRef;
+  @ViewChild('customizerFormula') customizerFormula!: ElementRef;
 
   module!: IModule;
   table!: ITable;
   column!: IColumn;
+  columnsArray!: IColumn[];
   overrideColumns!: IColumnsOverrideData[];
   jsonColumns: any;
   currentColumn!: IColumn;
   customizerModalInstance!: NgbModalRef;
+  COLUMN_TYPES = ColumnTypes;
+  // allowedTypesForFormula: Array<ColumnTypes> = [ColumnTypes.table, ColumnTypes.number]
 
   loading: boolean = false;
   icons = {
@@ -50,7 +57,9 @@ export class SubtableCustomizerComponent implements OnInit {
     hide: faEyeSlash,
     add: faPlus,
     delete: faTrash,
-    edit: faCogs
+    edit: faCogs,
+    menu: faEllipsisVertical,
+    calculator: faCalculator
   }
 
   constructor(private ngbModal: NgbModal) { }
@@ -69,22 +78,6 @@ export class SubtableCustomizerComponent implements OnInit {
     }
 
     this.columnOperationEnd.emit();
-    // this.loading = true;
-    // this.tableService.upsertColumn(this.columnData)
-    //   .subscribe(
-    //     {
-    //       next: (data: any) => {
-    //         console.log(data);
-    //         this.loading = false;
-    //         this.columnOperationEnd.emit();
-    //       },
-    //       error: (error: any) => {
-    //         this.loading = false;
-    //         console.log(error);
-    //       }
-    //     }
-    //   );
-
   }
 
   getTablesFilterCallback(table: ITable, columnData?: IColumn) {
@@ -105,7 +98,7 @@ export class SubtableCustomizerComponent implements OnInit {
         }
       );
     this.jsonColumns = this.convertArrayColumnsToJson(this.overrideColumns);
-    const aditionalColumns: IColumnsOverrideData[] = this.columnData.linkedTable?.columnsOverrideData ? this.columnData.linkedTable?.columnsOverrideData.filter(c=>c.isVirtualColumn) : [];
+    const aditionalColumns: IColumnsOverrideData[] = this.columnData.linkedTable?.columnsOverrideData ? this.columnData.linkedTable?.columnsOverrideData.filter(c => c.isVirtualColumn) : [];
     this.overrideColumns = ([] as IColumnsOverrideData[]).concat(aditionalColumns, overrideColumns);
   }
 
@@ -170,5 +163,11 @@ export class SubtableCustomizerComponent implements OnInit {
       return;
     }
     this.overrideColumns.splice(columnIndex, 1);
+  }
+
+  openEditFormulaModal(overrideColumn: IColumnsOverrideData) {
+    this.currentColumn = overrideColumn.virtualColumnData;
+    this.columnsArray = this.overrideColumns.map(oc=>oc.virtualColumnData);
+    this.customizerModalInstance = this.ngbModal.open(this.customizerFormula);
   }
 }

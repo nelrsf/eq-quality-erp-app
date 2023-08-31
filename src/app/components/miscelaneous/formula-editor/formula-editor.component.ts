@@ -56,10 +56,10 @@ export class FormulaEditorComponent implements AfterViewInit, OnInit {
   @ViewChild('inputFormula') inputFormula!: ElementRef;
   @Input() columnData!: IColumn;
   @Input() validFormula!: boolean;
+  @Input() columns: IColumn[] = [];
   @Output() validFormulaChange = new EventEmitter<boolean>();
 
   completions: { label: string, type?: string, info?: string }[] = [];
-  columns: IColumn[] = [];
   modules: IModule[] = [];
   editor!: EditorView;
   parsedExpr!: MathNode;
@@ -85,7 +85,15 @@ export class FormulaEditorComponent implements AfterViewInit, OnInit {
 
   ngOnInit(): void {
     this.getModules();
-    this.getColumns();
+    if (this.columns.length === 0) {
+      this.getColumns();
+    } else {
+      this.getCompletionsByColumns();
+      if (this.plainFormula) {
+        this.initializeFormula();
+      }
+    }
+
   }
 
   initializeFormula() {
@@ -139,7 +147,7 @@ export class FormulaEditorComponent implements AfterViewInit, OnInit {
     const languageConf = new Compartment;
     const extensions = [
       minimalSetup,
-      autocompletion({ override: [this.getCompletions] }),
+      autocompletion({ override: [this.getCompletionsContext] }),
       languageConf.of(spreadsheet()),
       placeholders
     ]
@@ -149,6 +157,19 @@ export class FormulaEditorComponent implements AfterViewInit, OnInit {
     return extensions;
   }
 
+  getCompletionsByColumns(){
+    this.completions = this.columns
+    .filter(col => col.type === ColumnTypes.number && col._id !== this.columnData._id)
+    .map(
+      (col: IColumn): any => {
+        return {
+          label: col._id,
+          displayLabel: col.columnName,
+          type: "constant",
+          apply: this.appyCompletionFunction
+        }
+      });
+  }
 
   getColumns() {
     this.tablesService.getAllColumns(this.columnData.module, this.columnData.table)
@@ -156,17 +177,7 @@ export class FormulaEditorComponent implements AfterViewInit, OnInit {
         {
           next: (columns: any) => {
             this.columns = Object.keys(columns).map(c => columns[c]);
-            this.completions = this.columns
-              .filter(col => col.type === ColumnTypes.number && col._id !== this.columnData._id)
-              .map(
-                (col: IColumn): any => {
-                  return {
-                    label: col._id,
-                    displayLabel: col.columnName,
-                    type: "constant",
-                    apply: this.appyCompletionFunction
-                  }
-                });
+            this.getCompletionsByColumns();
             if (this.plainFormula) {
               this.initializeFormula();
             }
@@ -176,7 +187,7 @@ export class FormulaEditorComponent implements AfterViewInit, OnInit {
   }
 
 
-  getCompletions = (context: CompletionContext) => {
+  getCompletionsContext = (context: CompletionContext) => {
     let before = context.matchBefore(/\w+/);
     // If completion wasn't explicitly started and there
     // is no word before the cursor, don't open completions.

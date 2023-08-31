@@ -29,6 +29,8 @@ export class ColumnFormulaComponent implements OnInit, AfterViewInit {
   @ViewChild('modalError') modalError!: ElementRef;
 
   @Input() columnData!: IColumn;
+  @Input() columns: IColumn[] = [];
+  @Input() submitButton: boolean = true;
   @Output() columnOperationEnd: EventEmitter<void> = new EventEmitter<void>();
 
   loading: boolean = false;
@@ -65,25 +67,8 @@ export class ColumnFormulaComponent implements OnInit, AfterViewInit {
   }
 
   saveFormula() {
-    // this.loading = true;
     this.setFooter();
     this.columnOperationEnd.emit();
-    // this.tableService.upsertColumn(this.columnData)
-    //   .subscribe(
-    //     {
-    //       next: (result) => {
-    //         console.log(result);
-    //         this.loading = false;
-    //         this.columnOperationEnd.next();
-    //       },
-    //       error: (error) => {
-    //         console.log(error)
-    //         this.errorMessage = error.error;
-    //         this.ngbModal.open(this.modalError);
-    //         this.loading = false;
-    //       }
-    //     }
-    //   )
   }
 
 }

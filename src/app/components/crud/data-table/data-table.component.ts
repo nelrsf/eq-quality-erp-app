@@ -458,7 +458,8 @@ export class DataTableComponent implements OnInit, AfterViewInit {
     if (column.type !== ColumnTypes.number) {
       return "";
     }
-    const columnValues = this.rows.map(r => parseFloat(r[column._id]));
+    let columnValues = this.rows.map(r => parseFloat(r[column._id]));
+    columnValues = columnValues.filter(v => !isNaN(v));
     switch (column.footer?.operationType) {
       case ColumnFooterOperation.SUM:
         return math.sum(columnValues);

@@ -105,21 +105,6 @@ export class SubtableComponent implements AfterViewInit {
     this.dataTable.columnsSubject.next(columns.filter(c => !c.hidden));
     this.dataTable.data.next(this.tableRows);
     this.cdr.detectChanges();
-    // this.tableService.getAllColumns(this.data.module, this.data.table)
-    //   .subscribe(
-    //     {
-    //       next: (result: any) => {
-    //         const columns = Object.keys(result).map(c => result[c]);
-    //         const replicatedColumns = this.replicateColumns(columns, this.data);
-    //         this.dataTable.columnsSubject.next(replicatedColumns);
-    //         this.dataTable.data.next(this.tableRows);
-    //         this.cdr.detectChanges();
-    //       },
-    //       error: (error) => {
-    //         console.log(error);
-    //       }
-    //     }
-    //   )
   }
 
   replicateColumns(data: ISubtableValue) {
@@ -157,10 +142,6 @@ export class SubtableComponent implements AfterViewInit {
   }
 
   generateObjectId() {
-    // const timestamp = (new Date().getTime() / 1000 | 0).toString(16);
-    // const randomPart = Math.floor(Math.random() * 16777215).toString(16);
-    // const increment = Math.floor(Math.random() * 16777215).toString(16);
-
     return generateObjectId();
   }
 
