@@ -17,6 +17,8 @@ import { ShowIfIsOwner } from 'src/app/directives/permissions/show-if-is-owner.d
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { DnDOrderDirective } from 'src/app/directives/order.directive';
 import { concatMap, from } from 'rxjs';
+import { SubtableComponent } from '../../subtable/subtable.component';
+import { ISubtableValue } from 'src/app/Model/interfaces/ISubtableValue';
 
 
 @Component({
@@ -39,7 +41,8 @@ import { concatMap, from } from 'rxjs';
     DnDOrderDirective,
     ShowIfIsAdmin,
     ShowIfIsOwner,
-    NgbDropdownModule
+    NgbDropdownModule,
+    SubtableComponent
   ]
 })
 export class FormComponent implements OnInit {
@@ -56,6 +59,7 @@ export class FormComponent implements OnInit {
   imagesFormData: any = {};
   filesFormData: any = {};
   listFormData: any = {};
+  subtableFormData: any = {};
   dragging: boolean = false;
   loading: boolean = false;
   hasError: boolean = false;
@@ -63,6 +67,7 @@ export class FormComponent implements OnInit {
   columnsJson: any;
 
   form!: FormGroup;
+  COLUMN_TYPES_ENUM = ColumnTypes;
 
   @Input() columns: any;
   @Input() module!: string;
@@ -124,6 +129,17 @@ export class FormComponent implements OnInit {
   }
 
 
+  createSubtableFormData() {
+    Object.keys(this.columns).forEach(
+      (col: string) => {
+        if (this.columns[col].type === ColumnTypes.table) {
+          this.subtableFormData[col] = [];
+        }
+      }
+    )
+  }
+
+
   createFormControl() {
     const newControls: any = {}
     Object.keys(this.columns).forEach((columnName: string) => {
@@ -174,6 +190,16 @@ export class FormComponent implements OnInit {
     )
   }
 
+  asignSubtableFormData(rowData: any) {
+    this.columns.forEach(
+      (col: any) => {
+        if (col.type === ColumnTypes.table) {
+          rowData[col._id] = this.subtableFormData[col._id];
+        }
+      }
+    )
+  }
+
   onSubmit() {
     if (this.form.status === "INVALID") {
       return;
@@ -190,6 +216,7 @@ export class FormComponent implements OnInit {
     this.asignImagesFormData(newRow);
     this.asignListFormData(newRow);
     this.asignFilesFormData(newRow);
+    this.asignSubtableFormData(newRow);
     this.tableService.createRow(this.module, this.table, newRow)
       .subscribe(
         {
@@ -250,4 +277,25 @@ export class FormComponent implements OnInit {
     });
   }
 
+
+  getSubtableData(column: IColumn): ISubtableValue {
+    return {
+      column: column.linkedTable?.column ? column.linkedTable?.column : '',
+      module: column.linkedTable?.module ? column.linkedTable?.module : '',
+      table: column.linkedTable?.table ? column.linkedTable?.table : '',
+      rows: [],
+      rowId: '',
+      valueHost: {
+        column: column._id,
+        module: column.module,
+        table: column.table,
+        columnsOverrideData: column.linkedTable?.columnsOverrideData ? column.linkedTable?.columnsOverrideData : []
+      }
+
+    }
+  }
+
+  onSubtableChange(rows: Array<any>, column: IColumn) {
+    this.subtableFormData[column._id] = rows;
+  }
 }

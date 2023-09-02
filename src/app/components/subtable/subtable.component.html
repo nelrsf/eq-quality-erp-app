@@ -1,9 +1,9 @@
 <div *ngIf="loading">
     <eq-loading></eq-loading>
   </div>
-<eq-breadcrumb [module]="getModule()"></eq-breadcrumb>
+<eq-breadcrumb *ngIf="showBreadCrumb" [module]="getModule()"></eq-breadcrumb>
 <div class="d-inline-flex justify-content-end w-100">
-  <span class="badge bg-secondary">
+  <span *ngIf="showBackButton" class="badge bg-secondary">
     <a class="nav-link" [routerLink]="getBackUrl()">
       <fa-icon [icon]="icons.back"></fa-icon>
       Regresar

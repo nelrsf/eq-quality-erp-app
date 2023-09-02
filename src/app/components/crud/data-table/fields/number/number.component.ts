@@ -100,7 +100,7 @@ export class NumberComponent implements OnInit, AfterViewInit {
       .map(v => v.replaceAll('col_', ''))
       .map(v => v.replaceAll('subtable_', ''))
       .map(v => v.replaceAll('_', '-'));
-      
+
     this.subscribeToValueChanges();
   }
 
@@ -134,7 +134,7 @@ export class NumberComponent implements OnInit, AfterViewInit {
                 if (!operation) {
                   return;
                 }
-                const values = rowsData.map(v => v[colId]);
+                const values = rowsData.map(v => v[colId]).filter(v => typeof v === 'number');
                 let subtableColumnFormula = new ColumnSubtable(this.columnData);
                 let scopeVar: IValueFurmulaChange = {
                   columnId: colId,
@@ -156,7 +156,7 @@ export class NumberComponent implements OnInit, AfterViewInit {
                     subtableColumnFormula.updateScope(scopeVar, this.scope);
                     break;
                 }
-                if(this.isCompleteScope()){
+                if (this.isCompleteScope()) {
                   this.updateValue();
                 }
               },

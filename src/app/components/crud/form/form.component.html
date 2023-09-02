@@ -1,9 +1,10 @@
 <form class="fields" (submit)="onSubmit()" [formGroup]="form">
     <div #DnDContainer class="fields-container d-flex w-100">
         <div *ngFor="let column of columns; let i = index" class="field d-flex align-items-center"
-            [style.width]="getWidth(column)" eqDrag [eqDragKey]="column._id" [(eqDropTarget)]="columnsJson" [(ddOrder)]="column.formOrder">
+            [style.width]="getWidth(column)" eqDrag [eqDragKey]="column._id" [(eqDropTarget)]="columnsJson"
+            [(ddOrder)]="column.formOrder">
             <div [ngSwitch]="column.type" class="draggable-card" *ngIf="!column.isRestricted">
-                <div *ngSwitchCase="'string'">
+                <div *ngSwitchCase="COLUMN_TYPES_ENUM.string">
                     <div class="m-2 form-group">
                         <label class="my-1 control-label">
                             <div>
@@ -17,7 +18,7 @@
                     </div>
                 </div>
 
-                <div *ngSwitchCase="'date'">
+                <div *ngSwitchCase="COLUMN_TYPES_ENUM.date">
                     <div class="m-2 form-group">
                         <label class="my-1 control-label">
                             <div>
@@ -32,8 +33,8 @@
                     </div>
                 </div>
 
-                <div *ngSwitchCase="'number'">
-                    <div class="m-2 form-group">
+                <div *ngSwitchCase="COLUMN_TYPES_ENUM.number">
+                    <div class="m-2 form-group" *ngIf="!column.hasFormula">
                         <label class="my-1 control-label">
                             <div>
                                 {{column.columnName}}
@@ -47,7 +48,7 @@
                 </div>
 
 
-                <div *ngSwitchCase="'file'">
+                <div *ngSwitchCase="COLUMN_TYPES_ENUM.file">
                     <div class="m-2 form-group">
                         <label class="my-1 control-label">
                             <div>
@@ -62,7 +63,7 @@
                 </div>
 
 
-                <div *ngSwitchCase="'image'">
+                <div *ngSwitchCase="COLUMN_TYPES_ENUM.image">
                     <eq-img-field [column]="column" [module]="module"
                         [(images)]="this.imagesFormData[column._id]"></eq-img-field>
                 </div>
@@ -82,7 +83,7 @@
                     </div>
                 </div>
 
-                <div *ngSwitchCase="'list'">
+                <div *ngSwitchCase="COLUMN_TYPES_ENUM.list">
                     <div class="m-2 form-group">
                         <label class="form-check-label my-1 control-label">
                             <div>
@@ -93,6 +94,24 @@
                             </div>
                         </label>
                         <eq-list-field [listData]="listFormData[column._id]"></eq-list-field>
+                    </div>
+                </div>
+
+                <div *ngSwitchCase="COLUMN_TYPES_ENUM.table">
+                    <div *ngIf="column.linkedTable" class="m-2 form-group">
+                        <label class="form-check-label my-1 control-label">
+                            <div class="font-weight-bold">
+                                {{column.columnName}}
+                            </div>
+                            <div *ngIf="subtableFormData[column._id]" class="ms-2 text-success">
+                                (Tabla guardada correctamente)
+                            </div>
+                            <div [showIfIsAdmin]="module" [showIfIsOwner]="module" class="config-field-menu">
+                                <fa-icon [icon]="icons.cog"></fa-icon>
+                            </div>
+                        </label>
+                        <eq-subtable [showBackButton]="false" [showBreadCrumb]="false" [data]="getSubtableData(column)"
+                            (rowsChange)="onSubtableChange($event, column)"></eq-subtable>
                     </div>
                 </div>
             </div>

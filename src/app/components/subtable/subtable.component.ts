@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { IColumnsOverrideData, ISubtable, ISubtableValue } from 'src/app/Model/interfaces/ISubtableValue';
 import { TablesService } from 'src/app/pages/tables/tables.service';
 import { DataTableComponent, IRowChecked } from '../crud/data-table/data-table.component';
@@ -32,7 +32,11 @@ export class SubtableComponent implements AfterViewInit {
 
   @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
   @Output() dataChange = new EventEmitter<ISubtableValue>();
-  data!: ISubtableValue;
+  @Output() rowsChange = new EventEmitter<Array<any>>();
+  @Input() data!: ISubtableValue;
+  @Input() showBreadCrumb: boolean = true;
+  @Input() showBackButton: boolean = true;
+
 
   tableRows: Array<any> = [];
   currentId: number = 0;
@@ -52,6 +56,12 @@ export class SubtableComponent implements AfterViewInit {
   }
 
   initializeTableData() {
+    if (!this.data.rowId) {
+      this.dataTable.data.next([]);
+      this.tableRows = this.dataTable.data.getValue();
+      this.cdr.detectChanges();
+      return;
+    }
     this.tableService.getRowById(this.data.valueHost.module, this.data.valueHost.table, this.data.rowId, this.data.valueHost.column)
       .subscribe(
         {
@@ -98,7 +108,9 @@ export class SubtableComponent implements AfterViewInit {
   }
 
   initializeTable() {
-    this.data = history.state['data'];
+    if (!this.data) {
+      this.data = history.state['data'];
+    }
     const columns = this.replicateColumns(this.data);
     this.setColumnsOrder(columns);
     this.setColumnsVisivility(columns);
@@ -174,6 +186,10 @@ export class SubtableComponent implements AfterViewInit {
   }
 
   saveRows() {
+    if (!this.data.rowId) {
+      this.rowsChange.emit(this.tableRows);
+      return;
+    }
     this.data.rows = this.tableRows;
     this.loading = true;
     this.tableService.updateRowByIdAndColumn(this.data.valueHost.module, this.data.valueHost.table, this.data.valueHost.column, this.data.rowId, this.data.rows)

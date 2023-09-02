@@ -1,5 +1,5 @@
 <div class="d-flex justify-content-start align-items-center">
-    <div>
+    <div class="d-inline-flex flex-column">
         <input #autocompleteInput class="text-input" [ngClass]="[!didValueMatchRestrictions()? 'invalid-field': '', !value ? 'eidt-subline' : '']" [disabled]="isDisabled"
             [matAutocomplete]="auto" (focus)="onFocus($event)" [(ngModel)]="value" (ngModelChange)="checkValue()">
         <span *ngIf="!didValueMatchRestrictions()" class="mx-1 text-danger">
