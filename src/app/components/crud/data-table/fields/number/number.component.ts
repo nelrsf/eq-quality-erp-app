@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ICellRestriction } from 'src/app/Model/interfaces/ICellRestrictions';
 import { AutocompleteComponent } from '../autocomplete/autocomplete.component';
@@ -24,7 +24,7 @@ import { ColumnSubtable } from 'src/app/components/miscelaneous/formula-editor/f
     AutocompleteComponent
   ]
 })
-export class NumberComponent implements OnInit, AfterViewInit {
+export class NumberComponent implements OnInit, AfterViewInit, OnChanges {
 
   @Input() value!: string;
   @Input() isRestricted: boolean = false;
@@ -44,14 +44,23 @@ export class NumberComponent implements OnInit, AfterViewInit {
 
   constructor(private numberService: NumberFieldService, private tableService: TablesService) { }
 
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes)
+  }
+
   ngAfterViewInit(): void {
+    this.emitMathValue(this.value)
+  }
+
+  emitMathValue(value: any){
     setTimeout(
       () => {
         this.numberService.onChange.next(
           {
             columnId: this.columnData._id,
             rowId: this.rowId,
-            value: parseFloat(this.value)
+            value: parseFloat(value)
           }
         )
       }
@@ -62,29 +71,29 @@ export class NumberComponent implements OnInit, AfterViewInit {
     this.initializeFormula();
     this.valueChange.subscribe(
       (value: number) => {
-        this.numberService.onChange.next({
-          columnId: this.columnData._id,
-          rowId: this.rowId,
-          value: value
-        })
+        this.emitMathValue(value);
       }
     );
   }
 
   onChange(event: any) {
-    this.valueChange.emit(event.target.value)
+    this.valueChange.emit(event.target.value);
+    this.emitMathValue(event.target.value);
   }
 
   onChangeByRestricted(value: any) {
     this.valueChange.emit(value);
+    this.emitMathValue(value);
   }
 
   onChangeByText(event: any) {
     this.valueChange.emit(event.target.value);
+    this.emitMathValue(event.target.value);
   }
 
   listChange(data: Partial<ICellRestriction>) {
     this.onListChange.emit(data);
+    this.emitMathValue(data.value);
   }
 
   initializeFormula() {

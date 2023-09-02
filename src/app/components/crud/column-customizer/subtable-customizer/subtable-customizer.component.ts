@@ -97,9 +97,41 @@ export class SubtableCustomizerComponent implements OnInit {
           }
         }
       );
-    this.jsonColumns = this.convertArrayColumnsToJson(this.overrideColumns);
     const aditionalColumns: IColumnsOverrideData[] = this.columnData.linkedTable?.columnsOverrideData ? this.columnData.linkedTable?.columnsOverrideData.filter(c => c.isVirtualColumn) : [];
     this.overrideColumns = ([] as IColumnsOverrideData[]).concat(aditionalColumns, overrideColumns);
+    this.overrideColumnsVisivility(this.columnData.linkedTable?.columnsOverrideData);
+    this.overrideColumnsOrder(this.columnData.linkedTable?.columnsOverrideData);
+    this.overrideColumns.sort((a: IColumnsOverrideData, b: IColumnsOverrideData) => {
+      if(a?.order === undefined || b?.order === undefined){
+        return -1
+      }
+      return a.order - b.order
+    })
+    this.jsonColumns = this.convertArrayColumnsToJson(this.overrideColumns);
+  }
+
+  overrideColumnsVisivility(overrideColumns: IColumnsOverrideData[] | undefined) {
+    if (!overrideColumns) {
+      return;
+    }
+    this.overrideColumns.forEach(
+      (oc: IColumnsOverrideData) => {
+        const hidden = overrideColumns.find(item => item.columnId === oc.columnId)?.hide === true;
+        oc.hide = hidden;
+      }
+    )
+  }
+
+  overrideColumnsOrder(overrideColumns: IColumnsOverrideData[] | undefined) {
+    if (!overrideColumns) {
+      return;
+    }
+    this.overrideColumns.forEach(
+      (oc: IColumnsOverrideData) => {
+        const order = overrideColumns.find(item => item.columnId === oc.columnId)?.order;
+        oc.order = order;
+      }
+    )
   }
 
   convertArrayColumnsToJson(array: Array<IColumnsOverrideData>) {
@@ -167,7 +199,7 @@ export class SubtableCustomizerComponent implements OnInit {
 
   openEditFormulaModal(overrideColumn: IColumnsOverrideData) {
     this.currentColumn = overrideColumn.virtualColumnData;
-    this.columnsArray = this.overrideColumns.map(oc=>oc.virtualColumnData);
+    this.columnsArray = this.overrideColumns.map(oc => oc.virtualColumnData);
     this.customizerModalInstance = this.ngbModal.open(this.customizerFormula);
   }
 }

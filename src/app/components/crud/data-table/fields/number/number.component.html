@@ -9,7 +9,8 @@
 
 
     <ng-template #restrictedFieldTemplate>
-        <eq-autocomplete [ngClass]="[!value ? 'eidt-subline' : '']" [data]="dataRestrictions" [(value)]="value" (valueChange)="onChangeByRestricted($event)" (onListChange)="listChange($event)" [isDisabled]="isDisabled" [restriction]="restriction"></eq-autocomplete>
+        <eq-autocomplete *ngIf="!isDisabled" [ngClass]="[!value ? 'eidt-subline' : '']" [data]="dataRestrictions" [(value)]="value" (valueChange)="onChangeByRestricted($event)" (onListChange)="listChange($event)"  [restriction]="restriction"></eq-autocomplete>
+        <span *ngIf="isDisabled" class="text-color static-field">{{value | number: '1.2-2'}}</span>
     </ng-template>
 
 

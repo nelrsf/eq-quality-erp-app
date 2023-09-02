@@ -12,6 +12,7 @@ import { ListComponent } from '../list/list.component';
 import { NumberComponent } from '../number/number.component';
 import { StringComponent } from '../string/string.component';
 import { TableViewerButtonComponent } from '../table-viewer/table-viewer.component';
+import { NumberFieldService } from '../number/number-field.service';
 
 
 @Component({
@@ -39,7 +40,7 @@ export class FieldRendererComponent implements AfterViewInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
   private component: any;
 
-  constructor(private cdr: ChangeDetectorRef, private rowsRestriction: RowsRestrictionsService) { }
+  constructor(private cdr: ChangeDetectorRef, private rowsRestriction: RowsRestrictionsService, private numberService: NumberFieldService) { }
 
   ngAfterViewInit(): void {
     this.selectComponentByRestriction();
@@ -143,7 +144,7 @@ export class FieldRendererComponent implements AfterViewInit, OnDestroy {
   }
 
 
-  setCustomNumberInputs(){
+  setCustomNumberInputs() {
     this.component.instance.columnData = this.column;
     this.component.instance.rowId = this.rowId;
   }
@@ -230,11 +231,22 @@ export class FieldRendererComponent implements AfterViewInit, OnDestroy {
             (value: any) => {
               this.component.instance.value = value;
               this.valueChange.emit(value);
+              this.emithNumberValue(value)
             }
           )
         }
       );
+  }
 
+  emithNumberValue(value: any) {
+    if (this.column?.type !== ColumnTypes.number) {
+      return;
+    }
+    this.numberService.onChange.next({
+      columnId: this.column?._id,
+      rowId: this.rowId,
+      value: parseFloat(value)
+    })
   }
 
   filterForeignRestrictions = (foreignRestriction: Partial<ICellRestriction>): boolean => {
