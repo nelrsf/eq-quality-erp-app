@@ -13,33 +13,10 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCheckCircle, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { CommonModule } from '@angular/common';
 import { MathNode, parse } from 'mathjs';
+import { FormulaElementsService } from './formula-elements/formula-elements.service';
+import { ColumnNumber, SingleColumnPlaceholderWidget } from './formula-elements/column-number';
+import { ColumnSubtable, SubtablePlaceholderWidget } from './formula-elements/column-subtable';
 
-export class PlaceholderWidget extends WidgetType {
-
-  constructor(private word: string, private columns: IColumn[]) {
-    super();
-  }
-
-  toDOM() {
-    const placeholderElement = document.createElement('span');
-    placeholderElement.className = 'placeholder-widget';
-    placeholderElement.setAttribute('columnId', this.word);
-    const column = this.findColumn(this.word);
-    placeholderElement.textContent = column?.columnName ? column?.columnName : '';
-    return placeholderElement;
-  }
-
-  findColumn(id: string) {
-    return this.columns.find(
-      (col: IColumn) => col._id === id
-    )
-  }
-
-  override updateDOM(dom: HTMLElement) {
-    // Update the widget's content if needed
-    return true
-  }
-}
 
 @Component({
   selector: 'eq-formula-editor',
@@ -66,12 +43,13 @@ export class FormulaEditorComponent implements AfterViewInit, OnInit {
   variables: Array<string> = [];
   plainFormula: string = '';
   formulaStr: string = '';
+  allowedColumnTypes: Array<ColumnTypes> = [ColumnTypes.number, ColumnTypes.table];
   icons = {
     valid: faCheckCircle,
     invalid: faCircleXmark
   }
 
-  constructor(private modulesService: ModulesService, private tablesService: TablesService) { }
+  constructor(private modulesService: ModulesService, private tablesService: TablesService, private formulaElementService: FormulaElementsService) { }
 
 
   ngAfterViewInit(): void {
@@ -103,10 +81,13 @@ export class FormulaEditorComponent implements AfterViewInit, OnInit {
       (childNode: any) => {
         if (childNode.nodeType === Node.ELEMENT_NODE) {
           const colId = childNode.getAttribute('columnId')
-          if (colId) {
-            const column = this.findColumn(colId);
-            childNode.innerText = column?.columnName;
-
+          const subtableId = childNode.getAttribute('subtableId');
+          if (subtableId && colId) {
+            const columnSubtable = new ColumnSubtable(this.columnData);
+            columnSubtable.initializeFormula(childNode, this.columns);
+          } else if (colId) {
+            const columnNumber = new ColumnNumber(this.columnData);
+            columnNumber.initializeFormula(childNode, this.columns);
           }
         }
       }
@@ -114,21 +95,17 @@ export class FormulaEditorComponent implements AfterViewInit, OnInit {
 
   }
 
-  findColumn(id: string) {
-    return this.columns.find(
-      (col: IColumn) => col._id === id
-    )
-  }
 
-  getEditorExtensions() {
+
+  getSingleColumnPlaceholders() {
     const placeholderMatcher = new MatchDecorator({
       regexp: /\[\[([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})\]\]/g,
       decoration: match => Decoration.replace({
-        widget: new PlaceholderWidget(match[1], this.columns),
+        widget: new SingleColumnPlaceholderWidget(match[1], this.columns),
       })
     })
 
-    const placeholders = ViewPlugin.fromClass(class {
+    return ViewPlugin.fromClass(class {
       placeholders: DecorationSet
       constructor(view: EditorView) {
         this.placeholders = placeholderMatcher.createDeco(view)
@@ -142,14 +119,41 @@ export class FormulaEditorComponent implements AfterViewInit, OnInit {
         return view.plugin(plugin)?.placeholders || Decoration.none
       })
     })
+  }
 
+  getSubtablePlaceholders() {
+    const placeholderMatcher = new MatchDecorator({
+      regexp: /\[\[([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})subtableDiv([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})\]\]/g,
+      decoration: match => Decoration.replace({
+        widget: new SubtablePlaceholderWidget(match[1], match[2], this.columns),
+      })
+    })
+
+    return ViewPlugin.fromClass(class {
+      placeholders: DecorationSet
+      constructor(view: EditorView) {
+        this.placeholders = placeholderMatcher.createDeco(view)
+      }
+      update(update: ViewUpdate) {
+        this.placeholders = placeholderMatcher.updateDeco(update, this.placeholders)
+      }
+    }, {
+      decorations: instance => instance.placeholders,
+      provide: plugin => EditorView.atomicRanges.of(view => {
+        return view.plugin(plugin)?.placeholders || Decoration.none
+      })
+    })
+  }
+
+  getEditorExtensions() {
     const theme = localStorage.getItem('theme');
     const languageConf = new Compartment;
     const extensions = [
       minimalSetup,
       autocompletion({ override: [this.getCompletionsContext] }),
       languageConf.of(spreadsheet()),
-      placeholders
+      this.getSingleColumnPlaceholders(),
+      this.getSubtablePlaceholders()
     ]
     if (theme === 'dark') {
       extensions.push(oneDarkTheme);
@@ -157,18 +161,15 @@ export class FormulaEditorComponent implements AfterViewInit, OnInit {
     return extensions;
   }
 
-  getCompletionsByColumns(){
+  getCompletionsByColumns() {
     this.completions = this.columns
-    .filter(col => col.type === ColumnTypes.number && col._id !== this.columnData._id)
-    .map(
-      (col: IColumn): any => {
-        return {
-          label: col._id,
-          displayLabel: col.columnName,
-          type: "constant",
-          apply: this.appyCompletionFunction
-        }
-      });
+      .filter(col => this.allowedColumnTypes.includes(col.type) && col._id !== this.columnData._id)
+      .map(
+        (col: IColumn): any => {
+          const formulaElement = this.formulaElementService.getElemnt(col);
+          return formulaElement?.getCompletionElement()
+        });
+    this.completions = this.completions.flat();
   }
 
   getColumns() {
@@ -228,34 +229,9 @@ export class FormulaEditorComponent implements AfterViewInit, OnInit {
       )
   }
 
-  appyCompletionFunction = (view: EditorView, completion: Completion, from: number, to: number) => {
-    {
-      // `completion` contains the information about the suggestion selected
-      const selectedColumnId = completion.label;
-      const selectedColumnLabel = completion.displayLabel;
-
-      // Construct the span element using DOM methods
-      const spanElement = document.createElement('span');
-      spanElement.id = selectedColumnId;
-      spanElement.textContent = selectedColumnLabel ? selectedColumnLabel : null;
-
-      // Replace the matched text with the spanString
-      const transaction = view.state.update({
-        changes: {
-          from: from,
-          to: to,
-          insert: `[[${selectedColumnId}]]`
-        }
-      });
-
-      view.dispatch(transaction);
-
-      // Calculate the new position (end of the inserted text)
-      const newPos = from + `[[${selectedColumnId}]]`.length;
-
-      // Set the caret position to the new position
-      view.dispatch(view.state.update({ selection: { anchor: newPos } }));
-
+  appendVariable(variableName: string) {
+    if (!this.variables.includes(variableName)) {
+      this.variables.push(variableName);
     }
   }
 
@@ -268,12 +244,18 @@ export class FormulaEditorComponent implements AfterViewInit, OnInit {
     nodes.childNodes.forEach(
       (childNode: any) => {
         if (childNode.nodeType === Node.ELEMENT_NODE) {
-          const colId = childNode.getAttribute('columnId')
-          if (colId) {
+          const colId = childNode.getAttribute('columnId');
+          const subtableId = childNode.getAttribute('subtableId');
+          if (colId && subtableId) {
+            const variableName = `subtable_${subtableId.replaceAll('-', '_')}subtableDiv${colId.replaceAll('-', '_')}`;
+            formattedFormula += variableName;
+            this.plainFormula += `[[${subtableId}subtableDiv${colId}]]`;
+            this.appendVariable(variableName);
+          } else if (colId) {
             const variableName = 'col_' + colId.replaceAll('-', '_');
             formattedFormula += variableName;
             this.plainFormula += `[[${colId}]]`;
-            if (!this.variables.includes(variableName)) { this.variables.push(variableName); }
+            this.appendVariable(variableName);
           } else {
             formattedFormula += childNode.innerText;
             this.plainFormula += childNode.innerText;
