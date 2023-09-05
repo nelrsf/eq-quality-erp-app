@@ -5,7 +5,7 @@ import { ColumnTypes, IColumn } from 'src/app/Model/interfaces/IColumn';
 import { IModule } from 'src/app/Model/interfaces/IModule';
 import { ITable } from 'src/app/Model/interfaces/ITable';
 import { TablesService } from 'src/app/pages/tables/tables.service';
-import { faCalculator, faCogs, faEllipsis, faEllipsisVertical, faEye, faEyeSlash, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCalculator, faCogs, faEllipsis, faEllipsisVertical, faEye, faEyeSlash, faLeftRight, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { IColumnsOverrideData } from 'src/app/Model/interfaces/ISubtableValue';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { DnDOrderDirective } from 'src/app/directives/order.directive';
@@ -15,6 +15,7 @@ import { generateObjectId } from 'src/app/functions/generateObjectId';
 import { GeneralAttributesComponent } from '../general-attributes/general-attributes.component';
 import { NgbDropdownModule, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ColumnFormulaComponent } from '../column-formula/column-formula.component';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'eq-subtable-customizer',
@@ -30,7 +31,8 @@ import { ColumnFormulaComponent } from '../column-formula/column-formula.compone
     DropTargetDirective,
     GeneralAttributesComponent,
     ColumnFormulaComponent,
-    NgbDropdownModule
+    NgbDropdownModule,
+    FormsModule
   ]
 })
 export class SubtableCustomizerComponent implements OnInit {
@@ -59,7 +61,8 @@ export class SubtableCustomizerComponent implements OnInit {
     delete: faTrash,
     edit: faCogs,
     menu: faEllipsisVertical,
-    calculator: faCalculator
+    calculator: faCalculator,
+    resize: faLeftRight
   }
 
   constructor(private ngbModal: NgbModal) { }
@@ -101,6 +104,7 @@ export class SubtableCustomizerComponent implements OnInit {
     this.overrideColumns = ([] as IColumnsOverrideData[]).concat(aditionalColumns, overrideColumns);
     this.overrideColumnsVisivility(this.columnData.linkedTable?.columnsOverrideData);
     this.overrideColumnsOrder(this.columnData.linkedTable?.columnsOverrideData);
+    this.overrideColumnsWidths(this.columnData.linkedTable?.columnsOverrideData);
     this.overrideColumns.sort((a: IColumnsOverrideData, b: IColumnsOverrideData) => {
       if(a?.order === undefined || b?.order === undefined){
         return -1
@@ -108,6 +112,20 @@ export class SubtableCustomizerComponent implements OnInit {
       return a.order - b.order
     })
     this.jsonColumns = this.convertArrayColumnsToJson(this.overrideColumns);
+  }
+
+  overrideColumnsWidths(overrideColumns: IColumnsOverrideData[] | undefined) {
+    if (!overrideColumns) {
+      return;
+    }
+    this.overrideColumns.forEach(
+      (oc: IColumnsOverrideData) => {
+        const width = overrideColumns.find(item => item.columnId === oc.columnId)?.width;
+        if(width){
+          oc.width = width;
+        }
+      }
+    )
   }
 
   overrideColumnsVisivility(overrideColumns: IColumnsOverrideData[] | undefined) {

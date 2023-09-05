@@ -103,6 +103,17 @@ export class SubtableComponent implements AfterViewInit {
     )
   }
 
+  setColumnsWidth(columns: IColumn[]) {
+    columns.forEach(
+      (col: IColumn) => {
+        const colOverrideFounded = this.findColumn(col._id, this.data.valueHost.columnsOverrideData);
+        if (colOverrideFounded) {
+          col.columnWidth = colOverrideFounded.width;
+        }
+      }
+    )
+  }
+
   findColumn(colId: string, columns: IColumnsOverrideData[]) {
     return columns.find((col: IColumnsOverrideData) => col.columnId === colId);
   }
@@ -114,6 +125,7 @@ export class SubtableComponent implements AfterViewInit {
     const columns = this.replicateColumns(this.data);
     this.setColumnsOrder(columns);
     this.setColumnsVisivility(columns);
+    this.setColumnsWidth(columns);
     this.dataTable.columnsSubject.next(columns.filter(c => !c.hidden));
     this.dataTable.data.next(this.tableRows);
     this.cdr.detectChanges();

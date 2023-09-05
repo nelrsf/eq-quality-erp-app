@@ -55,15 +55,17 @@
           (click)="modal.close()"></button>
       </div>
       <div class="modal-body">
-        <eq-column-formula [submitButton]="false" [columnData]="currentColumn" [columns]="columnsArray"></eq-column-formula>
+        <eq-column-formula [submitButton]="false" [columnData]="currentColumn"
+          [columns]="columnsArray"></eq-column-formula>
       </div>
     </div>
   </div>
 </ng-template>
 
 <ng-template #columnButtons let-column='column'>
-  <div class="d-none d-md-inline">
-    <div *ngIf="column.isVirtualColumn" class="d-inline">
+  <div class="d-none d-lg-inline-flex justify-content-end w-50">
+
+    <div *ngIf="column.isVirtualColumn" class="d-inline-flex justify-content-end w-100">
       <button class="btn btn-outline-secondary py-1 me-2" (click)="openEditModal(column)">
         <fa-icon [icon]="icons.edit"></fa-icon>
       </button>
@@ -75,17 +77,29 @@
         <fa-icon [icon]="icons.delete"></fa-icon>
       </button>
     </div>
-    <button *ngIf="column.hide" class="btn btn-outline-secondary py-1" (click)="column.hide=false">
+    <button *ngIf="column.hide" class="btn btn-outline-secondary py-1 me-2" (click)="column.hide=false">
       <fa-icon [icon]="icons.hide"></fa-icon>
     </button>
-    <button *ngIf="!column.hide" class="btn btn-outline-secondary py-1" (click)="column.hide=true">
+    <button *ngIf="!column.hide" class="btn btn-outline-secondary py-1 me-2" (click)="column.hide=true">
       <fa-icon [icon]="icons.show"></fa-icon>
     </button>
+    <div ngbDropdown>
+      <button ngbDropdownToggle class="btn btn-outline-secondary py-1">
+        <fa-icon [icon]="icons.resize"></fa-icon>
+      </button>
+      <div ngbDropdownMenu class="px-2">
+        <div class="input-group input-group-sm d-inline-flex" [style.maxWidth]="'15rem'">
+          <span class="w-50 input-group-text" id="inputGroup-sizing-sm">Ancho</span>
+          <input type="number" class="w-50 form-control" [(ngModel)]="column.width" name="colWidthDesktop">
+        </div>
+      </div>
+    </div>
+    
   </div>
 </ng-template>
 
 <ng-template #columnButtonsDropDown let-column='column'>
-  <div ngbDropdown class="d-inline-flex d-md-none">
+  <div ngbDropdown class="d-inline-flex d-lg-none">
     <button type="button" class="btn btn-outline-secondary px-3 border-0" ngbDropdownToggle>
       <fa-icon [icon]="icons.menu"></fa-icon>
     </button>
@@ -121,6 +135,10 @@
         </div>
         <span>Ocultar</span>
       </button>
+      <div class="input-group input-group-sm d-inline-flex px-2">
+        <span class="w-50 input-group-text" id="inputGroup-sizing-sm">Ancho</span>
+        <input type="number" class="w-50 form-control" [(ngModel)]="column.width" name="colWidthMobile">
+      </div>
     </div>
   </div>
 </ng-template>

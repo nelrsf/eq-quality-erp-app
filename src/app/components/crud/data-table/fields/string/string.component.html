@@ -7,5 +7,5 @@
 
 
 <ng-template #unrestrictedFieldTemplate>
-    <input [ngClass]="[!value ? 'eidt-subline' : '']" type="text" [(ngModel)]="value" [disabled]="isDisabled" (change)="onChangeByText($event)">
+    <input class="w-100" [ngClass]="[!value ? 'eidt-subline' : '']" type="text" [(ngModel)]="value" [disabled]="isDisabled" (change)="onChangeByText($event)">
 </ng-template>

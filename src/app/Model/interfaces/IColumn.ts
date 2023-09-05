@@ -17,7 +17,8 @@ export interface IColumn {
     formula?: IFormula,
     table: string,
     module: string,
-    width: number
+    width: number,
+    columnWidth?: number,
     unique: boolean,
     isRestricted: boolean,
     moduleRestriction?: string,

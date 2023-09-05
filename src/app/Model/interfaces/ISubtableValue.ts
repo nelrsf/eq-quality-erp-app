@@ -19,6 +19,7 @@ export interface ISubtable {
 export interface IColumnsOverrideData {
     columnId: string,
     hide: boolean,
+    width?: number,
     order: number | undefined,
     isVirtualColumn: boolean,
     virtualColumnData: IColumn

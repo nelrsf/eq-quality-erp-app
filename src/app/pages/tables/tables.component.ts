@@ -451,6 +451,14 @@ export class TablesComponent implements OnInit, AfterViewInit {
   }
 
   onColumnsOrderChange(_columns: IColumn[]) {
+    this.addUpdateColumnButton();
+  }
+
+  onColumnsWidthChange(_columns: IColumn[]) {
+    this.addUpdateColumnButton();
+  }
+
+  addUpdateColumnButton(){
     if (this.canConfig && !this.buttonsList.includes('update-column')) {
       this.buttonsList.push('update-column');
     }

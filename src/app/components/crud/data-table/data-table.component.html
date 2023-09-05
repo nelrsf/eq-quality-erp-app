@@ -23,42 +23,47 @@
                                         scope="col" (eqDropTargetChange)="onReorderColumns()"
                                         *ngFor="let column of columnsProperties; let colIndex = index"
                                         [(ddOrder)]="column.columnOrder">
-                                        <div class="col-header d-flex align-items-center">
-                                            <span>
-                                                {{column.columnName}}
-                                            </span>
-                                            <div class="dropdown" *ngIf="hasColumnsFunctions(column._id)">
-                                                <div class="buttons">
-                                                    <button class="p-2 btn btn-ligth"
-                                                        (click)="toggleColumnsMenu(columnsDropDown, modalContextMenu)"
-                                                        (blur)="hideColumnsMenu(columnsDropDown)">
-                                                        <fa-icon [icon]="icons.cogs"></fa-icon>
-                                                    </button>
+                                        <div eqResizable class="pe-2" [(width)]="column.columnWidth" (widthChange)="onColumnWidthChange()">
+                                            <div class="col-header d-flex align-items-center flex-grow-1" [style]="{'cursor':'auto'}">
+                                                <div  class="flex-grow-1">
+                                                    {{column.columnName}}
                                                 </div>
-                                                <div #columnsDropDown class="dropdown-menu"
-                                                    [ngClass]="[colIndex!==0?'dropdown-menu-right':'']">
-                                                    <a *ngFor="let function of getFunctionsByColumnId(column._id).functions"
-                                                        role="button" class="dropdown-item"
-                                                        (click)="executeColumnFunctionDropDown(function, columnsDropDown)">
-                                                        <fa-icon [icon]="function.functionIcon"></fa-icon>
-                                                        <span class="px-3">{{function.functionName}}</span>
-                                                    </a>
-                                                </div>
-                                                <ng-template #modalContextMenu let-modal>
-                                                    <div class="m-0 modal-dialog">
-                                                        <div class="modal-content">
-                                                            <div class="modal-body">
-                                                                <a *ngFor="let function of getFunctionsByColumnId(column._id).functions"
-                                                                    role="button" class="dropdown-item"
-                                                                    (click)="executeColumnFunctionModal(function)">
-                                                                    <fa-icon [icon]="function.functionIcon"></fa-icon>
-                                                                    <span class="px-3">{{function.functionName}}</span>
-                                                                </a>
+                                                <div class="dropdown" *ngIf="hasColumnsFunctions(column._id)">
+                                                    <div class="buttons">
+                                                        <button class="p-2 btn btn-ligth"
+                                                            (click)="toggleColumnsMenu(columnsDropDown, modalContextMenu)"
+                                                            (blur)="hideColumnsMenu(columnsDropDown)">
+                                                            <fa-icon [icon]="icons.cogs"></fa-icon>
+                                                        </button>
+                                                    </div>
+                                                    <div #columnsDropDown class="dropdown-menu"
+                                                        [ngClass]="[colIndex!==0?'dropdown-menu-right':'']">
+                                                        <a *ngFor="let function of getFunctionsByColumnId(column._id).functions"
+                                                            role="button" class="dropdown-item"
+                                                            (click)="executeColumnFunctionDropDown(function, columnsDropDown)">
+                                                            <fa-icon [icon]="function.functionIcon"></fa-icon>
+                                                            <span class="px-3">{{function.functionName}}</span>
+                                                        </a>
+                                                    </div>
+                                                    <ng-template #modalContextMenu let-modal>
+                                                        <div class="m-0 modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-body">
+                                                                    <a *ngFor="let function of getFunctionsByColumnId(column._id).functions"
+                                                                        role="button" class="dropdown-item"
+                                                                        (click)="executeColumnFunctionModal(function)">
+                                                                        <fa-icon
+                                                                            [icon]="function.functionIcon"></fa-icon>
+                                                                        <span
+                                                                            class="px-3">{{function.functionName}}</span>
+                                                                    </a>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </ng-template>
+                                                    </ng-template>
+                                                </div>
                                             </div>
+
                                         </div>
                                     </th>
                                 </tr>

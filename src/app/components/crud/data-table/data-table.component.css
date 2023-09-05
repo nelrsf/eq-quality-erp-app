@@ -1483,7 +1483,7 @@ p {
 }
 
 .cell-value {
-    min-width: 10rem;
+    min-width: 8rem;
     text-overflow: ellipsis;
     white-space: break-spaces;
 }

@@ -21,6 +21,7 @@ import { ISubtableValue } from 'src/app/Model/interfaces/ISubtableValue';
 import { DnDOrderDirective } from 'src/app/directives/order.directive';
 import { ColumnFooterOperation } from 'src/app/Model/interfaces/IColumnFooter';
 import * as math from 'mathjs';
+import { ResizableDirective } from 'src/app/directives/resizable.directive';
 
 
 
@@ -64,7 +65,8 @@ export interface IRowChecked {
     ListViewerComponent,
     ShowIfIsAdmin,
     ShowIfIsOwner,
-    SubtableComponent
+    SubtableComponent,
+    ResizableDirective
   ]
 })
 export class DataTableComponent implements OnInit, AfterViewInit {
@@ -78,6 +80,7 @@ export class DataTableComponent implements OnInit, AfterViewInit {
   @Input('mapAsUrl') mapAsUrl: IMapAsUrl[] = [];
   @Output() rowsSelectionChange = new EventEmitter<Array<IRowChecked>>();
   @Output() columnsOrderChange = new EventEmitter<Array<IColumn>>();
+  @Output() columnsWidthChange = new EventEmitter<Array<IColumn>>();
 
   icons = {
     angleLeft: faAngleLeft,
@@ -436,6 +439,10 @@ export class DataTableComponent implements OnInit, AfterViewInit {
     if (emitChange) {
       this.columnsOrderChange.emit(this.columnsProperties);
     }
+  }
+
+  onColumnWidthChange(){
+    this.columnsWidthChange.emit(this.columnsProperties);
   }
 
   getColumnsAsOnject() {
