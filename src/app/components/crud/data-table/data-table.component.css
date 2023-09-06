@@ -1525,3 +1525,16 @@ p {
     color: var(--bs-emphasis-color);
     font-weight: 400;
 }
+
+.header-container {
+    background-color: var(--bs-body-bg);
+    min-width: 8rem;
+}
+
+.resizable-container {
+    min-width: 10rem;
+}
+
+.resizable-container:hover {
+    background-color: var(--bs-card-bg);
+}

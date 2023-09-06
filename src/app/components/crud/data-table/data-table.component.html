@@ -23,8 +23,8 @@
                                         scope="col" (eqDropTargetChange)="onReorderColumns()"
                                         *ngFor="let column of columnsProperties; let colIndex = index"
                                         [(ddOrder)]="column.columnOrder">
-                                        <div eqResizable class="pe-2" [(width)]="column.columnWidth" (widthChange)="onColumnWidthChange()">
-                                            <div class="col-header d-flex align-items-center flex-grow-1" [style]="{'cursor':'auto'}">
+                                        <div eqResizable class="pe-2 resizable-container" [(width)]="column.columnWidth" (widthChange)="onColumnWidthChange()">
+                                            <div class="header-container col-header d-flex align-items-center flex-grow-1" [style]="{'cursor':'auto'}" (mousedown)="$event.stopPropagation()">
                                                 <div  class="flex-grow-1">
                                                     {{column.columnName}}
                                                 </div>
