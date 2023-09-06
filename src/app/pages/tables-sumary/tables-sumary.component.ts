@@ -226,8 +226,8 @@ export class TablesSumaryComponent implements OnInit, OnDestroy {
   }
 
 
-  openDeleteModal(table: string) {
-    this.currentTable = table;
+  openDeleteModal(table: ITable) {
+    this.currentTable = table?.label ? table.label : 'Elimiar tabla';
     this.confirmDeleteTableText = "";
     this.ngbModal.open(this.deleteTable);
   }

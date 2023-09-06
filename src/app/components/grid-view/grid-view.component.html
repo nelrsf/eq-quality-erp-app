@@ -14,7 +14,7 @@
                 <a [routerLink]="linkGetterFuntion(item.name, item)" class="btn btn-outline-secondary mx-1 px-2 py-1">
                     <fa-icon [icon]="icons.edit"></fa-icon>
                 </a>
-                <a [showIfIsOwner]="getParentModuleName(item)" [showIfCanDelete]="getTableData(item)" role="button" class="btn btn-outline-danger px-2 py-1 mx-1" (click)="onDeleteItem(item.name)">
+                <a [showIfIsOwner]="getParentModuleName(item)" [showIfCanDelete]="getTableData(item)" role="button" class="btn btn-outline-danger px-2 py-1 mx-1" (click)="onDeleteItem(item)">
                     <fa-icon [icon]="icons.delete"></fa-icon>
                 </a>
                 <a [showIfIsOwner]="getParentModuleName(item)" [showIfIsAdmin]="getParentModuleName(item)" role="button" (click)="openNavigator(item)" class="btn btn-outline-secondary px-2 mx-1 py-1">

@@ -41,7 +41,7 @@ export class GridViewComponent {
 
   @Input() linkGetterFuntion!: (value: string | undefined, object?: any) => string
 
-  @Output() delete = new EventEmitter<string>();
+  @Output() delete = new EventEmitter<IModule | ITable>();
   @Output() configItem = new EventEmitter<IModule | ITable>();
 
   currentSelectedItem!: ITable;
@@ -58,11 +58,11 @@ export class GridViewComponent {
     info: faInfoCircle
   }
 
-  onDeleteItem(name: string | undefined) {
-    if (!name) {
+  onDeleteItem(item: ITable | IModule) {
+    if (!item) {
       return;
     }
-    this.delete.emit(name);
+    this.delete.emit(item);
   }
 
   onConfigItem(item: IModule | ITable) {
