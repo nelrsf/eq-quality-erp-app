@@ -37,6 +37,7 @@ export class TablesSumaryComponent implements OnInit, OnDestroy {
   newTableName!: string;
 
   private unsubscribeAll = new Subject<void>();
+  private currentTableId!: string;
 
   constructor(private activatedRoute: ActivatedRoute, private tableService: TablesService, private ngbModal: NgbModal, private permissionsService: PermissionsService, private userService: UserService) { }
 
@@ -73,13 +74,13 @@ export class TablesSumaryComponent implements OnInit, OnDestroy {
     }
 
     this.permissionsService.canEditTable(module, this.route)
-    .subscribe({
-      next: (canEdit: boolean) => {
-        if (canEdit) {
-          subscriberCallback();
+      .subscribe({
+        next: (canEdit: boolean) => {
+          if (canEdit) {
+            subscriberCallback();
+          }
         }
-      }
-    });
+      });
 
     this.permissionsService.canEdit(module)
       .subscribe({
@@ -227,7 +228,8 @@ export class TablesSumaryComponent implements OnInit, OnDestroy {
 
 
   openDeleteModal(table: ITable) {
-    this.currentTable = table?.label ? table.label : 'Elimiar tabla';
+    this.currentTable = table?.label ? table.label : 'Eliminar tabla';
+    this.currentTableId = table?.name ? table?.name : '';
     this.confirmDeleteTableText = "";
     this.ngbModal.open(this.deleteTable);
   }
@@ -255,7 +257,7 @@ export class TablesSumaryComponent implements OnInit, OnDestroy {
 
   deleteCurrentTable() {
     this.closeModal();
-    this.tableService.deleteTable(this.module, this.currentTable)
+    this.tableService.deleteTable(this.module, this.currentTableId)
       .subscribe(
         {
           next: (response) => {
