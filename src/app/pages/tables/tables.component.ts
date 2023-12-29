@@ -11,8 +11,8 @@ import { PermissionsService } from 'src/app/services/permissions.service';
 import { buttonType } from 'src/app/components/crud/buttons-pad/buttons-pad.component';
 import { UserService } from 'src/app/services/user.service';
 import { IUser } from 'src/app/Model/interfaces/IUser';
-import { concatMap, forkJoin, from } from 'rxjs';
-import { error } from 'console';
+import { concatMap, from } from 'rxjs';
+import { ISubtableValue } from 'src/app/Model/interfaces/ISubtableValue';
 
 @Component({
   selector: 'eq-tables',
@@ -47,7 +47,7 @@ export class TablesComponent implements OnInit, AfterViewInit {
   errorMessage: string = '';
 
 
-  constructor(private tableService: TablesService, private activatedRoute: ActivatedRoute, private cdRef: ChangeDetectorRef, private permissionsService: PermissionsService, private ngbModal: NgbModal, private changesTracker: ChangesTrackerService, private userService: UserService) { }
+  constructor(private tableService: TablesService, private activatedRoute: ActivatedRoute, private cdRef: ChangeDetectorRef, private permissionsService: PermissionsService, private ngbModal: NgbModal, private changesTracker: ChangesTrackerService, private userService: UserService, private router: Router) { }
 
   ngAfterViewInit(): void {
     this.activatedRoute.params.subscribe((params) => {
@@ -490,6 +490,11 @@ export class TablesComponent implements OnInit, AfterViewInit {
         this.buttonsList.splice(indx, 1);
       }
     });
+  }
+
+  openTableViewer(event: ISubtableValue){
+    const backUrl = `/tables/data/${event?.valueHost?.module}/${event?.valueHost?.table}`;
+    this.router.navigate(['./subtable'], { state: { data: event, backUrl: backUrl } });
   }
 
 

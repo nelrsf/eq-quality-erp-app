@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
 import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { generateObjectId } from 'src/app/functions/generateObjectId';
+import { ICellRestriction, IColumnRestriction } from 'src/app/Model/interfaces/ICellRestrictions';
 
 
 @Component({
@@ -42,6 +43,10 @@ export class SubtableComponent implements AfterViewInit {
   currentId: number = 0;
   rowsSelection: IRowChecked[] = [];
   loading: boolean = false;
+  backUrl!: string | (() => void);
+  homeUrl!: string;
+  oldData: Array<ISubtableValue> = [];
+
 
 
   icons = {
@@ -51,13 +56,14 @@ export class SubtableComponent implements AfterViewInit {
   constructor(private tableService: TablesService, private cdr: ChangeDetectorRef) { }
 
   ngAfterViewInit(): void {
+    this.overrideCreateSubtableDataFcn();
     this.initializeTable();
     this.initializeTableData();
   }
 
   initializeTableData() {
     if (!this.data.rowId) {
-      this.dataTable.data.next([]);
+      this.dataTable.data.next(this.data.rows);
       this.tableRows = this.dataTable.data.getValue();
       this.cdr.detectChanges();
       return;
@@ -66,7 +72,6 @@ export class SubtableComponent implements AfterViewInit {
       .subscribe(
         {
           next: (result: any) => {
-            console.log(result);
             if (!result) {
               result = [];
             }
@@ -121,6 +126,8 @@ export class SubtableComponent implements AfterViewInit {
   initializeTable() {
     if (!this.data) {
       this.data = history.state['data'];
+      this.backUrl = history.state['backUrl'];
+      this.homeUrl = this.backUrl as string;
     }
     const columns = this.replicateColumns(this.data);
     this.setColumnsOrder(columns);
@@ -219,7 +226,61 @@ export class SubtableComponent implements AfterViewInit {
       )
   }
 
-  getBackUrl() {
-    return `/tables/data/${this.data?.valueHost?.module}/${this.data?.valueHost?.table}`
+  updateBackUrl() {
+    //return `/tables/data/${this.data?.valueHost?.module}/${this.data?.valueHost?.table}`
+    this.backUrl = () => {
+      if (this.oldData.length === 0) {
+        return;
+      }
+      this.data = this.oldData[this.oldData.length - 1];
+      this.initializeTable();
+      this.initializeTableData();
+      this.oldData.pop();
+      if(this.oldData.length === 0){
+        this.backUrl = this.homeUrl;
+      }
+    };
   }
+
+  openTableViewer(event: ISubtableValue) {
+    this.oldData.push(JSON.parse(JSON.stringify(this.data)));
+    this.updateBackUrl();
+    this.data = event;
+    this.overrideCreateSubtableDataFcn();
+    this.initializeTable();
+    this.initializeTableData();
+  }
+
+  getBackUrlType() {
+    return typeof this.backUrl;
+  }
+
+  getBackUrlAsString() {
+    return this.backUrl as string;
+  }
+
+  executeBackUrlFcn() {
+    const backUrlFcn = this.backUrl as () => void;
+    backUrlFcn();
+  }
+
+  overrideCreateSubtableDataFcn() {
+    this.dataTable.createSubtableDataFcn = (rowId: string, column: IColumn, rows: any) => {
+      return {
+        column: column.linkedTable?.column ? column.linkedTable?.column : '',
+        module: column.linkedTable?.module ? column.linkedTable?.module : '',
+        table: column.linkedTable?.table ? column.linkedTable?.table : '',
+        rows: rows ? rows : [],
+        rowId: '',
+        valueHost: {
+          column: column._id,
+          module: column.module,
+          table: column.table,
+          columnsOverrideData: column.linkedTable?.columnsOverrideData ? column.linkedTable?.columnsOverrideData : []
+        }
+      }
+    }
+  }
+
+
 }

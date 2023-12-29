@@ -81,6 +81,7 @@ export class DataTableComponent implements OnInit, AfterViewInit {
   @Output() rowsSelectionChange = new EventEmitter<Array<IRowChecked>>();
   @Output() columnsOrderChange = new EventEmitter<Array<IColumn>>();
   @Output() columnsWidthChange = new EventEmitter<Array<IColumn>>();
+  @Output() openTableViewerEvent = new EventEmitter<ISubtableValue>();
 
   icons = {
     angleLeft: faAngleLeft,
@@ -100,6 +101,22 @@ export class DataTableComponent implements OnInit, AfterViewInit {
   columnsProperties!: IColumn[];
   columnsPropertiesObj!: any;
   modalDisabled: boolean = false;
+  createSubtableDataFcn: (rowId: string, column: IColumn, rows: any) => ISubtableValue = (rowId: string, column: IColumn, rows: any): ISubtableValue => {
+    return {
+      column: column.linkedTable?.column ? column.linkedTable?.column : '',
+      module: column.linkedTable?.module ? column.linkedTable?.module : '',
+      table: column.linkedTable?.table ? column.linkedTable?.table : '',
+      rows: [],
+      rowId: rowId,
+      valueHost: {
+        column: column._id,
+        module: column.module,
+        table: column.table,
+        columnsOverrideData: column.linkedTable?.columnsOverrideData ? column.linkedTable?.columnsOverrideData : []
+      }
+    }
+  }
+
 
   constructor(private ngbModal: NgbModal, private rowsRestrictionService: RowsRestrictionsService, private router: Router) { }
 
@@ -255,24 +272,14 @@ export class DataTableComponent implements OnInit, AfterViewInit {
     this.ngbModal.open(this.imgViewer);
   }
 
+
   openTableViewer(subtableData: any, rowId: string, column: IColumn) {
     if (!Array.isArray(subtableData?.rows)) {
-      (subtableData as ISubtableValue) = {
-        column: column.linkedTable?.column ? column.linkedTable?.column : '',
-        module: column.linkedTable?.module ? column.linkedTable?.module : '',
-        table: column.linkedTable?.table ? column.linkedTable?.table : '',
-        rows: [],
-        rowId: rowId,
-        valueHost: {
-          column: column._id,
-          module: column.module,
-          table: column.table,
-          columnsOverrideData: column.linkedTable?.columnsOverrideData ? column.linkedTable?.columnsOverrideData : []
-        }
-      }
+      (subtableData as ISubtableValue) = this.createSubtableDataFcn(rowId, column, subtableData);
     }
     this.subtableData = subtableData;
-    this.router.navigate(['./subtable'], { state: { data: subtableData } })
+    this.openTableViewerEvent.emit(this.subtableData);
+    //this.router.navigate(['./subtable'], { state: { data: subtableData } });
   }
 
   openListViewer(list: Array<any>) {
@@ -441,7 +448,7 @@ export class DataTableComponent implements OnInit, AfterViewInit {
     }
   }
 
-  onColumnWidthChange(){
+  onColumnWidthChange() {
     this.columnsWidthChange.emit(this.columnsProperties);
   }
 

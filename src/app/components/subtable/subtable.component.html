@@ -3,8 +3,14 @@
   </div>
 <eq-breadcrumb *ngIf="showBreadCrumb" [module]="getModule()"></eq-breadcrumb>
 <div class="d-inline-flex justify-content-end w-100">
-  <span *ngIf="showBackButton" class="badge bg-secondary">
-    <a class="nav-link" [routerLink]="getBackUrl()">
+  <span *ngIf="showBackButton && getBackUrlType() === 'string'" class="badge bg-secondary">
+    <a class="nav-link" [routerLink]="getBackUrlAsString()">
+      <fa-icon [icon]="icons.back"></fa-icon>
+      Regresar
+    </a>
+  </span>
+  <span *ngIf="showBackButton && getBackUrlType() !== 'string'" class="badge bg-secondary">
+    <a role="button" class="nav-link" (click)="executeBackUrlFcn()">
       <fa-icon [icon]="icons.back"></fa-icon>
       Regresar
     </a>
@@ -12,4 +18,4 @@
 </div>
 <eq-buttons-pad [buttonsList]="['add', 'delete','save']" (_newRow)="createEmptyRow()"
     (_deleteRows)="deleteRows()" (_updateRows)="saveRows()"></eq-buttons-pad>
-<eq-data-table (rowsSelectionChange)="rowsSelectionChange($event)"></eq-data-table>
+<eq-data-table (rowsSelectionChange)="rowsSelectionChange($event)" (openTableViewerEvent)="openTableViewer($event)"></eq-data-table>
