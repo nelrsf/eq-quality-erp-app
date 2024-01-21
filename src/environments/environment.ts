@@ -7,6 +7,7 @@ export const environment = {
   hmr: false,
   apiUrl: 'http://localhost:3000',
   authUrl: 'http://localhost:3001',
+  mapsUrl: 'http://localhost:3004',
   filesUrl: 'https://eq-files.onrender.com',
   recoveryCodeKey: "EQ_ADMIN_RECOVERY",
   adminTables: {
@@ -14,6 +15,9 @@ export const environment = {
     users: 'Usuarios',
     mainUsersModule: '_eq__admin_manager',
     mainUsersTable: 'users'
+  },
+  pluggins: {
+    maps: true
   }
 };
 

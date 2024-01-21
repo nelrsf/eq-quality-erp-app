@@ -10,6 +10,11 @@
                 Documentación
             </a>
         </li>
+        <li *ngIf="checkMapsPluggin()" class="nav-item d-none d-sm-flex align-items-center">
+            <a class="nav-link" href="/maps">
+                Mapa
+            </a>
+        </li>
         <li class="profile-item nav-item dropdown">
             <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
                 <div class="nav-profile">

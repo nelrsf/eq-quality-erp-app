@@ -6,6 +6,7 @@ export const environment = {
   production: true,
   hmr: false,
   apiUrl: 'https://cde-crud.vercel.app',
+  mapsUrl: 'http://localhost:3004',
   authUrl: 'https://cde-auth.vercel.app',
   filesUrl: 'https://eq-files.onrender.com',
   recoveryCodeKey: "EQ_ADMIN_RECOVERY_CDE",
@@ -14,6 +15,9 @@ export const environment = {
     users: 'Usuarios',
     mainUsersModule: '_eq__admin_manager',
     mainUsersTable: 'users'
+  },
+  pluggins: {
+    maps: true
   }
 };
 
@@ -24,4 +28,4 @@ export const environment = {
  * This import should be commented out in production mode because it will have a negative impact
  * on performance if an error is thrown.
  */
-  // import 'zone.js/plugins/zone-error';  // Included with Angular CLI.
+// import 'zone.js/plugins/zone-error';  // Included with Angular CLI.

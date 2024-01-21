@@ -1,0 +1,3 @@
+<eq-maps-customize-panel [closePanel]="closeCustomPanel" (onInsertMarker)="insertMarker($event)" (onGetMapIcons)="getMapIcons($event)" (onGetMapElements)="getMapElements($event)"></eq-maps-customize-panel>
+<eq-marker-info [openPanel]="openMarkerInfoPanel"></eq-marker-info>
+<div id="map" [ngClass]="[insertMarkerByClick?'insert-marker':'']"></div>

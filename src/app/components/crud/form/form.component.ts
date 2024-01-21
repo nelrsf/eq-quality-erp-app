@@ -8,7 +8,6 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
 import { ImgFieldComponent } from './imgField/img-field.component';
 import { DropTargetDirective } from 'src/app/directives/drop-target.directive';
 import { DragDirective } from 'src/app/directives/drag.directive';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TablesService } from 'src/app/pages/tables/tables.service';
 import { ListFieldComponent } from './listField/list-field.component';
 import { FileFieldComponent } from './fileField/file-field.component';
@@ -19,6 +18,8 @@ import { DnDOrderDirective } from 'src/app/directives/order.directive';
 import { concatMap, from } from 'rxjs';
 import { SubtableComponent } from '../../subtable/subtable.component';
 import { ISubtableValue } from 'src/app/Model/interfaces/ISubtableValue';
+import { IModule } from 'src/app/Model/interfaces/IModule';
+import { ITable } from 'src/app/Model/interfaces/ITable';
 
 
 @Component({
@@ -29,7 +30,6 @@ import { ISubtableValue } from 'src/app/Model/interfaces/ISubtableValue';
   imports: [
     CommonModule,
     DragDropModule,
-    BrowserAnimationsModule,
     FontAwesomeModule,
     FormsModule,
     ReactiveFormsModule,
@@ -72,6 +72,8 @@ export class FormComponent implements OnInit {
   @Input() columns: any;
   @Input() module!: string;
   @Input() table!: string;
+  @Input() row: any;
+  @Input() readMode: boolean = false;
   @Output() columnsChange = new EventEmitter();
   @Output() formOperationEnd = new EventEmitter();
   @ViewChild("DnDContainer") DnDContainer!: ElementRef;
@@ -83,6 +85,7 @@ export class FormComponent implements OnInit {
     this.form = new FormGroup(this.createFormControl());
     this.createImagesFormData();
     this.createListFormData();
+    this.createSubtableFormData();
     let orderedColumns = Object.keys(this.columns).sort((a, b) => this.columns[a].formOrder - this.columns[b].formOrder).map(k => this.columns[k]);
     this.columns = orderedColumns;
     this.columnsJson = this.getColumnsAsJson();
@@ -102,8 +105,12 @@ export class FormComponent implements OnInit {
   createImagesFormData() {
     Object.keys(this.columns).forEach(
       (col: string) => {
+        let colValue = [];
         if (this.columns[col].type === ColumnTypes.image) {
-          this.imagesFormData[col] = [];
+          if (this.row[col]) {
+            colValue = this.row[col];
+          }
+          this.imagesFormData[col] = colValue;
         }
       }
     )
@@ -121,8 +128,12 @@ export class FormComponent implements OnInit {
   createListFormData() {
     Object.keys(this.columns).forEach(
       (col: string) => {
+        let colValue = [];
         if (this.columns[col].type === ColumnTypes.list) {
-          this.listFormData[col] = [];
+          if (this.row[col]) {
+            colValue = this.row[col];
+          }
+          this.listFormData[col] = colValue;
         }
       }
     )
@@ -132,8 +143,12 @@ export class FormComponent implements OnInit {
   createSubtableFormData() {
     Object.keys(this.columns).forEach(
       (col: string) => {
+        let colValue = [];
         if (this.columns[col].type === ColumnTypes.table) {
-          this.subtableFormData[col] = [];
+          if (this.row[col]) {
+            colValue = this.row[col];
+          }
+          this.subtableFormData[col] = colValue;
         }
       }
     )
@@ -141,9 +156,11 @@ export class FormComponent implements OnInit {
 
 
   createFormControl() {
-    const newControls: any = {}
+    const newControls: any = {};
     Object.keys(this.columns).forEach((columnName: string) => {
-      newControls[columnName] = new FormControl("", {});
+      let currentValue = this.row && this.row[columnName] ? this.row[columnName] : "";
+      currentValue = typeof currentValue === "string" ? currentValue : "";
+      newControls[columnName] = new FormControl(currentValue, {});
     });
     return newControls;
   }
@@ -217,7 +234,16 @@ export class FormComponent implements OnInit {
     this.asignListFormData(newRow);
     this.asignFilesFormData(newRow);
     this.asignSubtableFormData(newRow);
-    this.tableService.createRow(this.module, this.table, newRow)
+    if (this.row?._id) {
+      this.updateRow(this.module, this.table, newRow, this.row._id);
+    } else {
+      this.createRow(this.module, this.table, newRow);
+    }
+  }
+
+  updateRow(module: string, table: string, newRow: any, id: string) {
+    newRow._id = id;
+    this.tableService.updateRows(module, table, [newRow])
       .subscribe(
         {
           next: (response) => {
@@ -229,7 +255,25 @@ export class FormComponent implements OnInit {
             this.loading = false;
             this.hasError = true;
             this.errorMessage = error.error;
-            // this.formOperationEnd.emit();
+            console.log(error)
+          }
+        }
+      );
+  }
+
+  createRow(module: string, table: string, newRow: any) {
+    this.tableService.createRow(module, table, newRow)
+      .subscribe(
+        {
+          next: (response) => {
+            console.log(response);
+            this.loading = false;
+            this.formOperationEnd.emit();
+          },
+          error: (error) => {
+            this.loading = false;
+            this.hasError = true;
+            this.errorMessage = error.error;
             console.log(error)
           }
         }
@@ -283,7 +327,7 @@ export class FormComponent implements OnInit {
       column: column.linkedTable?.column ? column.linkedTable?.column : '',
       module: column.linkedTable?.module ? column.linkedTable?.module : '',
       table: column.linkedTable?.table ? column.linkedTable?.table : '',
-      rows: [],
+      rows: this.row[column._id] ? this.row[column._id] : [],
       rowId: '',
       valueHost: {
         column: column._id,

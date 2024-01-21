@@ -1,0 +1,20 @@
+.icon-item {
+    background-color: transparent;
+    border-radius: 5px;
+    border-width: 0.5px;
+    border-color: var(--bs-accordion-border-color);
+}
+
+.icons-container {
+    display: block;
+    max-height: 6rem;
+    overflow: auto;
+}
+
+.selected-icon {
+    box-shadow: 0px 0px 4px var(--bs-success);
+}
+
+.button-control {
+    height: 2.5rem;
+}

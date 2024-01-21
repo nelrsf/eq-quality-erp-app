@@ -29,6 +29,8 @@ import { ApiDocsComponent } from './api-docs/api-docs.component';
 import { BreadcrumbComponent } from '../components/breadcrumb/breadcrumb.component';
 import { GridModuleViewComponent } from '../components/grid-module-view/grid-module-view.component';
 import { SubtableComponent } from '../components/subtable/subtable.component';
+import { MapsComponent } from '../components/maps/maps/maps.component';
+import { PlugginGuard } from '../helpers/Pluggin.guard';
 
 
 
@@ -51,6 +53,7 @@ const routes: Routes = [
       {path: 'images-gallery/:images', component: GalleryViewComponent, canActivate: [ParamGuard]},
       {path: 'list/:listData', component: ListViewerComponent, canActivate: [ParamGuard]},
       {path: 'subtable', component: SubtableComponent},
+      {path: 'maps', component: MapsComponent, canActivate: [PlugginGuard], data: {type: 'maps'}},
       {path: 'error', component: ErrorNotFoundComponent},
       {path: 'unauthorized', component: ErrorUnauthorizedPageComponent},
       {path: 'docs', component: ApiDocsComponent},

@@ -5,6 +5,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IUser } from 'src/app/Model/interfaces/IUser';
 import { AuthService } from 'src/app/pages/auth/auth.service';
 import { UserService } from 'src/app/services/user.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'eq-nav-bar',
@@ -84,6 +85,10 @@ export class NavBarComponent implements AfterViewInit, OnDestroy {
 
   getProfileImage(){
     return this.userData?.image ? this.userData.image : '../../../../assets/images/previews/1.jpg'
+  }
+
+  checkMapsPluggin(){
+    return environment.pluggins.maps;
   }
 
 }
