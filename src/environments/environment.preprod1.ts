@@ -6,7 +6,7 @@ export const environment = {
   production: true,
   hmr: false,
   apiUrl: 'https://cde-crud.vercel.app',
-  mapsUrl: 'http://localhost:3004',
+  mapsUrl: 'https://eq-maps.vercel.app',
   authUrl: 'https://cde-auth.vercel.app',
   filesUrl: 'https://eq-files.onrender.com',
   recoveryCodeKey: "EQ_ADMIN_RECOVERY_CDE",
