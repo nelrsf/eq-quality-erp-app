@@ -107,7 +107,7 @@ export class FormComponent implements OnInit {
       (col: string) => {
         let colValue = [];
         if (this.columns[col].type === ColumnTypes.image) {
-          if (this.row[col]) {
+          if (this.row?.hasOwnProperty(col)) {
             colValue = this.row[col];
           }
           this.imagesFormData[col] = colValue;
@@ -130,7 +130,7 @@ export class FormComponent implements OnInit {
       (col: string) => {
         let colValue = [];
         if (this.columns[col].type === ColumnTypes.list) {
-          if (this.row[col]) {
+          if (this.row?.hasOwnProperty(col)) {
             colValue = this.row[col];
           }
           this.listFormData[col] = colValue;
