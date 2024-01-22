@@ -8,7 +8,7 @@ export const environment = {
   apiUrl: 'https://cde-crud.vercel.app',
   mapsUrl: 'https://eq-maps.vercel.app',
   authUrl: 'https://cde-auth.vercel.app',
-  filesUrl: 'https://eq-files.onrender.com',
+  filesUrl: 'https://eco-quality-files.vercel.app',
   recoveryCodeKey: "EQ_ADMIN_RECOVERY_CDE",
   adminTables: {
     profile: 'Perfiles',
