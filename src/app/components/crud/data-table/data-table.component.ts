@@ -93,6 +93,8 @@ export class DataTableComponent implements OnInit, AfterViewInit {
   rows: Array<any> = [];
   images: Array<string> = [];
   list: Array<string> = [];
+  modalReferenceId!: string;
+  modalReferenceColumn!: string;
   subtableData!: ISubtableValue;
   rowsChecked: IRowChecked[] = [];
   columnsFunctions: IColumnFunctions[] = [];
@@ -247,6 +249,8 @@ export class DataTableComponent implements OnInit, AfterViewInit {
 
   openModal(event: ColumnTypes, row: any, column: IColumn) {
     const columnId = column._id;
+    this.modalReferenceId = row._id;
+    this.modalReferenceColumn = columnId;
     this.modalDisabled = column.isRestricted;
     switch (event) {
       case ColumnTypes.image:
@@ -258,6 +262,15 @@ export class DataTableComponent implements OnInit, AfterViewInit {
       case ColumnTypes.table:
         this.openTableViewer(row[columnId], row._id, column);
         break;
+    }
+  }
+
+  saveImagesByModal(images: Array<string>) {
+    this.closeModal();
+    try {
+      this.rows.find(r => r._id === this.modalReferenceId)[this.modalReferenceColumn] = images;
+    } catch (e) {
+      console.log(e);
     }
   }
 
@@ -279,8 +292,17 @@ export class DataTableComponent implements OnInit, AfterViewInit {
     }
     this.subtableData = subtableData;
     this.openTableViewerEvent.emit(this.subtableData);
-    //this.router.navigate(['./subtable'], { state: { data: subtableData } });
   }
+
+  saveListByModal(list: Array<string>) {
+    this.closeModal();
+    try {
+      this.rows.find(r => r._id === this.modalReferenceId)[this.modalReferenceColumn] = list;
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
 
   openListViewer(list: Array<any>) {
     if (!list) {

@@ -7,6 +7,7 @@ import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { TooltipDirective } from 'src/app/directives/tooltip.directive';
 import { ColumnTypes } from 'src/app/Model/interfaces/IColumn';
 import { DeviceDetectorService, DeviceType } from 'src/app/services/device-detector.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'eq-image-viewer',
@@ -40,7 +41,7 @@ export class ImageViewerComponent implements OnInit {
 
   ngOnInit(): void {
     this.getDevice();
-    this.value = this.value ? this.value : '../../../../../../assets/images/previews/1.jpg';
+    //this.value = this.value ? this.value : '../../../../../../assets/images/previews/1.jpg';
   }
 
   getDevice() {
@@ -50,10 +51,13 @@ export class ImageViewerComponent implements OnInit {
 
 
   getLinkAsThumb(link: string): string {
+    if (!link) {
+      return '../../../../../../assets/images/previews/1.jpg';
+    }
     if (typeof link !== "string") {
       return "";
     }
-    return link + this.thumbStr;
+    return environment.filesUrl + '/download/' + link;
   }
 
   onChange(event: any) {

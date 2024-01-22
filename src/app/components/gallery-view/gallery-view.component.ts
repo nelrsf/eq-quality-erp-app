@@ -46,6 +46,7 @@ export class GalleryViewComponent {
   imgsLoading: Array<IImageLoadingState> = [];
   device!: DeviceType;
   cameraActive: boolean = false;
+  downloadUrl: string = environment.filesUrl + '/download/';
 
 
   constructor(private deviceDetector: DeviceDetectorService, private fileService: FileService) { }

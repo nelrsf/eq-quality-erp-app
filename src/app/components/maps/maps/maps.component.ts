@@ -1,12 +1,14 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Renderer2, TemplateRef, ViewChild } from '@angular/core';
 import { MapsCustomizePanelComponent } from '../maps-customize-panel/maps-customize-panel.component';
-import { Icon, LatLng, LeafletMouseEvent, Map, Marker, Point, marker, tileLayer } from 'leaflet';
+import { Icon, LatLng, LatLngExpression, LeafletMouseEvent, Map, Marker, Point, marker, popup, tileLayer } from 'leaflet';
 import { IMapElement } from '../Model/IMapElement';
 import { MapsService } from '../maps.service';
 import { IMarker } from '../Model/IMarker';
 import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
 import { MarkerInfoComponent } from '../marker-info/marker-info.component';
+import { NgbDropdown, NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmDialogComponent, EQ_CONFIRM_MODAL_NO, EQ_CONFIRM_MODAL_YES } from '../../alerts/confirm/confirm.component';
 
 
 @Component({
@@ -17,10 +19,15 @@ import { MarkerInfoComponent } from '../marker-info/marker-info.component';
   imports: [
     MapsCustomizePanelComponent,
     MarkerInfoComponent,
+    NgbDropdownModule,
+    ConfirmDialogComponent,
     CommonModule
   ]
 })
 export class MapsComponent implements AfterViewInit {
+
+  @ViewChild('contextMenu') contextMenu!: ElementRef;
+  @ViewChild('confirmDeleteMarker') confirmDeleteMarker!: TemplateRef<any>;
 
   mapElements: IMapElement[] = [];
   map!: Map;
@@ -29,13 +36,39 @@ export class MapsComponent implements AfterViewInit {
   insertMarkerByClick: boolean = false;
   closeCustomPanel: Subject<void> = new Subject<void>();
   openMarkerInfoPanel: Subject<{ marker: IMarker, mapElement: IMapElement }> = new Subject<{ marker: IMarker, mapElement: IMapElement }>();
+  mapCenter: LatLngExpression = this.getInitialMapCenter();
+  mapZoom: number = this.getInitialMapZoom();
+  markerToDelete!: IMarker;
+  llMarkerToDelete!: Marker;
 
-  constructor(private mapsService: MapsService) { }
+  constructor(private modal: NgbModal,private mapsService: MapsService, private renderer2: Renderer2) { }
 
   ngAfterViewInit(): void {
-    this.map = new Map('map').setView([7.0679784451182845, -73.85419861588933], 17);
+    this.map = new Map('map').setView(this.mapCenter, this.mapZoom);
     this.selectMapTheme(this.map);
     this.map.addEventListener('click', this.onClickMap);
+    this.map.addEventListener("zoom", this.onMapZoom);
+    this.map.addEventListener("moveend", this.onMapMove);
+  }
+
+  getInitialMapZoom() {
+    const zoomStr = localStorage.getItem("mapZoom");
+    const zoom = parseInt(zoomStr ? zoomStr : "");
+    return !isNaN(zoom) ? zoom : 17;
+  }
+
+  getInitialMapCenter() {
+    const centerStr = localStorage.getItem("mapCenter");
+    try {
+      const center = JSON.parse(centerStr ? centerStr : "");
+      if (!center) {
+        return [7.0679784451182845, -73.85419861588933];
+      }
+      return center
+    }
+    catch {
+      return [7.0679784451182845, -73.85419861588933];
+    }
   }
 
   selectMapTheme(map: Map) {
@@ -51,6 +84,16 @@ export class MapsComponent implements AfterViewInit {
     }
     this.currentMarker.mapElement = mapElement.id;
     this.insertMarkerByClick = true;
+  }
+
+  onMapZoom = (event: any) => {
+    const zoom = event.target._zoom;
+    localStorage.setItem("mapZoom", zoom);
+  }
+
+  onMapMove = (_event: any) => {
+    const center = this.map.getCenter();
+    localStorage.setItem("mapCenter", JSON.stringify(center));
   }
 
   onClickMap = (event: LeafletMouseEvent) => {
@@ -85,7 +128,7 @@ export class MapsComponent implements AfterViewInit {
     }
     const icon = new Icon({
       iconUrl: iconObj.url,
-      iconSize: new Point(25, 25, true)
+      iconSize: new Point(17, 17, true)
     })
     const mark = marker([newMarker.lat, newMarker.lng], {
       icon: icon,
@@ -95,7 +138,28 @@ export class MapsComponent implements AfterViewInit {
     mark.addEventListener("click", (event) => {
       this.closeCustomPanel.next();
       this.openMarkerInfoPanel.next({ marker: newMarker, mapElement: mapElement })
-    })
+    });
+    mark.addEventListener("dragend", (event) => {
+      newMarker.lat = event.target._latlng.lat;
+      newMarker.lng = event.target._latlng.lng;
+      this.updateMarker(newMarker);
+      console.log(event);
+    });
+    mark.addEventListener("contextmenu", (event) => {
+      const popupMenu = popup({ content: this.contextMenu.nativeElement, closeButton: false })
+        .setLatLng(mark.getLatLng());
+      this.renderer2.removeClass(this.contextMenu.nativeElement, "d-none");
+      this.renderer2.addClass(this.contextMenu.nativeElement, "d-inline-flex");
+      const deleteButton = this.contextMenu.nativeElement.querySelector("#delete-marker");
+      deleteButton.removeAllListeners();
+      deleteButton.addEventListener("click", () => {
+        this.markerToDelete = newMarker;
+        this.llMarkerToDelete = mark;
+        this.modal.open(this.confirmDeleteMarker);
+        popupMenu.close();
+      });
+      popupMenu.openOn(this.map)
+    });
     mark.addTo(this.map);
   }
 
@@ -131,6 +195,9 @@ export class MapsComponent implements AfterViewInit {
         {
           next: (markers: any) => {
             this.renderMarkers(markers);
+          },
+          error: (error: any) => {
+            console.log(error);
           }
         }
       )
@@ -146,6 +213,31 @@ export class MapsComponent implements AfterViewInit {
       }
     )
   }
+
+  updateMarker(marker: IMarker) {
+    this.mapsService.updateMarkers(marker)
+      .subscribe({
+        error: (error: any) => {
+          console.log(error);
+        }
+      })
+  }
+
+  onSubmitDeleteModal(result: number) {
+    if (result === EQ_CONFIRM_MODAL_YES) {
+      this.mapsService.deleteMarker(this.markerToDelete)
+        .subscribe({
+          next: () => {
+            this.modal.dismissAll();
+            this.llMarkerToDelete.remove();
+          }
+        })
+    } else if (result === EQ_CONFIRM_MODAL_NO) {
+      this.modal.dismissAll();
+    }
+  }
+
+
 
 
 }

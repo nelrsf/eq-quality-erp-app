@@ -1,0 +1,14 @@
+<div class="alert mb-0">
+    <button type="button" class="close-modal-error btn btn-outline-secondary" data-dismiss="alert"
+        aria-hidden="true" (click)="closeModal()">
+        ×</button>
+
+        <h4 *ngIf="title"  class="h4 my-2">{{title}}</h4>
+        <p *ngIf="message">{{message}}</p>
+
+        <div class="d-flex justify-content-center my-2">
+            <button class="btn btn-primary mx-2" (click)="submitYes($event)">Si</button>
+            <button class="btn btn-outline-secondary mx-2" (click)="submitNo($event)">No</button>
+        </div>
+
+</div>

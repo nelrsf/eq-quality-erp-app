@@ -1,14 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
-import { NgbOffcanvas, NgbOffcanvasModule, NgbTypeahead, NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, TemplateRef, ViewChild } from '@angular/core';
+import { NgbModal, NgbModalModule, NgbOffcanvas, NgbOffcanvasModule, NgbTypeahead, NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, OperatorFunction, Subject, catchError, debounceTime, distinctUntilChanged, map, of, switchMap } from 'rxjs';
 import { IMarker } from '../Model/IMarker';
 import { TablesService } from 'src/app/pages/tables/tables.service';
 import { IMapElement } from '../Model/IMapElement';
 import { FormComponent } from '../../crud/form/form.component';
-import { BrowserModule } from '@angular/platform-browser';
 import { IColumn } from 'src/app/Model/interfaces/IColumn';
 import { MapsService } from '../maps.service';
+import { ConfirmDialogComponent, EQ_CONFIRM_MODAL_NO, EQ_CONFIRM_MODAL_YES } from '../../alerts/confirm/confirm.component';
 
 @Component({
   selector: 'eq-marker-info',
@@ -19,7 +19,8 @@ import { MapsService } from '../maps.service';
     CommonModule,
     NgbTypeaheadModule,
     NgbOffcanvasModule,
-    FormComponent
+    FormComponent,
+    ConfirmDialogComponent
   ]
 })
 export class MarkerInfoComponent implements AfterViewInit {
@@ -142,4 +143,5 @@ export class MarkerInfoComponent implements AfterViewInit {
       )
 
   }
+
 }

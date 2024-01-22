@@ -11,6 +11,7 @@ import { FileService } from 'src/app/services/file.service';
 import { ImageUploaderComponent } from 'src/app/components/miscelaneous/image-uploader/image-uploader.component';
 import { CameraComponent } from 'src/app/components/miscelaneous/camera/camera.component';
 import { DeviceDetectorService, DeviceType } from 'src/app/services/device-detector.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'eq-img-field',
@@ -38,7 +39,7 @@ export class ImgFieldComponent implements OnInit {
   @Input() module!: string;
   @Output() imagesChange = new EventEmitter<Array<string>>();
 
-
+  imageDownloadEndpoint = environment.filesUrl + '/download/';
   icons = {
     cog: faCog,
     camera: faCamera,

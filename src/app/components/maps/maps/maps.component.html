@@ -1,3 +1,12 @@
 <eq-maps-customize-panel [closePanel]="closeCustomPanel" (onInsertMarker)="insertMarker($event)" (onGetMapIcons)="getMapIcons($event)" (onGetMapElements)="getMapElements($event)"></eq-maps-customize-panel>
 <eq-marker-info [openPanel]="openMarkerInfoPanel"></eq-marker-info>
 <div id="map" [ngClass]="[insertMarkerByClick?'insert-marker':'']"></div>
+
+<div #contextMenu class="d-none">
+        <button id="delete-marker" class="btn btn-danger">Eliminar marcador</button>
+</div>
+
+<ng-template #confirmDeleteMarker let-modal>
+	<eq-confirm-dialog [title]="'Eliminar marcador'" (submit)="onSubmitDeleteModal($event)"
+		[message]="'Está seguro que desea elinar este marcador'" (close)="modal.close()"></eq-confirm-dialog>
+</ng-template>
