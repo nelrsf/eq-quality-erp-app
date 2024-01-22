@@ -145,7 +145,7 @@ export class FormComponent implements OnInit {
       (col: string) => {
         let colValue = [];
         if (this.columns[col].type === ColumnTypes.table) {
-          if (this.row[col]) {
+          if (this.row?.hasOwnProperty(col)) {
             colValue = this.row[col];
           }
           this.subtableFormData[col] = colValue;
@@ -327,7 +327,7 @@ export class FormComponent implements OnInit {
       column: column.linkedTable?.column ? column.linkedTable?.column : '',
       module: column.linkedTable?.module ? column.linkedTable?.module : '',
       table: column.linkedTable?.table ? column.linkedTable?.table : '',
-      rows: this.row[column._id] ? this.row[column._id] : [],
+      rows: this.row?.hasOwnProperty(column._id) ? this.row[column._id] : [],
       rowId: '',
       valueHost: {
         column: column._id,
