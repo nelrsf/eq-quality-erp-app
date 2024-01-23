@@ -3,7 +3,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faCamera, faCirclePlus, faCog, faUpDownLeftRight, faUpload } from '@fortawesome/free-solid-svg-icons';
+import { faCamera, faCirclePlus, faCog, faPencil, faTrash, faUpDownLeftRight, faUpload } from '@fortawesome/free-solid-svg-icons';
 import { FileUploaderComponent } from 'src/app/components/miscelaneous/file-uploader/file-uploader.component';
 import { ShowIfIsAdmin } from 'src/app/directives/permissions/show-if-is-admin.directive';
 import { ShowIfIsOwner } from 'src/app/directives/permissions/show-if-is-owner.directive';
@@ -44,10 +44,13 @@ export class ImgFieldComponent implements OnInit {
     cog: faCog,
     camera: faCamera,
     upload: faUpload,
-    addImage: faCirclePlus
+    addImage: faCirclePlus,
+    edit: faPencil,
+    delete: faTrash
   }
 
   imageUrl: string = "";
+  imagePos: number = 0;
   previousImageUrl: string = "";
 
   isValidImgUrl: boolean = false;
@@ -93,15 +96,15 @@ export class ImgFieldComponent implements OnInit {
 
   detectDevice() {
     this.detectDeviceService.detectDevice()
-    .then(
-      (value)=>{
-        this.device = value;
-      }
-    ).catch(
-      (error)=>{
-        console.log(error);
-      }
-    )
+      .then(
+        (value) => {
+          this.device = value;
+        }
+      ).catch(
+        (error) => {
+          console.log(error);
+        }
+      )
   }
 
   switchToCameraMode(event: Event) {
@@ -112,6 +115,21 @@ export class ImgFieldComponent implements OnInit {
   onImagesChange(images: Array<string>) {
     this.cameraMode = !this.cameraMode;
     this.images.push(...images);
+    this.imagesChange.emit(this.images);
+  }
+
+  appendImagesChange(imagesPack: string[]) {
+    this.images.push(...imagesPack);
+    this.imagesChange.emit(this.images);
+  }
+
+  deleteImg(event: any, imagePos: number) {
+    event.preventDefault();
+    if (imagePos >= 0) {
+      this.images.splice(imagePos, 1);
+      this.imageUrl = "";
+      this.imagesChange.emit(this.images);
+    }
   }
 
 }

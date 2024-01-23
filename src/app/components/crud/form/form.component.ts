@@ -342,4 +342,5 @@ export class FormComponent implements OnInit {
   onSubtableChange(rows: Array<any>, column: IColumn) {
     this.subtableFormData[column._id] = rows;
   }
+
 }

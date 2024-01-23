@@ -29,9 +29,6 @@
     border-color: var(--bs-btn-hover-border-color);
 }
 
-.form-group img {
-    max-height: 6rem;
-}
 
 .img-gallery {
     overflow-x: auto;
@@ -39,8 +36,4 @@
 
 .img-gallery img {
     max-height: 40rem;
-}
-
-.form-group img {
-    max-height: 15rem;
 }

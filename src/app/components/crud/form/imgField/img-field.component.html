@@ -8,9 +8,13 @@
         </div>
     </label>
     <div class="image-tools d-flex justify-content-end">
-        <!-- <button *ngIf="device !== 'web'" class="button-tool mx-1 btn btn-light" (click)="startCamera($event)">
-            <fa-icon [icon]="icons.camera"></fa-icon>
-        </button> -->
+
+        <div *ngIf="imageUrl">
+            <button #uploadImageButton class="button-tool btn btn-danger mx-1" (click)="deleteImg($event,imagePos)">
+                <fa-icon [icon]="icons.delete"></fa-icon>
+            </button>
+        </div>
+
         <div *ngIf="device !== 'web'">
             <!-- <eq-image-uploader [uploadButton]="uploadImageButton" ></eq-image-uploader> -->
             <button #uploadImageButton class="button-tool btn btn-light mx-1" (click)="switchToCameraMode($event)">
@@ -19,11 +23,13 @@
         </div>
 
         <div *ngIf="device === 'web'">
-            <eq-file-uploader [(files)]="images" [uploadButton]="uploadButton"></eq-file-uploader>
+            <eq-file-uploader [files]="images" (filesChange)="appendImagesChange($event)"
+                [uploadButton]="uploadButton"></eq-file-uploader>
             <button #uploadButton class="button-tool btn btn-light mx-1" (click)="$event.preventDefault()">
                 <fa-icon [icon]="icons.upload"></fa-icon>
             </button>
         </div>
+
 
     </div>
     <div class="img-container">
@@ -33,7 +39,7 @@
     </div>
 
     <div *ngIf="images.length !== 0" class="img-gallery d-flex">
-        <div class="me-2 img-thumb" *ngFor="let img of images" (click)="imageUrl=img">
+        <div class="me-2 img-thumb" *ngFor="let img of images; let i=index" (click)="imageUrl=img;imagePos=i">
             <img height="30rem" [src]="imageDownloadEndpoint + img" alt="">
         </div>
     </div>
