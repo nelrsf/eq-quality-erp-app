@@ -8,7 +8,7 @@ export const environment = {
   apiUrl: 'http://localhost:3000',
   authUrl: 'http://localhost:3001',
   mapsUrl: 'http://localhost:3004',
-  filesUrl: 'http://localhost:3002',
+  filesUrl: 'https://eco-quality-files.vercel.app',
   recoveryCodeKey: "EQ_ADMIN_RECOVERY",
   adminTables: {
     profile: 'Perfiles',

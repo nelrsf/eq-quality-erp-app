@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCamera, faCirclePlus, faCog, faPencil, faTrash, faUpDownLeftRight, faUpload } from '@fortawesome/free-solid-svg-icons';
@@ -12,6 +12,8 @@ import { ImageUploaderComponent } from 'src/app/components/miscelaneous/image-up
 import { CameraComponent } from 'src/app/components/miscelaneous/camera/camera.component';
 import { DeviceDetectorService, DeviceType } from 'src/app/services/device-detector.service';
 import { environment } from 'src/environments/environment';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ErrorComponent } from 'src/app/components/alerts/error/error.component';
 
 @Component({
   selector: 'eq-img-field',
@@ -27,17 +29,19 @@ import { environment } from 'src/environments/environment';
     ImageUploaderComponent,
     ShowIfIsAdmin,
     ShowIfIsOwner,
-    CameraComponent
+    CameraComponent,
+    ErrorComponent
   ]
 })
 export class ImgFieldComponent implements OnInit {
 
-  constructor(private http: HttpClient, private detectDeviceService: DeviceDetectorService) { }
+  constructor(private modal: NgbModal,private http: HttpClient, private detectDeviceService: DeviceDetectorService) { }
 
   @Input() column: any;
   @Input() images!: Array<string>
   @Input() module!: string;
   @Output() imagesChange = new EventEmitter<Array<string>>();
+  @ViewChild('modalError') modalError!: TemplateRef<any>;
 
   imageDownloadEndpoint = environment.filesUrl + '/download/';
   icons = {
@@ -52,7 +56,7 @@ export class ImgFieldComponent implements OnInit {
   imageUrl: string = "";
   imagePos: number = 0;
   previousImageUrl: string = "";
-
+  errorMessage: string = "";
   isValidImgUrl: boolean = false;
   device!: DeviceType;
   cameraMode: boolean = false;
@@ -132,4 +136,8 @@ export class ImgFieldComponent implements OnInit {
     }
   }
 
+  showErrorModal(event: string){
+    this.errorMessage = event;
+    this.modal.open(this.modalError);
+  }
 }

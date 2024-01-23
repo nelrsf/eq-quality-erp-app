@@ -23,8 +23,8 @@
         </div>
 
         <div *ngIf="device === 'web'">
-            <eq-file-uploader [files]="images" (filesChange)="appendImagesChange($event)"
-                [uploadButton]="uploadButton"></eq-file-uploader>
+            <eq-file-uploader (onError)="showErrorModal($event)" [files]="images"
+                (filesChange)="appendImagesChange($event)" [uploadButton]="uploadButton"></eq-file-uploader>
             <button #uploadButton class="button-tool btn btn-light mx-1" (click)="$event.preventDefault()">
                 <fa-icon [icon]="icons.upload"></fa-icon>
             </button>
@@ -52,3 +52,8 @@
     </div> -->
 
 </div>
+
+
+<ng-template #modalError let-modal>
+    <eq-error [errorMessage]="errorMessage" (close)="modal.close()"></eq-error>
+</ng-template>

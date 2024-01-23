@@ -5,6 +5,8 @@ import { faUpload } from '@fortawesome/free-solid-svg-icons';
 import { fromEvent } from 'rxjs';
 import { FileService } from 'src/app/services/file.service';
 import { LoadingComponent } from '../loading/loading.component';
+import { ErrorComponent } from '../../alerts/error/error.component';
+import { NgbModal, NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'eq-file-uploader',
@@ -14,7 +16,9 @@ import { LoadingComponent } from '../loading/loading.component';
   imports: [
     CommonModule,
     FontAwesomeModule,
-    LoadingComponent
+    LoadingComponent,
+    ErrorComponent,
+    NgbModalModule
   ]
 })
 export class FileUploaderComponent implements AfterViewInit {
@@ -28,6 +32,7 @@ export class FileUploaderComponent implements AfterViewInit {
   @Input() accept: string = "image/*";
   @Input() returnBlob: boolean = false;
   @Output() blobChange = new EventEmitter<any>();
+  @Output() onError = new EventEmitter<string>();
   @Output() filesChange = new EventEmitter<Array<string>>();
 
   constructor(private fileService: FileService, private renderer: Renderer2, private viewContainerRef: ViewContainerRef, private cdr: ChangeDetectorRef) { }
@@ -38,6 +43,8 @@ export class FileUploaderComponent implements AfterViewInit {
   }
   filesData!: Array<any>;
   loading: boolean = false;
+  payloadLargeMessage: string = "El archivo debe tener un tamaño menor a 1mb";
+
 
   ngAfterViewInit(): void {
     if (this.uploadButton) {
@@ -59,10 +66,24 @@ export class FileUploaderComponent implements AfterViewInit {
     this.fileUploader.nativeElement.click();
   }
 
+  checkFilesSize(files: any[]) {
+    const maxSize = 1048576; // 1MB in bytes
+    for (let i = 0; i < files.length; i++) {
+      if (files[i].size > maxSize) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   onSelectedFile(event: any) {
     event.preventDefault();
-    this.loading = true;
     this.filesData = event.target.files;
+    if (this.checkFilesSize(this.filesData)) {
+      this.onError.emit(this.payloadLargeMessage);
+      return
+    };
+    this.loading = true;
     if (this.returnBlob) {
       this.blobChange.next(this.filesData);
       this.loading = false;
@@ -77,9 +98,7 @@ export class FileUploaderComponent implements AfterViewInit {
     this.fileService.uploadFile(formData)
       .subscribe({
         next: (data: any) => {
-          // if (!Array.isArray(this.files)) {
-            this.files = [];
-          // }
+          this.files = [];
           this.files.push(...data.urls);
           this.filesChange.emit(this.files);
           this.loading = false;

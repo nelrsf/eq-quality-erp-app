@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faEdit, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -10,6 +10,8 @@ import { LoadingComponent } from '../miscelaneous/loading/loading.component';
 import { DeviceDetectorService, DeviceType } from 'src/app/services/device-detector.service';
 import { CameraComponent } from '../miscelaneous/camera/camera.component';
 import { ImageUploaderComponent } from '../miscelaneous/image-uploader/image-uploader.component';
+import { ErrorComponent } from '../alerts/error/error.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 
 interface IImageLoadingState {
@@ -28,7 +30,8 @@ interface IImageLoadingState {
     FileUploaderComponent,
     LoadingComponent,
     CameraComponent,
-    ImageUploaderComponent
+    ImageUploaderComponent,
+    ErrorComponent
   ]
 })
 export class GalleryViewComponent {
@@ -36,6 +39,8 @@ export class GalleryViewComponent {
   @Input() disabled: boolean = false;
   @Input() images: Array<string> = [];
   @Output() imagesChange = new EventEmitter<Array<string>>();
+  @ViewChild('modalError') modalError!: TemplateRef<any>;
+  @Output() blobChange = new EventEmitter<any>();
 
   icons = {
     edit: faEdit,
@@ -47,9 +52,10 @@ export class GalleryViewComponent {
   device!: DeviceType;
   cameraActive: boolean = false;
   downloadUrl: string = environment.filesUrl + '/download/';
+  errorMessage: string = "";
 
 
-  constructor(private deviceDetector: DeviceDetectorService, private fileService: FileService) { }
+  constructor(private modal: NgbModal, private deviceDetector: DeviceDetectorService, private fileService: FileService) { }
 
   ngOnInit(): void {
     this.getDevice();
@@ -173,6 +179,11 @@ export class GalleryViewComponent {
 
   saveChanges() {
     this.imagesChange.emit(this.images);
+  }
+
+  showErrorModal(event: string) {
+    this.errorMessage = event;
+    this.modal.open(this.modalError);
   }
 
 }

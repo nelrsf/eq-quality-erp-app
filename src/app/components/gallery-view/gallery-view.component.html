@@ -48,10 +48,11 @@
                 <fa-icon [icon]="icons.add"></fa-icon>
             </button>
         </div>
-        <eq-file-uploader *ngIf="device ==='web'" accept="image/*" [multiple]="true" [uploadButton]="buttonAddImage"
+        <eq-file-uploader *ngIf="device ==='web'" (onError)="showErrorModal($event)" accept="image/*" [multiple]="true" [uploadButton]="buttonAddImage"
             [files]="[]" (filesChange)="addImage($event)"></eq-file-uploader>
         <div class="buttons d-flex justify-content-between align-items-center w-100 p-3">
-            <button #buttonAddImage type="button" class="btn btn-primary d-flex align-items-center" (click)="saveChanges()">
+            <button #buttonAddImage type="button" class="btn btn-primary d-flex align-items-center"
+                (click)="saveChanges()">
                 Guardar Cambios
             </button>
         </div>
@@ -61,3 +62,8 @@
 
 <eq-camera *ngIf="cameraActive && device !=='web'" (dissmiss)="cameraActive = false"
     (filesChange)="onFilesAdded($event)"></eq-camera>
+
+
+<ng-template #modalError let-modal>
+    <eq-error [errorMessage]="errorMessage" (close)="modal.close()"></eq-error>
+</ng-template>
