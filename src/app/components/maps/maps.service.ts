@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import { environment } from "src/environments/environment";
 import { IMapElement } from "./Model/IMapElement";
 import { IMarker } from "./Model/IMarker";
+import { IPath } from "./Model/IPath";
 
 @Injectable({
     providedIn: 'root'
@@ -25,6 +26,10 @@ export class MapsService {
         return this.http.get(this.mapsApi + '/markers');
     }
 
+    getPaths() {
+        return this.http.get(this.mapsApi + '/paths');
+    }
+
     updateMapElements(mapElement: IMapElement) {
         const { id, ...body } = mapElement;
         delete (body as any).icons;
@@ -36,14 +41,22 @@ export class MapsService {
         return this.http.patch(this.mapsApi + '/markers/' + marker.id, body);
     }
 
+    updatePath(path: IPath) {
+        const { id, ...body } = path;
+        return this.http.patch(this.mapsApi + '/paths/' + path.id, body);
+    }
+
     deleteMapElements(mapElement: IMapElement) {
         const { id, ..._body } = mapElement;
         return this.http.delete(this.mapsApi + '/map-elements/' + mapElement.id);
     }
 
     deleteMarker(marker: IMarker) {
-        const { id, ..._body } = marker;
         return this.http.delete(this.mapsApi + '/markers/' + marker.id);
+    }
+
+    deletePath(path: IPath) {
+        return this.http.delete(this.mapsApi + '/paths/' + path.id);
     }
 
     createMapElements(mapElement: IMapElement) {
@@ -52,5 +65,9 @@ export class MapsService {
 
     createMarker(marker: IMarker) {
         return this.http.post(this.mapsApi + '/markers/', marker);
+    }
+
+    createPath(path: IPath) {
+        return this.http.post(this.mapsApi + '/paths/', path);
     }
 }

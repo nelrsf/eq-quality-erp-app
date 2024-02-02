@@ -6,3 +6,8 @@
 .insert-marker {
     cursor: crosshair;
 }
+
+.hover-path-marker:hover {
+    transform: scale(1.2);
+}
+

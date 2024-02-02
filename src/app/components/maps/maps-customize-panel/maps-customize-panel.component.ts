@@ -10,7 +10,6 @@ import { FormsModule } from '@angular/forms';
 import { IModule } from 'src/app/Model/interfaces/IModule';
 import { ITable } from 'src/app/Model/interfaces/ITable';
 import { IColumn } from 'src/app/Model/interfaces/IColumn';
-import { Map } from 'leaflet';
 import { Subject } from 'rxjs';
 
 @Component({
@@ -44,7 +43,10 @@ export class MapsCustomizePanelComponent implements OnInit {
     moduleRef: '',
     name: 'Nuevo elemento',
     tableRef: '',
-    type: 'point'
+    type: 'point',
+    pathColor: '#006B25',
+    pathStroke: 3
+    
   };
 
 
@@ -186,4 +188,5 @@ export class MapsCustomizePanelComponent implements OnInit {
   insertMarker(mapElement: IMapElement) {
     this.onInsertMarker.emit(mapElement);
   }
+
 }

@@ -13,33 +13,11 @@
 				<div ngbAccordionCollapse>
 					<div ngbAccordionBody>
 						<ng-template>
-							<div class="form-group">
-								<label for="exampleFormControlInput1">Nombre</label>
-								<input [(ngModel)]="newElement.name" type="email" class="form-control"
-									id="exampleFormControlInput1">
-							</div>
-							<div class="form-group mt-3">
-								<label for="exampleFormControlSelect1">Tipo de elemento</label>
-								<select class="form-control" id="exampleFormControlSelect1"
-									[(ngModel)]="newElement.type">
-									<option [value]="'path'">Línea</option>
-									<option selected [value]="'point'">Punto</option>
-								</select>
-							</div>
-							<div columnSelector class="mt-3" (moduleChange)="setModule($event, newElement)"
-								(tableChange)="setTable($event, newElement)"
-								(columnChange)="setColumn($event, newElement)"></div>
-							<div class="form-group mt-3">
-								<label for="exampleFormControlSelect2">Icono</label>
-								<div class="card icons-container">
-									<button *ngFor="let icon of mapIcons" class="icon-item m-1 p-1"
-										(click)="onSelectIcon(newElement,icon)"
-										[ngClass]="[icon.id===newElement.icon?'selected-icon':'']">
-										<img [src]="icon.url" width="25" height="25" />
-									</button>
-								</div>
 
-							</div>
+
+							<ng-container [ngTemplateOutlet]="editMapElemTplt"
+								[ngTemplateOutletContext]="{mapEl: newElement}"></ng-container>
+
 							<div class="d-flex justify-content-end mt-3 w-100">
 								<button class="btn btn-primary me-2"
 									(click)="createMapElement(newElement, createAccordion)">Agregar</button>
@@ -55,44 +33,22 @@
 		<div ngbAccordion [closeOthers]="true">
 			<div *ngFor="let item of mapElements; let i=index" ngbAccordionItem [collapsed]="true">
 				<h2 ngbAccordionHeader>
-						<button ngbAccordionButton  class="d-inline-flex">
-							<div class="ms-2 d-inline-flex align-items-center">
-								<img [src]="getButtonIcon(item.icon)" width="25" height="25"/>
-							</div>
-							<div class="ms-2 d-inline-flex">
-								{{item.name}}
-							</div>
-						</button>
+					<button ngbAccordionButton class="d-inline-flex">
+						<div class="ms-2 d-inline-flex align-items-center">
+							<img *ngIf="item.type==='point'" [src]="getButtonIcon(item.icon)" width="25" height="25" />
+							<div *ngIf="item.type==='path'" [style.height]="item.pathStroke + 'px'"
+								[style.backgroundColor]="item.pathColor" [style.width]="'1.2rem'"></div>
+						</div>
+						<div class="ms-2 d-inline-flex">
+							{{item.name}}
+						</div>
+					</button>
 				</h2>
 				<div ngbAccordionCollapse>
 					<div ngbAccordionBody>
 						<ng-template>
-							<div class="form-group">
-								<label for="exampleFormControlInput1">Nombre de elemento</label>
-								<input type="email" class="form-control" id="exampleFormControlInput1"
-									[(ngModel)]="item.name">
-							</div>
-							<div class="form-group mt-3">
-								<label for="exampleFormControlSelect1">Tipo de elemento</label>
-								<select class="form-control" id="exampleFormControlSelect1" [(ngModel)]="item.type">
-									<option [selected]="item.type==='path'" [value]="'path'">Línea</option>
-									<option [selected]="item.type==='point'" [value]="'point'">Punto</option>
-								</select>
-							</div>
-							<div columnSelector class="mt-3" [data]="setSelectorData(item)"
-								(moduleChange)="setModule($event, item)" (tableChange)="setTable($event, item)"
-								(columnChange)="setColumn($event, item)"></div>
-							<div class="form-group mt-3">
-								<label for="exampleFormControlSelect2">Icono</label>
-								<div class="card icons-container">
-									<button *ngFor="let icon of mapIcons" class="icon-item m-1 p-1"
-										(click)="onSelectIcon(item,icon)"
-										[ngClass]="[icon.id===item.icon?'selected-icon':'']">
-										<img [src]="icon.url" width="25" height="25" />
-									</button>
-								</div>
-
-							</div>
+							<ng-container [ngTemplateOutlet]="editMapElemTplt"
+								[ngTemplateOutletContext]="{mapEl:item}"></ng-container>
 							<div class="d-flex justify-content-end mt-3 w-100">
 								<button class="btn btn-primary me-2" (click)="saveMapElement(item)">Guardar</button>
 								<button class="btn btn-danger me-2" (click)="deleteMapElement(item)">Eliminar</button>
@@ -108,10 +64,56 @@
 	</div>
 </ng-template>
 
-<button class="btn btn-outline-primary mb-2 me-2 mt-2 button-control" (click)="openEnd(content)">
-	<fa-icon [icon]="icons.config"></fa-icon>
-</button>
 
-<button *ngFor="let mapElement of mapElements" class="icon-item me-2 button-control" (click)="insertMarker(mapElement)">
-	<img [src]="getButtonIcon(mapElement.icon)" width="25" height="25" />
-</button>
+
+<div class="d-inline-flex align-items-center w-100">
+	<button class="btn btn-outline-primary mb-2 me-2 mt-2 button-control" (click)="openEnd(content)">
+		<fa-icon [icon]="icons.config"></fa-icon>
+	</button>
+	<button *ngFor="let mapElement of mapElements" class="icon-item me-2 button-control"
+		(click)="insertMarker(mapElement)">
+		<img *ngIf="mapElement.type==='point'" [src]="getButtonIcon(mapElement.icon)" width="25" height="25" />
+		<div *ngIf="mapElement.type==='path'" [style.height]="mapElement.pathStroke + 'px'"
+			[style.backgroundColor]="mapElement.pathColor" [style.width]="'1.5rem'"></div>
+	</button>
+
+</div>
+
+
+<ng-template #editMapElemTplt let-mapEl="mapEl">
+	<div class="form-group">
+		<label for="exampleFormControlInput1">Nombre de elemento</label>
+		<input type="email" class="form-control" id="exampleFormControlInput1" [(ngModel)]="mapEl.name">
+	</div>
+	<div class="form-group mt-3">
+		<label for="exampleFormControlSelect1">Tipo de elemento</label>
+		<select class="form-control" id="exampleFormControlSelect1" [(ngModel)]="mapEl.type">
+			<option [selected]="mapEl.type==='path'" [value]="'path'">Línea</option>
+			<option [selected]="mapEl.type==='point'" [value]="'point'">Punto</option>
+		</select>
+	</div>
+	<div columnSelector class="mt-3" [data]="setSelectorData(mapEl)" (moduleChange)="setModule($event, mapEl)"
+		(tableChange)="setTable($event, mapEl)" (columnChange)="setColumn($event, mapEl)"></div>
+	<div class="form-group mt-3" *ngIf="mapEl.type==='point'">
+		<label for="exampleFormControlSelect2">Icono</label>
+		<div class="card icons-container">
+			<button *ngFor="let icon of mapIcons" class="icon-item m-1 p-1" (click)="onSelectIcon(mapEl,icon)"
+				[ngClass]="[icon.id===mapEl.icon?'selected-icon':'']">
+				<img [src]="icon.url" width="25" height="25" />
+			</button>
+		</div>
+	</div>
+	<div class="form-group" *ngIf="mapEl.type==='path'">
+
+		<div class="form-group d-inline-flex w-50 mt-3">
+			<label class="me-2">Color</label>
+			<input class="mx-1" type="color" class="form-control" [(ngModel)]="mapEl.pathColor">
+		</div>
+		<div class="form-group mt-3">
+			<label for="exampleFormControlInput1">Grosor de línea</label>
+			<input [max]="10" [min]="1" type="range" class="form-range" id="customRange1" [(ngModel)]="mapEl.pathStroke">
+		</div>
+
+
+	</div>
+</ng-template>

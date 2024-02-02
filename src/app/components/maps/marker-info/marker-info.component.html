@@ -5,10 +5,10 @@
 	</div>
 	<div class="offcanvas-body">
 
-		<label *ngIf="!marker.idRef" for="typeahead-basic" class="text-danger">Este marcador no tiene información
+		<label *ngIf="!mapShape.idRef" for="typeahead-basic" class="ms-2 text-danger">Este marcador no tiene información
 			asignada</label>
-		<label for="typeahead-basic">Buscar elemento</label>
-		<input class="mb-2" id="typeahead-basic" type="text" class="form-control" (selectItem)="onSelectItem($event)"
+		<label class="ms-2 mb-2" for="typeahead-basic">Buscar elemento</label>
+		<input class="mb-2" id="typeahead-basic" type="text" class="ms-2 form-control custom-m-end" (selectItem)="onSelectItem($event)"
 			[ngbTypeahead]="search" [inputFormatter]="resultFormatter" [resultFormatter]="resultFormatter" />
 
 		<div *ngIf="columnMetadata">

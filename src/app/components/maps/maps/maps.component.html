@@ -3,7 +3,8 @@
 <div id="map" [ngClass]="[insertMarkerByClick?'insert-marker':'']"></div>
 
 <div #contextMenu class="d-none">
-        <button id="delete-marker" class="btn btn-danger">Eliminar marcador</button>
+        <button id="delete-marker" class="btn btn-danger d-none mb-2 w-100">Eliminar marcador</button>
+		<button id="path-end" class="btn btn-primary d-none mb-2 w-100">Terminar</button>
 </div>
 
 <ng-template #confirmDeleteMarker let-modal>

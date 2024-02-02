@@ -1,14 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, TemplateRef, ViewChild } from '@angular/core';
-import { NgbModal, NgbModalModule, NgbOffcanvas, NgbOffcanvasModule, NgbTypeahead, NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
-import { Observable, OperatorFunction, Subject, catchError, debounceTime, distinctUntilChanged, map, of, switchMap } from 'rxjs';
+import { NgbOffcanvas, NgbOffcanvasModule, NgbTypeahead, NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
+import { Observable, OperatorFunction, Subject, Subscriber, catchError, debounceTime, distinctUntilChanged, map, of, switchMap } from 'rxjs';
 import { IMarker } from '../Model/IMarker';
 import { TablesService } from 'src/app/pages/tables/tables.service';
 import { IMapElement } from '../Model/IMapElement';
 import { FormComponent } from '../../crud/form/form.component';
 import { IColumn } from 'src/app/Model/interfaces/IColumn';
 import { MapsService } from '../maps.service';
-import { ConfirmDialogComponent, EQ_CONFIRM_MODAL_NO, EQ_CONFIRM_MODAL_YES } from '../../alerts/confirm/confirm.component';
+import { ConfirmDialogComponent } from '../../alerts/confirm/confirm.component';
+import { IPath } from '../Model/IPath';
+import { EqMarker } from '../Model/Marker';
+import { EqPath } from '../Model/Path';
 
 @Component({
   selector: 'eq-marker-info',
@@ -26,11 +29,11 @@ import { ConfirmDialogComponent, EQ_CONFIRM_MODAL_NO, EQ_CONFIRM_MODAL_YES } fro
 export class MarkerInfoComponent implements AfterViewInit {
 
   @ViewChild('content') content!: ElementRef;
-  @Input() openPanel!: Subject<{ marker: IMarker, mapElement: IMapElement }>;
+  @Input() openPanel!: Subject<{ mapShape: IMarker | IPath, mapElement: IMapElement }>;
 
   mainLinst: any[] = [];
   mapElement!: IMapElement;
-  marker!: IMarker;
+  mapShape!: IMarker | IPath;
   formItem: any;
   columnMetadata: IColumn | undefined;
 
@@ -71,13 +74,13 @@ export class MarkerInfoComponent implements AfterViewInit {
       return;
     }
     this.openPanel.subscribe(
-      (data: { marker: IMarker, mapElement: IMapElement }) => {
+      (data: { mapShape: IMarker | IPath, mapElement: IMapElement }) => {
         this.columnMetadata = undefined;
         this.formItem = undefined;
         this.offcanvasService.open(this.content, { position: 'end' });
         this.mapElement = data.mapElement;
-        this.marker = data.marker;
-        if (this.marker.idRef) {
+        this.mapShape = data.mapShape;
+        if (this.mapShape.idRef) {
           this.getItemByRefId();
         }
       }
@@ -89,8 +92,8 @@ export class MarkerInfoComponent implements AfterViewInit {
   }
 
   onSelectItem(event: any) {
-    this.marker.idRef = event?.item?._id ? event.item._id : null;
-    this.updateIdRef(this.marker)
+    this.mapShape.idRef = event?.item?._id ? event.item._id : null;
+    this.updateIdRef(this.mapShape)
       .subscribe(
         {
           next: (_response: any) => {
@@ -107,8 +110,14 @@ export class MarkerInfoComponent implements AfterViewInit {
       )
   }
 
-  updateIdRef(marker: IMarker) {
-    return this.mapsService.updateMarkers(marker);
+  updateIdRef(mapShape: IMarker | IPath) {
+    if (EqMarker.isMarker(mapShape)) {
+      return this.mapsService.updateMarkers(mapShape as IMarker);
+    } else if (EqPath.isPath(mapShape)) {
+      return this.mapsService.updatePath(mapShape as IPath);
+    }
+    return new Observable((subscriber: Subscriber<any>) => { subscriber.next() });
+
   }
 
   getColumns() {
@@ -129,7 +138,8 @@ export class MarkerInfoComponent implements AfterViewInit {
   }
 
   getItemByRefId() {
-    this.tableService.getRowById(this.mapElement.moduleRef, this.mapElement.tableRef, this.marker.idRef)
+    const idRef = this.mapShape?.idRef ? this.mapShape?.idRef : '';
+    this.tableService.getRowById(this.mapElement.moduleRef, this.mapElement.tableRef, idRef)
       .subscribe(
         {
           next: (row: any) => {
