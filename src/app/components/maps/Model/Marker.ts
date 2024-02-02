@@ -11,7 +11,9 @@ export class EqMarker {
 
     constructor(mapElement: IMapElement, private mapsService: MapsService) {
         if (mapElement) {
-            this.marker.mapElement = mapElement.id;
+            this.marker = {
+                mapElement: mapElement.id
+            }
         }
 
 
