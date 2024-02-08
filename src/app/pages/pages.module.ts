@@ -47,6 +47,7 @@ const routes: Routes = [
     children: [
       {path: '', component: ModulesComponent},
       {path: 'tables/:module/:route', component: TablesSumaryComponent, canActivate: [ParamGuard]},
+      {path: 'form/:module/:table', component: FormComponent},
       {path: 'tables/:module', component: TablesSumaryComponent, canActivate: [ParamGuard]},
       {path: 'tables/auxdata/:objectdata', component: TablesComponent, canActivate: [ParamGuard]},
       {path: 'tables/data/:module/:table', component: TablesComponent, canActivate: [ParamGuard]},

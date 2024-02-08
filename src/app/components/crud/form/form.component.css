@@ -1,13 +1,31 @@
-.fields-container{
+@keyframes hideAnimation {
+    from {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    to {
+        visibility: hidden;
+        opacity: 0;
+    }
+}
+
+/* Clase que aplicará la animación */
+.fade-out {
+    animation: hideAnimation 5s forwards;
+}
+
+
+.fields-container {
     flex-wrap: wrap;
 }
 
-.field {
+/* .field {
     z-index: 999999;
-}
+} */
 
 .cdk-drag-preview {
-    z-index: 2000!important;
+    z-index: 2000 !important;
 }
 
 .control-label {

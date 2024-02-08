@@ -1,15 +1,15 @@
 <div *ngIf="loading">
     <eq-loading></eq-loading>
-  </div>
+</div>
 <eq-breadcrumb *ngIf="showBreadCrumb" [module]="getModule()"></eq-breadcrumb>
 <div class="d-inline-flex justify-content-end w-100">
-  <span *ngIf="showBackButton && getBackUrlType() === 'string'" class="badge bg-secondary">
-    <a class="nav-link" [routerLink]="getBackUrlAsString()">
+  <span *ngIf="showBackButton && getBackUrlType() === 'string'  && backUrl" class="badge bg-secondary">
+    <a class="nav-link" [routerLink]="getBackUrlAsString()" (click)="onGetBack()">
       <fa-icon [icon]="icons.back"></fa-icon>
       Regresar
     </a>
   </span>
-  <span *ngIf="showBackButton && getBackUrlType() !== 'string'" class="badge bg-secondary">
+  <span *ngIf="showBackButton && getBackUrlType() !== 'string' && backUrl" class="badge bg-secondary">
     <a role="button" class="nav-link" (click)="executeBackUrlFcn()">
       <fa-icon [icon]="icons.back"></fa-icon>
       Regresar

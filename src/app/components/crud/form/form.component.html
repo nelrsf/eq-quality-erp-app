@@ -1,4 +1,4 @@
-<form class="fields" (submit)="onSubmit()" [formGroup]="form">
+<form *ngIf="columns" class="fields" (submit)="onSubmit()" [formGroup]="form">
     <div #DnDContainer class="fields-container d-flex w-100">
         <div *ngFor="let column of columns; let i = index" class="field d-flex align-items-center"
             [style.width]="getWidth(column)" eqDrag [eqDragKey]="column._id" [(eqDropTarget)]="columnsJson"
@@ -103,14 +103,15 @@
                             <div class="font-weight-bold">
                                 {{column.columnName}}
                             </div>
-                            <div *ngIf="subtableFormData[column._id]" class="ms-2 text-success">
+                            <div id="successtextconf" *ngIf="subtableFormData[column._id] && subtableFormData[column._id].length !==0"
+                                class="ms-2 text-success fade-out">
                                 (Tabla guardada correctamente)
                             </div>
                             <div [showIfIsAdmin]="module" [showIfIsOwner]="module" class="config-field-menu">
                                 <fa-icon [icon]="icons.cog"></fa-icon>
                             </div>
                         </label>
-                        <eq-subtable [showBackButton]="false" [showBreadCrumb]="false" [data]="getSubtableData(column)"
+                        <eq-subtable [showBreadCrumb]="false" [data]="getSubtableData(column)"
                             (rowsChange)="onSubtableChange($event, column)"></eq-subtable>
                     </div>
                 </div>

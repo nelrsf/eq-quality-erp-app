@@ -11,7 +11,6 @@ import { CommonModule } from '@angular/common';
 import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { generateObjectId } from 'src/app/functions/generateObjectId';
-import { ICellRestriction, IColumnRestriction } from 'src/app/Model/interfaces/ICellRestrictions';
 
 
 @Component({
@@ -34,6 +33,7 @@ export class SubtableComponent implements AfterViewInit {
   @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
   @Output() dataChange = new EventEmitter<ISubtableValue>();
   @Output() rowsChange = new EventEmitter<Array<any>>();
+  @Output() getBackTable = new EventEmitter<void>();
   @Input() data!: ISubtableValue;
   @Input() showBreadCrumb: boolean = true;
   @Input() showBackButton: boolean = true;
@@ -63,7 +63,7 @@ export class SubtableComponent implements AfterViewInit {
 
   initializeTableData() {
     if (!this.data.rowId) {
-      this.dataTable.data.next(this.data.rows);
+      this.dataTable.data.next(this.data?.rows ? this.data.rows : []);
       this.tableRows = this.dataTable.data.getValue();
       this.cdr.detectChanges();
       return;
@@ -140,7 +140,7 @@ export class SubtableComponent implements AfterViewInit {
 
   replicateColumns(data: ISubtableValue) {
     const columnsReplicated: IColumn[] = [];
-    data.valueHost.columnsOverrideData.forEach(
+    data?.valueHost?.columnsOverrideData?.forEach(
       (c: IColumnsOverrideData) => {
         if (c.isVirtualColumn) {
           columnsReplicated.push(c.virtualColumnData);
@@ -236,7 +236,7 @@ export class SubtableComponent implements AfterViewInit {
       this.initializeTable();
       this.initializeTableData();
       this.oldData.pop();
-      if(this.oldData.length === 0){
+      if (this.oldData.length === 0) {
         this.backUrl = this.homeUrl;
       }
     };
@@ -262,6 +262,11 @@ export class SubtableComponent implements AfterViewInit {
   executeBackUrlFcn() {
     const backUrlFcn = this.backUrl as () => void;
     backUrlFcn();
+    this.getBackTable.emit();
+  }
+
+  onGetBack() {
+    this.getBackTable.emit();
   }
 
   overrideCreateSubtableDataFcn() {

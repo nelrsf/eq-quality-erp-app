@@ -6,7 +6,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faExclamationCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
-import { filter, fromEvent, map, Observable, startWith } from 'rxjs';
+import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
+import { debounceTime, distinctUntilChanged, filter, fromEvent, map, Observable, startWith } from 'rxjs';
 import { ICellRestriction } from 'src/app/Model/interfaces/ICellRestrictions';
 
 @Component({
@@ -20,7 +21,8 @@ import { ICellRestriction } from 'src/app/Model/interfaces/ICellRestrictions';
     MatFormFieldModule,
     FormsModule,
     MatInputModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    NgbTypeaheadModule
   ]
 })
 export class AutocompleteComponent implements OnInit, AfterViewInit {
@@ -40,6 +42,18 @@ export class AutocompleteComponent implements OnInit, AfterViewInit {
   icons = {
     invalid: faExclamationCircle,
     delete: faTimesCircle
+  }
+
+  search = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      map(term => term === '' ? []
+        : this.filteredData.filter(v => v.value.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
+    );
+
+  formatValue = (item: any) => {
+    return item?.value ? item.value : '';
   }
 
 
@@ -66,7 +80,7 @@ export class AutocompleteComponent implements OnInit, AfterViewInit {
       return [];
     }
     return this.data.filter(d => {
-      if(d.value=== undefined || d.value === null){
+      if (d.value === undefined || d.value === null) {
         return;
       }
       return d.value?.toLowerCase().indexOf(name.toLowerCase()) !== -1;

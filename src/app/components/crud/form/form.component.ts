@@ -18,8 +18,7 @@ import { DnDOrderDirective } from 'src/app/directives/order.directive';
 import { concatMap, from } from 'rxjs';
 import { SubtableComponent } from '../../subtable/subtable.component';
 import { ISubtableValue } from 'src/app/Model/interfaces/ISubtableValue';
-import { IModule } from 'src/app/Model/interfaces/IModule';
-import { ITable } from 'src/app/Model/interfaces/ITable';
+import { ActivatedRoute } from '@angular/router';
 
 
 @Component({
@@ -78,10 +77,18 @@ export class FormComponent implements OnInit {
   @Output() formOperationEnd = new EventEmitter();
   @ViewChild("DnDContainer") DnDContainer!: ElementRef;
 
-  constructor(private tableService: TablesService) { }
+  constructor(private tableService: TablesService, private activatedRoute: ActivatedRoute) { }
 
 
   ngOnInit(): void {
+    if (!this.columns) {
+      this.getColumnsFromServer();
+    } else {
+      this.initializeForm();
+    }
+  }
+
+  initializeForm() {
     this.form = new FormGroup(this.createFormControl());
     this.createImagesFormData();
     this.createListFormData();
@@ -89,6 +96,28 @@ export class FormComponent implements OnInit {
     let orderedColumns = Object.keys(this.columns).sort((a, b) => this.columns[a].formOrder - this.columns[b].formOrder).map(k => this.columns[k]);
     this.columns = orderedColumns;
     this.columnsJson = this.getColumnsAsJson();
+  }
+
+  getColumnsFromServer() {
+    this.activatedRoute.params.subscribe(
+      (params) => {
+        const module = params['module'];
+        const table = params['table'];
+        if (module && table) {
+          this.tableService.getAllColumns(module, table)
+            .subscribe(
+              {
+                next: (columnsData) => {
+                  this.columns = columnsData;
+                  this.initializeForm();
+                },
+                error: (error: any) => {
+                  console.log(error);
+                }
+              }
+            )
+        }
+      })
   }
 
 
@@ -143,7 +172,7 @@ export class FormComponent implements OnInit {
   createSubtableFormData() {
     Object.keys(this.columns).forEach(
       (col: string) => {
-        let colValue = [];
+        let colValue = null;
         if (this.columns[col].type === ColumnTypes.table) {
           if (this.row?.hasOwnProperty(col)) {
             colValue = this.row[col];
@@ -327,7 +356,7 @@ export class FormComponent implements OnInit {
       column: column.linkedTable?.column ? column.linkedTable?.column : '',
       module: column.linkedTable?.module ? column.linkedTable?.module : '',
       table: column.linkedTable?.table ? column.linkedTable?.table : '',
-      rows: this.row?.hasOwnProperty(column._id) ? this.row[column._id] : [],
+      rows: this.subtableFormData?.hasOwnProperty(column._id) ? this.subtableFormData[column._id] : [],
       rowId: '',
       valueHost: {
         column: column._id,
@@ -341,6 +370,17 @@ export class FormComponent implements OnInit {
 
   onSubtableChange(rows: Array<any>, column: IColumn) {
     this.subtableFormData[column._id] = rows;
+    this.setSeccessMsg();
   }
+
+  setSeccessMsg() {
+    const el = document.querySelector('#successtextconf');
+    el?.classList.remove('fade-out');
+    setTimeout(() => {
+      el?.classList.add('fade-out');
+    }, 3000)
+
+  }
+
 
 }

@@ -6,7 +6,7 @@
             <fa-icon [icon]="icons.invalid"></fa-icon>
             Campo NO valido!
         </span>
-        <mat-autocomplete #auto="matAutocomplete">
+        <mat-autocomplete #auto="matAutocomplete" >
             <mat-option *ngFor="let element of filteredData" [value]="element.value">
                 <span>{{ element.value }}</span>
             </mat-option>
@@ -14,3 +14,14 @@
     </div>
 
 </div>
+
+<!-- <div class="d-flex justify-content-start align-items-center">
+    <div class="d-inline-flex flex-column w-100">
+        <input #autocompleteInput type="text" class="form-control text-input w-100" [class.is-invalid]="!didValueMatchRestrictions()" [disabled]="isDisabled"
+            [(ngModel)]="value" [inputFormatter]="formatValue" [resultFormatter]="formatValue" (focus)="onFocus($event)" (ngModelChange)="checkValue()" [ngbTypeahead]="search" />
+
+        <div *ngIf="!didValueMatchRestrictions()" class="mx-1 my-1 text-danger">
+            <fa-icon [icon]="icons.invalid"></fa-icon> Campo NO valido!
+        </div>
+    </div>
+</div> -->

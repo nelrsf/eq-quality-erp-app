@@ -1,6 +1,6 @@
-import { AfterViewInit, Component, ElementRef, Renderer2, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, Renderer2, TemplateRef, ViewChild } from '@angular/core';
 import { MapsCustomizePanelComponent } from '../maps-customize-panel/maps-customize-panel.component';
-import { Icon, LatLngExpression, LeafletEvent, LeafletMouseEvent, Map, Marker, Point, Polyline, Popup, divIcon, marker, point, polyline, popup, tileLayer } from 'leaflet';
+import { Icon, LatLngExpression, LeafletEvent, LeafletKeyboardEvent, LeafletMouseEvent, Map, Marker, Point, Polyline, Popup, divIcon, marker, point, polyline, popup, tileLayer } from 'leaflet';
 import { IMapElement } from '../Model/IMapElement';
 import { MapsService } from '../maps.service';
 import { IMarker } from '../Model/IMarker';
@@ -47,7 +47,12 @@ export class MapsComponent implements AfterViewInit {
   mapShapeToDelete!: IMarker | IPath;
   leafletMapShapeToDelete!: Marker | Polyline;
   markers: Marker[] = [];
+  pathMarkers: Marker[] = [];
   paths: Polyline[] = [];
+  iPaths: IPath[] = [];
+  iMarkers: IPath[] = [];
+  baseZoom: number = 19;
+  factor: number = 1;
 
   constructor(private modal: NgbModal, private mapsService: MapsService, private renderer2: Renderer2) { }
 
@@ -56,13 +61,20 @@ export class MapsComponent implements AfterViewInit {
     this.selectMapTheme(this.map);
     this.map.addEventListener('click', this.onClickMap);
     this.map.addEventListener("zoom", this.onMapZoom);
+    this.map.addEventListener("zoomend", this.onMapZoomEnd);
     this.map.addEventListener("moveend", this.onMapMove);
+    this.map.addEventListener("keypress", this.onMapKeyPress);
+    this.map.addEventListener("mouseover", (event: any) => {
+      if (this.insertMarkerByClick) {
+        event.originalEvent.stopPropagation();
+      }
+    });
   }
 
   getInitialMapZoom() {
     const zoomStr = localStorage.getItem("mapZoom");
     const zoom = parseInt(zoomStr ? zoomStr : "");
-    return !isNaN(zoom) ? zoom : 17;
+    return !isNaN(zoom) ? zoom : this.baseZoom;
   }
 
   getInitialMapCenter() {
@@ -81,7 +93,8 @@ export class MapsComponent implements AfterViewInit {
 
   selectMapTheme(map: Map) {
     tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
+      maxZoom: this.baseZoom,
+      updateWhenZooming: false,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map)
   }
@@ -103,9 +116,98 @@ export class MapsComponent implements AfterViewInit {
     this.insertMarkerByClick = true;
   }
 
+  onMapZoomEnd = (event: any) => {
+    this.updateZoomFactor();
+    this.handleOnZoomMarkers(this.factor);
+    this.handleOnZoomPathMarkers(this.factor);
+    this.handleOnZoomPaths(this.factor);
+  }
+
+  updateZoomFactor() {
+    const zoom = this.map.getZoom();
+    const minZoom = 10;
+    const maxZoom = this.baseZoom;
+
+    this.factor = zoom / this.baseZoom;
+  }
+
+  handleOnZoomPaths(factor: number) {
+    this.paths.forEach(
+      (p: Polyline) => {
+        const pathId = parseInt(p?.options?.attribution ? p?.options?.attribution : '-1');
+        const currPath = this.getPathById(pathId);
+        const mapElement = this.getMapElementById(currPath?.mapElement ? currPath?.mapElement : -1)
+        p.setStyle({
+          weight: mapElement?.pathStroke ? mapElement.pathStroke * factor : 2
+        })
+      }
+    )
+  }
+
+
+  handleOnZoomMarkers(factor: number) {
+    this.markers.forEach(
+      (m: Marker) => {
+        const markerId = parseInt(m.options?.alt ? m.options?.alt : '-1');
+        const iMarker = this.getMarkerById(markerId);
+        const mapElement = this.getMapElementById(iMarker?.mapElement ? iMarker.mapElement : -1);
+        const markerIcon = this.getMapIconById(mapElement?.icon ? mapElement?.icon : -1);
+        const newIconSize: number = markerIcon?.anchor ? markerIcon?.anchor : this.baseZoom;
+        const icon = m.options.icon;
+        if (icon && icon.options && icon.options) {
+          const { iconSize, ...rest } = icon.options;
+          m.setIcon(new Icon({ iconSize: [newIconSize * factor, factor * newIconSize], ...rest }))
+        }
+
+      }
+    )
+  }
+
+  handleOnZoomPathMarkers(factor: number) {
+    this.pathMarkers.forEach(
+      (m: Marker) => {
+        const pathId = parseInt(m?.options?.alt ? m.options.alt : '-1');
+        const pathObj = this.getPathById(pathId);
+        if (!pathObj) return
+        const pathDetails = this.getPathMarkerDetails(pathObj);
+        const newIcon = this.getPathMarkerIcon(pathDetails.color, pathDetails.stroke);
+        if (newIcon.options.iconSize) {
+          const size = (pathDetails.stroke + 3) * factor;
+          newIcon.options.iconSize = new Point(size, size);
+        }
+        m.setIcon(newIcon);
+
+      }
+    )
+  }
+
+  getPathById(id: number) {
+    return this.iPaths.find(
+      (ip: IPath) => {
+        return ip.id === id;
+      }
+    )
+  }
+
+  getMarkerById(id: number) {
+    return this.iMarkers.find(
+      (im: IPath) => {
+        return im.id === id;
+      }
+    )
+  }
+
   onMapZoom = (event: any) => {
+    this.updateZoomFactor();
     const zoom = event.target._zoom;
     localStorage.setItem("mapZoom", zoom);
+  }
+
+  @HostListener("keydown", ["$event"])
+  onMapKeyPress(event: any) {
+    if (event.key == 'Escape') {
+      this.insertMarkerByClick = false;
+    }
   }
 
   onMapMove = (_event: any) => {
@@ -117,6 +219,7 @@ export class MapsComponent implements AfterViewInit {
     if (!this.currentElement) {
       return
     }
+    event.originalEvent.stopPropagation();
     this.insertMarkerByClick = this.currentElement.onClickMap(event, this.insertMarkerByClick);
   }
 
@@ -129,30 +232,37 @@ export class MapsComponent implements AfterViewInit {
     if (!iconObj) {
       return;
     }
+    const iconSize = iconObj?.anchor ? iconObj.anchor : this.baseZoom;
     const icon = new Icon({
       iconUrl: iconObj.url,
-      iconSize: new Point(17, 17, true)
+      iconSize: [iconSize * this.factor, iconSize * this.factor],
+
     })
     const mark = marker([newMarker.lat, newMarker.lng], {
       icon: icon,
       draggable: true,
+      interactive: true,
+      bubblingMouseEvents: true,
       alt: newMarker.id.toString()
     });
-    mark.addEventListener("click", (event) => {
+    mark.addEventListener("click", (event: LeafletMouseEvent) => {
+      if (this.insertMarkerByClick) {
+        return
+      }
       this.closeCustomPanel.next();
-      this.openMarkerInfoPanel.next({ mapShape: newMarker, mapElement: mapElement })
+      this.openMarkerInfoPanel.next({ mapShape: newMarker, mapElement: mapElement });
     });
     mark.addEventListener("dragend", (event) => {
       newMarker.lat = event.target._latlng.lat;
       newMarker.lng = event.target._latlng.lng;
       this.updateMarker(newMarker);
-      console.log(event);
     });
     mark.addEventListener("contextmenu", (event) => {
       const latlng = event.target._latlng;
       this.showContextMenu(latlng, mark, newMarker, ['delete'])
     });
     this.markers.push(mark);
+    this.iMarkers.push(newMarker);
     mark.addTo(this.map);
   }
 
@@ -213,6 +323,12 @@ export class MapsComponent implements AfterViewInit {
       }
     );
     this.paths = [];
+    this.pathMarkers.forEach(
+      (pm: Marker) => {
+        pm.remove();
+      }
+    );
+    this.pathMarkers = [];
   }
 
 
@@ -239,6 +355,7 @@ export class MapsComponent implements AfterViewInit {
       .subscribe(
         {
           next: (paths: any) => {
+            this.iPaths = paths
             paths?.forEach(
               (p: any) => {
                 this.renderPath(p);
@@ -256,6 +373,7 @@ export class MapsComponent implements AfterViewInit {
       .subscribe(
         {
           next: (markers: any) => {
+            this.iMarkers = markers;
             this.renderMarkers(markers);
           },
           error: (error: any) => {
@@ -343,7 +461,7 @@ export class MapsComponent implements AfterViewInit {
     const buttons = this.contextMenu.nativeElement.childNodes;
     Array.from(buttons).forEach(
       (button: any) => {
-        this.renderer2.addClass(button,'d-none');
+        this.renderer2.addClass(button, 'd-none');
       }
     )
   }
@@ -387,100 +505,97 @@ export class MapsComponent implements AfterViewInit {
     pathEndButton.addEventListener("click", onClickEndPathButton);
   }
 
-  renderPath(path: IPath) {
+  private getPathDetails(path: IPath): { pathColor: string, stroke: number } {
+    const mapElement = this.getMapElementById(path?.mapElement ? path?.mapElement : -1);
+    return {
+      pathColor: mapElement?.pathColor ?? 'gray',
+      stroke: mapElement?.pathStroke ?? 3
+    };
+  }
 
-    let mapElement: IMapElement | undefined;
-    let pathColor: string | undefined;
-    let stroke: number | undefined;
-    if (path.mapElement) {
-      mapElement = this.getMapElementById(path.mapElement);
-      pathColor = mapElement?.pathColor;
-      stroke = mapElement?.pathStroke;
-    }
+  private getPathMarkerDetails(path: IPath): { color: string, stroke: number } {
+    const mapElement = this.getMapElementById(path?.mapElement ? path?.mapElement : -1);
+    return {
+      color: mapElement?.pathColor ?? 'gray',
+      stroke: mapElement?.pathStroke ?? 3
+    };
+  }
 
+
+  private buildPathLine(points: LatLngExpression[], pathDetails: { pathColor: string, stroke: number }, id: string | undefined): Polyline {
+    return polyline(points, {
+      color: pathDetails.pathColor,
+      weight: pathDetails.stroke * this.factor,
+      attribution: id ? id : ''
+    }).addTo(this.map);
+  }
+
+
+  private handlePathLineEvents(pathLine: Polyline, path: IPath, mapElement: IMapElement | undefined): void {
+    pathLine.addEventListener('click', () => {
+      if (this.insertMarkerByClick) {
+        return
+      }
+      if (!mapElement) return;
+      this.openMarkerInfoPanel.next({ mapShape: path, mapElement: mapElement });
+    });
+
+    pathLine.addEventListener('contextmenu', (event) => {
+      this.showContextMenu(event.latlng, pathLine, path, ['delete']);
+    });
+  }
+
+
+  private createAndManagePathMarkers(points: any[], path: IPath): void {
+    const pathDetails = this.getPathDetails(path);
+    points.forEach((p: any, index: number) => {
+      const icon = this.getPathMarkerIcon(pathDetails.pathColor, pathDetails.stroke);
+      const pathMarker = marker(p,
+        {
+          icon: icon,
+          draggable: true,
+          alt: path.id?.toString()
+        }).addTo(this.map);
+      this.pathMarkers.push(pathMarker);
+
+      pathMarker.addEventListener("dragend", (event) => this.handleMarkerDragEnd(event, index, points, path, pathMarker));
+    });
+  }
+
+  private handleMarkerDragEnd(event: any, index: number, points: any[], path: IPath, pathMarker: Marker): void {
+    const point = event.target._latlng;
+    points[index] = [point.lat, point.lng];
+    path.points = JSON.stringify(points);
+    this.mapsService.updatePath(path).subscribe({
+      next: () => {
+        this.refreshPath(path);
+      },
+      error: (error: any) => console.log(error)
+    });
+  }
+
+  private refreshPath(path: IPath): void {
+    this.paths.forEach(p => p.remove());
+    this.pathMarkers.forEach(m => m.remove());
+    this.getAllPaths();
+  }
+
+  renderPath(path: IPath): void {
     const pointsStr = path.points;
     let points: any;
     if (pointsStr) {
       points = JSON.parse(pointsStr);
+      if (!Array.isArray(points)) return;
+
+      const pathDetails = this.getPathDetails(path);
+      const pathLine = this.buildPathLine(points, pathDetails, path.id?.toString());
+      this.paths.push(pathLine);
+      this.iPaths.push(path);
+
+      const mapElement = this.getMapElementById(path?.mapElement ? path?.mapElement : -1);
+      this.handlePathLineEvents(pathLine, path, mapElement);
+      this.createAndManagePathMarkers(points, path);
     }
-    if (!Array.isArray(points)) {
-      return;
-    }
-
-    const pathLine = polyline(
-      points,
-      {
-        color: pathColor ? pathColor : 'gray',
-        weight: stroke ? stroke : 3
-      }
-    ).addTo(this.map);
-
-    this.paths.push(pathLine);
-    pathLine.addEventListener('click',
-      (event: any) => {
-        if (!mapElement) {
-          return;
-        }
-        this.openMarkerInfoPanel.next(
-          {
-            mapShape: path,
-            mapElement: mapElement
-          })
-      });
-
-    pathLine.addEventListener('contextmenu',
-      (event: any) => {
-        this.showContextMenu(event.latlng, pathLine, path, ['delete']);
-      })
-
-
-
-    const pathMarkers: Marker[] = [];
-
-    points.forEach(
-      (p: any, index: number) => {
-
-        const icon = this.getPathMarkerIcon(pathColor, stroke);
-        const pathMarker = marker(p,
-          {
-            icon: icon,
-            draggable: true
-          });
-        pathMarker.addTo(this.map);
-        pathMarkers.push(pathMarker);
-        this.markers.push(pathMarker);
-
-        const pathJoinMove = (event: any) => {
-          const point = event.target._latlng;
-          points[index] = [point.lat, point.lng];
-          path.points = JSON.stringify(points);
-          this.mapsService.updatePath(path)
-            .subscribe(
-              {
-                next: (_path: any) => {
-                  pathLine.remove();
-                  pathMarkers.forEach(
-                    (pm: Marker) => {
-                      pm.remove();
-                    }
-                  )
-                  this.renderPath(path);
-                },
-                error: (error: any) => {
-                  console.log(error);
-                }
-              }
-            )
-
-        }
-
-        pathMarker.addEventListener("dragend", pathJoinMove);
-      }
-    )
-
-
   }
-
-
 
 }

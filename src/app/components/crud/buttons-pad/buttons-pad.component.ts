@@ -54,10 +54,12 @@ export class ButtonsPadComponent {
 
   editRows() {
     this._updateRows.emit();
+    this.ngbModal.dismissAll();
   }
 
   deleteRows() {
     this._deleteRows.emit();
+    this.ngbModal.dismissAll();
   }
 
   createColumn() {
