@@ -19,6 +19,10 @@ import { concatMap, from } from 'rxjs';
 import { SubtableComponent } from '../../subtable/subtable.component';
 import { ISubtableValue } from 'src/app/Model/interfaces/ISubtableValue';
 import { ActivatedRoute } from '@angular/router';
+import { ICellRestriction } from 'src/app/Model/interfaces/ICellRestrictions';
+import { RowsRestrictionsService } from 'src/app/services/rows-restrictions.service';
+import { FieldRendererComponent } from '../data-table/fields/field-renderer/field-renderer.component';
+import { error } from 'console';
 
 
 @Component({
@@ -41,7 +45,8 @@ import { ActivatedRoute } from '@angular/router';
     ShowIfIsAdmin,
     ShowIfIsOwner,
     NgbDropdownModule,
-    SubtableComponent
+    SubtableComponent,
+    FieldRendererComponent
   ]
 })
 export class FormComponent implements OnInit {
@@ -64,6 +69,9 @@ export class FormComponent implements OnInit {
   hasError: boolean = false;
   errorMessage: string = "";
   columnsJson: any;
+  autocompleteRestrictions: Array<{ columnId: string, restriction: Array<Partial<ICellRestriction>> }> = [];
+  autocompleteSelections: Array<{ columnId: string, restriction: Partial<ICellRestriction> }> = [];
+  restriction: ICellRestriction[] = [];
 
   form!: FormGroup;
   COLUMN_TYPES_ENUM = ColumnTypes;
@@ -77,7 +85,7 @@ export class FormComponent implements OnInit {
   @Output() formOperationEnd = new EventEmitter();
   @ViewChild("DnDContainer") DnDContainer!: ElementRef;
 
-  constructor(private tableService: TablesService, private activatedRoute: ActivatedRoute) { }
+  constructor(private tableService: TablesService, private activatedRoute: ActivatedRoute, private rowsRestrictionService: RowsRestrictionsService) { }
 
 
   ngOnInit(): void {
@@ -93,10 +101,77 @@ export class FormComponent implements OnInit {
     this.createImagesFormData();
     this.createListFormData();
     this.createSubtableFormData();
+    this.initializeAutocompleteRestrictions();
     let orderedColumns = Object.keys(this.columns).sort((a, b) => this.columns[a].formOrder - this.columns[b].formOrder).map(k => this.columns[k]);
     this.columns = orderedColumns;
     this.columnsJson = this.getColumnsAsJson();
   }
+
+  initializeAutocompleteRestrictions() {
+    Object.keys(this.columns).forEach((columnName: string) => {
+      const currColumn: IColumn = this.columns[columnName];
+      if (!currColumn?.isRestricted) {
+        return;
+      }
+      this.rowsRestrictionService.getColumnRestrictions(currColumn)
+        .subscribe(
+          {
+            next: (restriction: Array<Partial<ICellRestriction>>) => {
+              this.autocompleteRestrictions.push({
+                columnId: columnName,
+                restriction: restriction
+              });
+              this.setRestrictionByColumn(currColumn);
+            },
+            error: (error: any) => {
+              console.log(error);
+            }
+          }
+        );
+
+      if (!this.row && !this.row?._id) {
+        return;
+      }
+      this.tableService.getRestrictionByIdAndColumn(this.module, this.table, currColumn._id, this.row._id)
+        .subscribe(
+          {
+            next: (res: any) => {
+              this.restriction.push(res);
+            }
+          }
+        )
+    })
+  }
+
+  getRestrictionByColumnId(columnId: string) {
+    return this.restriction.find(
+      (res: ICellRestriction) => {
+        return res.column._id === columnId
+      }
+    )
+  }
+
+  getAutoCompleteData(columnId: string) {
+    const acRestriction = this.autocompleteRestrictions.find(
+      (acr: { columnId: string, restriction: Partial<ICellRestriction>[] }) => {
+        return acr.columnId === columnId
+      }
+    );
+    if (acRestriction) {
+      return acRestriction.restriction;
+    } else {
+      return []
+    }
+  }
+
+  onRestricetedValueChange(event: any, columnId: string) {
+    this.autocompleteSelections.push({
+      columnId: columnId,
+      restriction: event
+    })
+    this.form.controls[columnId].setValue(event.value);
+  }
+
 
   getColumnsFromServer() {
     this.activatedRoute.params.subscribe(
@@ -275,10 +350,8 @@ export class FormComponent implements OnInit {
     this.tableService.updateRows(module, table, [newRow])
       .subscribe(
         {
-          next: (response) => {
-            console.log(response);
-            this.loading = false;
-            this.formOperationEnd.emit();
+          next: (response: any) => {
+            this.saveRestrictions(id)
           },
           error: (error) => {
             this.loading = false;
@@ -294,10 +367,8 @@ export class FormComponent implements OnInit {
     this.tableService.createRow(module, table, newRow)
       .subscribe(
         {
-          next: (response) => {
-            console.log(response);
-            this.loading = false;
-            this.formOperationEnd.emit();
+          next: (response: any) => {
+            this.saveRestrictions(response.insertedId)
           },
           error: (error) => {
             this.loading = false;
@@ -307,6 +378,81 @@ export class FormComponent implements OnInit {
           }
         }
       );
+  }
+
+
+  setRestrictionByColumn(column: IColumn) {
+    if (!column?.isRestricted) {
+      return;
+    }
+    this.tableService.getRestrictionByIdAndColumn(this.module, this.table, column._id, this.row._id)
+      .subscribe(
+        {
+          next: (res: any) => {
+            if (!res && !res.rowIdRestriction) {
+              return
+            }
+            const restriction: ICellRestriction = {
+              column: column,
+              rowId: this.row._id,
+              value: this.row[column._id],
+              rowIdRestriction: res.rowIdRestriction
+            }
+            const checkRestrictionsObserver = this.rowsRestrictionService.checkRestriction(restriction)
+            if (checkRestrictionsObserver) {
+              checkRestrictionsObserver.subscribe(
+                (value: any) => {
+                  this.form.controls[column._id].setValue(value);
+                }
+              );
+            }
+          },
+          error: (error: any) => {
+            console.log(error);
+          }
+        }
+      )
+
+
+
+  }
+
+  saveRestrictions(rowiId: string) {
+    this.autocompleteSelections.forEach(
+      (acs: { columnId: string, restriction: Partial<ICellRestriction> }) => {
+        acs.restriction.rowId = rowiId;
+      }
+    )
+    const newRestrictions = this.autocompleteSelections.map(
+      (acs: { columnId: string, restriction: Partial<ICellRestriction> }) => {
+        return acs.restriction
+      }
+    );
+    if (newRestrictions.length === 0 || !newRestrictions) {
+      this.rowCreationEnd({
+        _id: rowiId
+      })
+    }
+    this.tableService.updateRestrictions(this.module, this.table, newRestrictions)
+      .subscribe(
+        {
+          next: (result: any) => {
+            this.rowCreationEnd(result);
+          },
+          error: (error) => {
+            this.loading = false;
+            this.hasError = true;
+            this.errorMessage = error.error;
+            console.log(error)
+          }
+        }
+      )
+  }
+
+  rowCreationEnd(result: any) {
+    console.log(result);
+    this.loading = false;
+    this.formOperationEnd.emit();
   }
 
   submitConfiguration(event: Event) {

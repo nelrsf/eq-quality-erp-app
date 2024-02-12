@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject, Subscriber } from 'rxjs';
+import { Observable, Subject, Subscriber, catchError, map, of, switchMap, throwError } from 'rxjs';
 import { ICellRestriction, IColumnRestriction } from '../Model/interfaces/ICellRestrictions';
 import { IColumn } from '../Model/interfaces/IColumn';
 import { TablesService } from '../pages/tables/tables.service';
@@ -119,6 +119,10 @@ export class RowsRestrictionsService {
     return cellRestriction;
   }
 
+  findRestrictionByRowAndColumnFromServer(module: string, table: string, rowId: string, columnId: string): Observable<any> {
+    return this.tableService.getRestrictionByIdAndColumn(module, table, columnId, rowId);
+  }
+
   checkRestriction(restriction: ICellRestriction) {
     const module = restriction.column.moduleRestriction;
     if (!module) {
@@ -128,15 +132,15 @@ export class RowsRestrictionsService {
     if (!table) {
       return;
     }
-    const colunn = restriction.column.columnRestriction;
-    if (!colunn) {
+    const column = restriction.column.columnRestriction;
+    if (!column) {
       return
     }
     const rowIdRestriction = restriction.rowIdRestriction;
     if (!rowIdRestriction) {
-      return
+      return;
     }
-    return this.tableService.getRowById(module, table, rowIdRestriction, colunn);
+    return this.tableService.getRowById(module, table, rowIdRestriction, column);
   }
 
   isColumnDisabled(column: IColumn) {
@@ -163,7 +167,7 @@ export class RowsRestrictionsService {
     return isUniqueObserver;
   }
 
-  getColumnRestrictionData(column: IColumn){
+  getColumnRestrictionData(column: IColumn) {
     const module = column.moduleRestriction;
     if (!module) {
       return;
@@ -178,6 +182,9 @@ export class RowsRestrictionsService {
     }
     return this.tableService.getColumnData(module, table, colunnId);
   }
+
+
+
 }
 
 

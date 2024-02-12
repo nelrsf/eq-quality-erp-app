@@ -3,7 +3,7 @@
         <div *ngFor="let column of columns; let i = index" class="field d-flex align-items-center"
             [style.width]="getWidth(column)" eqDrag [eqDragKey]="column._id" [(eqDropTarget)]="columnsJson"
             [(ddOrder)]="column.formOrder">
-            <div [ngSwitch]="column.type" class="draggable-card" *ngIf="!column.isRestricted">
+            <div [ngSwitch]="column.type" class="draggable-card">
                 <div *ngSwitchCase="COLUMN_TYPES_ENUM.string">
                     <div class="m-2 form-group">
                         <label class="my-1 control-label">
@@ -14,7 +14,13 @@
                                 <fa-icon [icon]="icons.cog"></fa-icon>
                             </div>
                         </label>
-                        <input type="text" class="form-control" placeholder="" formControlName="{{column._id}}">
+                        <ng-container *ngIf="column.isRestricted; then autocompleteTmpl; else normalStrTmpl"></ng-container>
+                        <ng-template #autocompleteTmpl>
+                            <eq-field-renderer [restriction]="getRestrictionByColumnId(column._id)" [value]="form.controls[column._id].value" [column]="column" [restrictions]="getAutoCompleteData(column._id)" (onListChange)="onRestricetedValueChange($event, column._id)"></eq-field-renderer>
+                        </ng-template>
+                        <ng-template #normalStrTmpl>
+                            <input type="text" class="form-control" placeholder="" formControlName="{{column._id}}">
+                        </ng-template>
                     </div>
                 </div>
 

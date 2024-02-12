@@ -24,7 +24,7 @@ import { NumberFieldService } from '../number/number-field.service';
     FormsModule
   ]
 })
-export class FieldRendererComponent implements AfterViewInit, OnDestroy {
+export class FieldRendererComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   @Input() column!: IColumn | undefined;
   @Input() rowId!: string;
@@ -41,6 +41,12 @@ export class FieldRendererComponent implements AfterViewInit, OnDestroy {
   private component: any;
 
   constructor(private cdr: ChangeDetectorRef, private rowsRestriction: RowsRestrictionsService, private numberService: NumberFieldService) { }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.hasOwnProperty('value') && this.component?.instance) {
+      this.component.instance.value = changes['value'].currentValue;
+    }
+  }
 
   ngAfterViewInit(): void {
     this.selectComponentByRestriction();
@@ -78,6 +84,7 @@ export class FieldRendererComponent implements AfterViewInit, OnDestroy {
         (value: any) => {
           this.value = value;
           this.valueChange.emit(this.value);
+          this.component.instance.value = value;
         }
       );
     }
@@ -194,6 +201,9 @@ export class FieldRendererComponent implements AfterViewInit, OnDestroy {
       .subscribe(
         (isDisabled: boolean) => {
           this.component.instance.isDisabled = isDisabled;
+          if (this.restriction && !isDisabled) {
+            this.rowsRestriction.onRestrictionsChange.next(this.restriction as ICellRestriction);
+          }
         }
       );
   }

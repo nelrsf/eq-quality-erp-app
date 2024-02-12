@@ -15,6 +15,8 @@ export class TablesService {
   private endpointRows = "/rows";
   private endpointUpsert = "/upsert";
   private endpointUpdate = "/update";
+  private endpointUpdateRestrictions = "/updaterestrictions";
+  private endpointGetRestriction = "/restrictions";
   private endpointDelete = "/delete";
   private endpointCreate = "/create";
   private endpointCustomize = "/customize";
@@ -53,7 +55,7 @@ export class TablesService {
     });
   }
 
-  getTableObjectMetadata(moduleName: string, table: string){
+  getTableObjectMetadata(moduleName: string, table: string) {
     const urlRequest = environment.apiUrl + this.endpointTables + this.endpointMetadata + "/" + moduleName + "/" + table;
     return this.http.get(encodeURI(urlRequest));
   }
@@ -69,7 +71,7 @@ export class TablesService {
   }
 
   getTablesAndFolders(moduleName: string) {
-    const urlRequest = environment.apiUrl + this.endpointTables +  '/all/' + moduleName;
+    const urlRequest = environment.apiUrl + this.endpointTables + '/all/' + moduleName;
     return this.http.get(encodeURI(urlRequest));
   }
 
@@ -94,6 +96,11 @@ export class TablesService {
     return this.http.get(encodeURI(urlRequest));
   }
 
+  getRestrictionByIdAndColumn(moduleName: string, tableName: string, columnId: string, rowId: string){
+    const urlRequest = environment.apiUrl + this.endpointRows + this.endpointGetRestriction + "/" + moduleName + "/" + tableName + '/' + rowId + "/" + columnId;
+    return this.http.get(encodeURI(urlRequest));
+  }
+
   createRow(moduleName: string, tableName: string, rowData: any) {
     const urlRequest = environment.apiUrl + this.endpointRows + this.endpointCreate + "/" + moduleName + "/" + tableName;
     return this.http.post(encodeURI(urlRequest), rowData);
@@ -102,6 +109,11 @@ export class TablesService {
   updateRows(moduleName: string, tableName: string, rowData: any) {
     const urlRequest = environment.apiUrl + this.endpointRows + this.endpointUpdate + "/" + moduleName + "/" + tableName;
     return this.http.patch(encodeURI(urlRequest), rowData);
+  }
+
+  updateRestrictions(moduleName: string, tableName: string, restrictionsData: any) {
+    const urlRequest = environment.apiUrl + this.endpointRows + this.endpointUpdateRestrictions + "/" + moduleName + "/" + tableName;
+    return this.http.patch(encodeURI(urlRequest), restrictionsData);
   }
 
 
