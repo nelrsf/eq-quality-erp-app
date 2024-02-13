@@ -1,4 +1,10 @@
-input {
+
+.go-to-form {
+    width: 2rem;
+    padding: 0;
+}
+
+input, input:active {
     border-style: none;
     color: var(--bs-emphasis-color);
     background-color: transparent;

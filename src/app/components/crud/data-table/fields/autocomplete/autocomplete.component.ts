@@ -1,14 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faExclamationCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
-import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
+import { faArrowPointer, faArrowUpRightFromSquare, faExclamationCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
+import { NgbModal, NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { debounceTime, distinctUntilChanged, filter, fromEvent, map, Observable, startWith } from 'rxjs';
 import { ICellRestriction } from 'src/app/Model/interfaces/ICellRestrictions';
+import { FormComponent } from '../../../form/form.component';
+import { TablesService } from 'src/app/pages/tables/tables.service';
 
 @Component({
   selector: 'eq-autocomplete',
@@ -16,6 +18,7 @@ import { ICellRestriction } from 'src/app/Model/interfaces/ICellRestrictions';
   styleUrls: ['./autocomplete.component.css'],
   standalone: true,
   imports: [
+    FormComponent,
     CommonModule,
     MatAutocompleteModule,
     MatFormFieldModule,
@@ -35,13 +38,17 @@ export class AutocompleteComponent implements OnInit, AfterViewInit {
   @Output() onListChange = new EventEmitter<Partial<ICellRestriction>>();
 
   @ViewChild('autocompleteInput') autocompleteInput!: ElementRef;
+  @ViewChild('modalContent', { static: true }) modalContent!: TemplateRef<any>;
 
   filteredData!: Array<Partial<ICellRestriction>>;
   previousRestriction: Partial<ICellRestriction> = {};
+  rowViewer: any;
 
   icons = {
     invalid: faExclamationCircle,
-    delete: faTimesCircle
+    delete: faTimesCircle,
+    goToForm: faArrowUpRightFromSquare
+
   }
 
   search = (text$: Observable<string>) =>
@@ -57,7 +64,7 @@ export class AutocompleteComponent implements OnInit, AfterViewInit {
   }
 
 
-  constructor() {
+  constructor(private modal: NgbModal, private tableService: TablesService) {
   }
 
   ngAfterViewInit(): void {
@@ -125,6 +132,37 @@ export class AutocompleteComponent implements OnInit, AfterViewInit {
       }
     )
     return findValue !== undefined || !this.value;
+  }
+
+  async goToForm(event: any) {
+    event.preventDefault();
+    const fieldRestriction = this.previousRestriction || this.restriction;
+    if(!fieldRestriction){
+      return;
+    }
+    this.tableService.getRowById(
+      fieldRestriction.column?.moduleRestriction || '',
+      fieldRestriction.column?.tableRestriction || '',
+      fieldRestriction.rowIdRestriction || '')
+      .subscribe(
+        {
+          next: async (row: any) => {
+            const formComponentImport = await import('../../../form/form.component');
+            const formComponent = formComponentImport.FormComponent;
+            const modalRef = this.modal.open(formComponent, {
+              backdropClass: 'backdrop-infinite-form',
+              size: 'lg'
+            })
+            modalRef.componentInstance.module = fieldRestriction.column?.moduleRestriction;
+            modalRef.componentInstance.table = fieldRestriction.column?.tableRestriction;
+            modalRef.componentInstance.row = row;
+            modalRef.componentInstance.padding = '2rem';
+          },
+          error: (error: any) => {
+            console.log(error)
+          }
+        }
+      )
   }
 
 }

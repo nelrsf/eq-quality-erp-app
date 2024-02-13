@@ -1,4 +1,4 @@
-<form *ngIf="columns" class="fields" (submit)="onSubmit()" [formGroup]="form">
+<form [ngStyle]="{'padding':padding}" *ngIf="columns" class="fields" (submit)="onSubmit()" [formGroup]="form">
     <div #DnDContainer class="fields-container d-flex w-100">
         <div *ngFor="let column of columns; let i = index" class="field d-flex align-items-center"
             [style.width]="getWidth(column)" eqDrag [eqDragKey]="column._id" [(eqDropTarget)]="columnsJson"
@@ -14,9 +14,13 @@
                                 <fa-icon [icon]="icons.cog"></fa-icon>
                             </div>
                         </label>
-                        <ng-container *ngIf="column.isRestricted; then autocompleteTmpl; else normalStrTmpl"></ng-container>
+                        <ng-container
+                            *ngIf="column.isRestricted; then autocompleteTmpl; else normalStrTmpl"></ng-container>
                         <ng-template #autocompleteTmpl>
-                            <eq-field-renderer [restriction]="getRestrictionByColumnId(column._id)" [value]="form.controls[column._id].value" [column]="column" [restrictions]="getAutoCompleteData(column._id)" (onListChange)="onRestricetedValueChange($event, column._id)"></eq-field-renderer>
+                            <eq-field-renderer [restriction]="getRestrictionByColumnId(column._id)"
+                                [value]="form.controls[column._id].value" [column]="column"
+                                [restrictions]="getAutoCompleteData(column._id)"
+                                (onListChange)="onRestricetedValueChange($event, column._id)"></eq-field-renderer>
                         </ng-template>
                         <ng-template #normalStrTmpl>
                             <input type="text" class="form-control" placeholder="" formControlName="{{column._id}}">
@@ -109,7 +113,8 @@
                             <div class="font-weight-bold">
                                 {{column.columnName}}
                             </div>
-                            <div id="successtextconf" *ngIf="subtableFormData[column._id] && subtableFormData[column._id].length !==0"
+                            <div id="successtextconf"
+                                *ngIf="subtableFormData[column._id] && subtableFormData[column._id].length !==0"
                                 class="ms-2 text-success fade-out">
                                 (Tabla guardada correctamente)
                             </div>

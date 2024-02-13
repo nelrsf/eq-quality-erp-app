@@ -79,8 +79,9 @@ export class FormComponent implements OnInit {
   @Input() columns: any;
   @Input() module!: string;
   @Input() table!: string;
-  @Input() row: any;
+  @Input() row: any = { _id: '_tempId' };
   @Input() readMode: boolean = false;
+  @Input() padding: string = '';
   @Output() columnsChange = new EventEmitter();
   @Output() formOperationEnd = new EventEmitter();
   @ViewChild("DnDContainer") DnDContainer!: ElementRef;
@@ -113,6 +114,7 @@ export class FormComponent implements OnInit {
       if (!currColumn?.isRestricted) {
         return;
       }
+
       this.rowsRestrictionService.getColumnRestrictions(currColumn)
         .subscribe(
           {
@@ -121,6 +123,7 @@ export class FormComponent implements OnInit {
                 columnId: columnName,
                 restriction: restriction
               });
+              
               this.setRestrictionByColumn(currColumn);
             },
             error: (error: any) => {
@@ -129,24 +132,25 @@ export class FormComponent implements OnInit {
           }
         );
 
-      if (!this.row && !this.row?._id) {
-        return;
-      }
-      this.tableService.getRestrictionByIdAndColumn(this.module, this.table, currColumn._id, this.row._id)
-        .subscribe(
-          {
-            next: (res: any) => {
-              this.restriction.push(res);
-            }
-          }
-        )
+      // if (!this.row && !this.row?._id) {
+      //   return;
+      // }
+
+      // this.tableService.getRestrictionByIdAndColumn(this.module, this.table, currColumn._id, this.row._id)
+      //   .subscribe(
+      //     {
+      //       next: (res: any) => {
+      //         this.restriction.push(res);
+      //       }
+      //     }
+      //   )
     })
   }
 
   getRestrictionByColumnId(columnId: string) {
     return this.restriction.find(
       (res: ICellRestriction) => {
-        return res.column._id === columnId
+        return res?.column?._id === columnId
       }
     )
   }
@@ -176,8 +180,8 @@ export class FormComponent implements OnInit {
   getColumnsFromServer() {
     this.activatedRoute.params.subscribe(
       (params) => {
-        const module = params['module'];
-        const table = params['table'];
+        const module = params['module'] ? params['module'] : this.module;
+        const table = params['table'] ? params['table'] : this.table;
         if (module && table) {
           this.tableService.getAllColumns(module, table)
             .subscribe(
@@ -385,11 +389,16 @@ export class FormComponent implements OnInit {
     if (!column?.isRestricted) {
       return;
     }
-    this.tableService.getRestrictionByIdAndColumn(this.module, this.table, column._id, this.row._id)
+    this.tableService.getRestrictionByIdAndColumn(this.module, this.table, column._id, this.row?._id)
       .subscribe(
         {
           next: (res: any) => {
-            if (!res && !res.rowIdRestriction) {
+            if (!res && !res?.rowIdRestriction) {
+              this.restriction.push({
+                column:column,
+                rowId: '_tempId',
+                value: ''
+              })
               return
             }
             const restriction: ICellRestriction = {
@@ -398,6 +407,7 @@ export class FormComponent implements OnInit {
               value: this.row[column._id],
               rowIdRestriction: res.rowIdRestriction
             }
+            this.restriction.push(restriction);
             const checkRestrictionsObserver = this.rowsRestrictionService.checkRestriction(restriction)
             if (checkRestrictionsObserver) {
               checkRestrictionsObserver.subscribe(

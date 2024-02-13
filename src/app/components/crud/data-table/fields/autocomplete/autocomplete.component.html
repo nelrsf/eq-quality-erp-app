@@ -1,12 +1,19 @@
 <div class="d-flex justify-content-start align-items-center">
-    <div class="d-inline-flex flex-column w-100">
-        <input #autocompleteInput class="text-input w-100" [ngClass]="[!didValueMatchRestrictions()? 'invalid-field': '', !value ? 'eidt-subline' : '']" [disabled]="isDisabled"
-            [matAutocomplete]="auto" (focus)="onFocus($event)" [(ngModel)]="value" (ngModelChange)="checkValue()">
+    <div class="d-inline-flex w-100 flex-column">
+        <div class="w-100 d-inline-flex">
+            <input #autocompleteInput class="text-input d-block flex-grow-1"
+                [ngClass]="[!didValueMatchRestrictions()? 'invalid-field': '', !value ? 'eidt-subline' : '']"
+                [disabled]="isDisabled" [matAutocomplete]="auto" (focus)="onFocus($event)" [(ngModel)]="value"
+                (ngModelChange)="checkValue()">
+            <button *ngIf="value" class="btn btn-light d-block go-to-form ms-1" (click)="goToForm($event)">
+                <fa-icon [icon]="icons.goToForm"></fa-icon>
+            </button>
+        </div>
         <span *ngIf="!didValueMatchRestrictions()" class="mx-1 text-danger">
             <fa-icon [icon]="icons.invalid"></fa-icon>
             Campo NO valido!
         </span>
-        <mat-autocomplete #auto="matAutocomplete" >
+        <mat-autocomplete #auto="matAutocomplete">
             <mat-option *ngFor="let element of filteredData" [value]="element.value">
                 <span>{{ element.value }}</span>
             </mat-option>
@@ -14,6 +21,8 @@
     </div>
 
 </div>
+
+
 
 <!-- <div class="d-flex justify-content-start align-items-center">
     <div class="d-inline-flex flex-column w-100">

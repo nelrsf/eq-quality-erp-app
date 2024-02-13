@@ -46,6 +46,19 @@ export class FieldRendererComponent implements AfterViewInit, OnDestroy, OnChang
     if (changes.hasOwnProperty('value') && this.component?.instance) {
       this.component.instance.value = changes['value'].currentValue;
     }
+    if (changes.hasOwnProperty('restriction') && this.component?.instance) {
+      const restriction = changes['restriction'].currentValue;
+      if(restriction){
+        this.component.instance.restriction = restriction;
+      }
+    }
+    if (changes.hasOwnProperty('restrictions') && this.component?.instance) {
+      const restrictions = changes['restrictions'].currentValue;
+      if(Array.isArray(restrictions) && restrictions.length > 0){
+        this.component.instance.dataRestrictions = changes['restrictions'].currentValue;
+      }
+
+    }
   }
 
   ngAfterViewInit(): void {

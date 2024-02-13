@@ -1,5 +1,10 @@
 @import url('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
 
+
+.backdrop-infinite-form{
+  opacity: 0!important;
+}
+
 .eq-tooltip {
   // position: absolute;
   // top: 110%;

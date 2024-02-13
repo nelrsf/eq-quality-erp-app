@@ -1,3 +1,9 @@
+@media (max-width: 900px) {
+    .side-bar-wrapper {
+        transform: translateX(-260px)!important;
+    }
+  }
+
 .side-bar-wrapper {
     width: 260px;
     transform: translateX(-230px);
