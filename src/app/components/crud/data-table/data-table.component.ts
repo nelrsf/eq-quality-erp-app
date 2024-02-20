@@ -4,7 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faAngleLeft, faAngleRight, IconDefinition, faCogs } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { DragDirective } from 'src/app/directives/drag.directive';
 import { DropTargetDirective } from 'src/app/directives/drop-target.directive';
 import { ICellRestriction, IColumnRestriction } from 'src/app/Model/interfaces/ICellRestrictions';
@@ -22,6 +22,7 @@ import { DnDOrderDirective } from 'src/app/directives/order.directive';
 import { ColumnFooterOperation } from 'src/app/Model/interfaces/IColumnFooter';
 import * as math from 'mathjs';
 import { ResizableDirective } from 'src/app/directives/resizable.directive';
+import { PermissionsService } from 'src/app/services/permissions.service';
 
 
 
@@ -78,6 +79,7 @@ export class DataTableComponent implements OnInit, AfterViewInit {
   @ViewChild("tableViewer") tableViewer!: ElementRef;
 
   @Input('mapAsUrl') mapAsUrl: IMapAsUrl[] = [];
+  @Input() fullAccess: boolean = false;
   @Output() rowsSelectionChange = new EventEmitter<Array<IRowChecked>>();
   @Output() columnsOrderChange = new EventEmitter<Array<IColumn>>();
   @Output() columnsWidthChange = new EventEmitter<Array<IColumn>>();
@@ -98,6 +100,7 @@ export class DataTableComponent implements OnInit, AfterViewInit {
   subtableData!: ISubtableValue;
   rowsChecked: IRowChecked[] = [];
   columnsFunctions: IColumnFunctions[] = [];
+  columnsEditPermissions: Array<{ value: boolean, column: string }> = [];
   columnsRestrictions: IColumnRestriction[] = [];
   contextMenuModal: boolean = false;
   columnsProperties!: IColumn[];
@@ -120,7 +123,7 @@ export class DataTableComponent implements OnInit, AfterViewInit {
   }
 
 
-  constructor(private ngbModal: NgbModal, private rowsRestrictionService: RowsRestrictionsService, private router: Router) { }
+  constructor(private ngbModal: NgbModal, private rowsRestrictionService: RowsRestrictionsService) { }
 
   ngAfterViewInit(): void {
     this.subscribeToOnResizeTable();
@@ -511,4 +514,20 @@ export class DataTableComponent implements OnInit, AfterViewInit {
   hasTableFooter() {
     return this.columnsProperties.some((col) => col.hasFooter);
   }
+
+  isColumnEditable(column: IColumn) {
+    if (this.fullAccess) {
+      return true;
+    }
+    const colPermission = this.columnsEditPermissions.find(
+      (colEd: { value: boolean, column: string }) => {
+        return column._id === colEd.column;
+      }
+    );
+    if (!colPermission) {
+      return false;
+    }
+    return colPermission.value;
+  }
+
 }

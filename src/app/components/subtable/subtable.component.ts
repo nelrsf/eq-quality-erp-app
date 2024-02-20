@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
 import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { generateObjectId } from 'src/app/functions/generateObjectId';
+import { ShowIfCanEdit } from 'src/app/directives/permissions/show-if-can-edit.directive';
 
 
 @Component({
@@ -25,7 +26,8 @@ import { generateObjectId } from 'src/app/functions/generateObjectId';
     ButtonsPadComponent,
     LoadingComponent,
     FontAwesomeModule,
-    RouterModule
+    RouterModule,
+    ShowIfCanEdit
   ]
 })
 export class SubtableComponent implements AfterViewInit {
@@ -59,6 +61,13 @@ export class SubtableComponent implements AfterViewInit {
     this.overrideCreateSubtableDataFcn();
     this.initializeTable();
     this.initializeTableData();
+  }
+
+  getModuleAndTable(){
+    return {
+      module: this.data?.valueHost?.module,
+      table: this.data?.valueHost?.table
+    }
   }
 
   initializeTableData() {

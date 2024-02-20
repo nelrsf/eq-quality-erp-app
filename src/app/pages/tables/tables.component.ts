@@ -11,7 +11,7 @@ import { PermissionsService } from 'src/app/services/permissions.service';
 import { buttonType } from 'src/app/components/crud/buttons-pad/buttons-pad.component';
 import { UserService } from 'src/app/services/user.service';
 import { IUser } from 'src/app/Model/interfaces/IUser';
-import { concatMap, from } from 'rxjs';
+import { Observable, concatMap, forkJoin, from, map, of, switchMap, take } from 'rxjs';
 import { ISubtableValue } from 'src/app/Model/interfaces/ISubtableValue';
 
 @Component({
@@ -199,6 +199,14 @@ export class TablesComponent implements OnInit, AfterViewInit {
         {
           next: (result: any) => {
             const columnsAsArray = this.convertColumnsToArray(result);
+            this.permissionsService.setEditableColumns(columnsAsArray)
+              .subscribe(
+                {
+                  next: (columnsEditPermissions: Array<{ value: boolean, column: string }>) => {
+                    this.dataTable.columnsEditPermissions = columnsEditPermissions;
+                  }
+                }
+              );
             this.dataTable.columnsSubject.next(columnsAsArray);
             this.getRowsData(this.module, this.table);
           },
@@ -209,6 +217,8 @@ export class TablesComponent implements OnInit, AfterViewInit {
         }
       );
   }
+
+
 
   convertColumnsToArray(columnsObject: any) {
     const arrayColumns: IColumn[] = [];
@@ -310,7 +320,7 @@ export class TablesComponent implements OnInit, AfterViewInit {
           console.log(response);
           this.getColumnsData(this.module, this.table);
         },
-        error: (error)=>{
+        error: (error) => {
           this.errorMessage = error.error;
           this.ngbModal.open(this.modalError);
           this.loading = false;
@@ -458,7 +468,7 @@ export class TablesComponent implements OnInit, AfterViewInit {
     this.addUpdateColumnButton();
   }
 
-  addUpdateColumnButton(){
+  addUpdateColumnButton() {
     if (this.canConfig && !this.buttonsList.includes('update-column')) {
       this.buttonsList.push('update-column');
     }
@@ -492,7 +502,7 @@ export class TablesComponent implements OnInit, AfterViewInit {
     });
   }
 
-  openTableViewer(event: ISubtableValue){
+  openTableViewer(event: ISubtableValue) {
     const backUrl = `/tables/data/${event?.valueHost?.module}/${event?.valueHost?.table}`;
     this.router.navigate(['./subtable'], { state: { data: event, backUrl: backUrl } });
   }

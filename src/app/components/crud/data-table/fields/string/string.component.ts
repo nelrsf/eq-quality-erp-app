@@ -21,6 +21,7 @@ export class StringComponent implements OnDestroy {
   @Input() isRestricted: boolean = false;
   @Input() restriction!: Partial<ICellRestriction>;
   @Input() isDisabled: boolean = false;
+  @Input() editable: boolean = true;
   @Input() dataRestrictions!: Partial<ICellRestriction>[];
   @Output() valueChange = new EventEmitter<string>();
   @Output() onListChange = new EventEmitter<any>();

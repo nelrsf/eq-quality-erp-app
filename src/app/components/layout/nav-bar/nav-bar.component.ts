@@ -25,7 +25,7 @@ export class NavBarComponent implements AfterViewInit, OnDestroy {
   }
 
   constructor(private authService: AuthService, private router: Router, private ngbModal: NgbModal, private cdr: ChangeDetectorRef, private userService: UserService) { }
-  
+
   ngOnDestroy(): void {
     this.userService.setUser(null);
   }
@@ -83,11 +83,15 @@ export class NavBarComponent implements AfterViewInit, OnDestroy {
       )
   }
 
-  getProfileImage(){
-    return this.userData?.image ? this.userData.image : '../../../../assets/images/previews/1.jpg'
+  getProfileImage() {
+    let userImageUrl;
+    if (this.userData?.image) {
+      userImageUrl = environment.filesUrl + '/download/' + this.userData.image;
+    }
+    return userImageUrl ? userImageUrl : window.location.origin + '/assets/images/previews/1.jpg'
   }
 
-  checkMapsPluggin(){
+  checkMapsPluggin() {
     return environment.pluggins.maps;
   }
 

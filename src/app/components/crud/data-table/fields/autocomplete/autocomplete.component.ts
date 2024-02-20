@@ -32,6 +32,7 @@ export class AutocompleteComponent implements OnInit, AfterViewInit {
 
   @Input() data!: Array<Partial<ICellRestriction>>;
   @Input() value!: string;
+  @Input() editable: boolean = true;
   @Input() isDisabled!: boolean;
   @Input() restriction!: Partial<ICellRestriction>;
   @Output() valueChange = new EventEmitter<string>();
@@ -137,7 +138,7 @@ export class AutocompleteComponent implements OnInit, AfterViewInit {
   async goToForm(event: any) {
     event.preventDefault();
     const fieldRestriction = this.previousRestriction || this.restriction;
-    if(!fieldRestriction){
+    if (!fieldRestriction) {
       return;
     }
     this.tableService.getRowById(
@@ -151,8 +152,11 @@ export class AutocompleteComponent implements OnInit, AfterViewInit {
             const formComponent = formComponentImport.FormComponent;
             const modalRef = this.modal.open(formComponent, {
               backdropClass: 'backdrop-infinite-form',
-              size: 'lg'
+              size: 'lg',
+              modalDialogClass: 'modal-infinite-form',
             })
+            modalRef.componentInstance.closeButton = true;
+            modalRef.componentInstance.onCloseButton.subscribe(() => modalRef.close());
             modalRef.componentInstance.module = fieldRestriction.column?.moduleRestriction;
             modalRef.componentInstance.table = fieldRestriction.column?.tableRestriction;
             modalRef.componentInstance.row = row;

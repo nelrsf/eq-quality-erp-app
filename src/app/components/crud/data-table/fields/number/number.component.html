@@ -16,7 +16,7 @@
 
     <ng-template #unrestrictedFieldTemplate>
         <input *ngIf="editMode" #fieldEditable [ngClass]="[!value ? 'eidt-subline' : '']" type="number"
-            [(ngModel)]="value" [disabled]="isDisabled" (change)="onChangeByText($event)" (blur)="editMode=false">
+            [(ngModel)]="value" [disabled]="isDisabled || !editable" (change)="onChangeByText($event)" (blur)="editMode=false">
         <span class="text-color static-field" *ngIf="!editMode" (click)="onClickField($event)">{{value | number: '1.2-2'}}</span>
     </ng-template>
 </ng-template>

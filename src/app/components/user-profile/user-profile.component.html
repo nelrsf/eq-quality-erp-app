@@ -5,10 +5,9 @@
     <div class="card-body">
         <div class="d-flex flex-column align-items-center text-center">
             <div class="image-container">
-                <img src="{{user.image}}" alt="Admin" class="rounded-circle"
-                width="150">
+                <img [src]="getUserImage()" alt="Admin" class="rounded-circle" width="150">
                 <div class="file-uploader">
-                    <eq-file-uploader [(files)]="imageFile" (filesChange)="setUserImage()" ></eq-file-uploader>
+                    <eq-file-uploader [(files)]="imageFile" (filesChange)="setUserImage()"></eq-file-uploader>
                 </div>
             </div>
 
@@ -18,7 +17,7 @@
                 </h4>
                 <p class="text-secondary mb-1">{{user.email}}</p>
                 <p *ngIf="errorMessage" class="text-danger my-2">{{errorMessage}}</p>
-                <p *ngIf="successMessage" class="text-success my-2">{{successMessage}}</p>            
+                <p *ngIf="successMessage" class="text-success my-2">{{successMessage}}</p>
                 <button class="btn btn-primary mx-1" (click)="saveUser()">Guardar</button>
             </div>
         </div>

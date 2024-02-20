@@ -2,6 +2,11 @@
 .go-to-form {
     width: 2rem;
     padding: 0;
+    opacity: 0.3;
+}
+
+.go-to-form:hover {
+    opacity: 0.6;
 }
 
 input, input:active {

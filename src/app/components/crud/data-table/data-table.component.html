@@ -80,7 +80,10 @@
                                     </td>
                                     <td *ngFor="let column of columnsProperties">
                                         <div class="cell-value">
-                                            <eq-field-renderer [rowId]="row['_id']" [(value)]="row[column._id]"
+                                            <eq-field-renderer 
+                                                [editable]="isColumnEditable(column)" 
+                                                [rowId]="row['_id']" 
+                                                [(value)]="row[column._id]"
                                                 [column]="getColumnProperties(column._id)"
                                                 [restriction]="getCellRestriction(column, row['_id'])"
                                                 [restrictions]="getRestrictionsByColumnId(column._id)"

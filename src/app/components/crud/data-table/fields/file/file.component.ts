@@ -19,6 +19,7 @@ export class FileComponent implements OnInit {
 
   @Input() isRestricted: boolean = false;
   @Input() value!: string[];
+  @Input() editable: boolean = true;
   @Output() valueChange = new EventEmitter<string[]>();
 
   constructor(private http: HttpClient) { }

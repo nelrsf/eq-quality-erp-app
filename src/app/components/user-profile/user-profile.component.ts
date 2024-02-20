@@ -5,6 +5,7 @@ import { FileUploaderComponent } from '../miscelaneous/file-uploader/file-upload
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { LoadingComponent } from '../miscelaneous/loading/loading.component';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'eq-user-profile',
@@ -25,6 +26,8 @@ export class UserProfileComponent implements OnInit {
   public errorMessage!: string;
   public successMessage!: string;
   public loading: boolean = false;
+  public filesUrl = environment.filesUrl;
+  public downloadEndpoint = '/download/'
 
   constructor(private userService: UserService) { }
 
@@ -53,6 +56,14 @@ export class UserProfileComponent implements OnInit {
       return
     }
     this.user.image = this.imageFile[this.imageFile.length - 1];
+  }
+
+  getUserImage() {
+    if(this.user?.image){
+      return this.filesUrl + this.downloadEndpoint + this.user.image
+    } else {
+      return window.location.origin + '/assets/images/previews/1.jpg'
+    }
   }
 
   saveUser() {

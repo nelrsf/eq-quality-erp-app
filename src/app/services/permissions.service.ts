@@ -2,10 +2,12 @@ import { Injectable } from "@angular/core";
 import { UserService } from "./user.service";
 import { IUser } from "../Model/interfaces/IUser";
 import { TablesService } from "../pages/tables/tables.service";
-import { Observable, Subscriber } from "rxjs";
+import { Observable, Subscriber, catchError, forkJoin, map, of, switchMap, take } from "rxjs";
 import { ModulesService } from "../pages/modules/modules.service";
 import { IModule } from "../Model/interfaces/IModule";
 import { environment } from "src/environments/environment";
+import { error } from "console";
+import { IColumn } from "../Model/interfaces/IColumn";
 
 @Injectable({
     providedIn: 'root'
@@ -16,6 +18,81 @@ export class PermissionsService {
     profilesTable: string = environment.adminTables.profile;
 
     constructor(private userService: UserService, private tablesService: TablesService, private modulesService: ModulesService) { }
+
+    canEditColumn(module: string, table: string, column: string): Observable<boolean> {
+        return new Observable<boolean>(
+            (subscriber: Subscriber<any>) => {
+                if (!table || !column) {
+                    subscriber.next(false);
+                    subscriber.complete();
+                    return;
+                }
+                const user = this.userService.getUser();
+                if (!user) {
+                    subscriber.next(false);
+                    subscriber.complete();
+                    return;
+                }
+                const profileObs = this.tablesService.getRowsByColumnAndValue(module, this.usersTable, 'Email', user.email)
+                    .pipe(
+                        switchMap(
+                            (userObj: any) => {
+                                return this.tablesService.getRowsByColumnAndValue(module, this.profilesTable, 'Nombre', userObj[0]?.Perfil);
+                            }
+                        ),
+                        catchError(
+                            (error: any) => {
+                                console.log(error);
+                                throw Error;
+                            }
+                        )
+                    );
+
+                const columnObserver = profileObs.pipe(
+                    switchMap(
+                        (profile: any) => {
+                            const columnObs = this.tablesService.getColumnData(module, table, column);
+                            return columnObs.pipe(
+                                map((col: any) => {
+                                    return {
+                                        column: col,
+                                        profile: profile[0]
+                                    }
+                                })
+                            );
+                        }
+                    )
+                );
+                
+                columnObserver.subscribe(
+                    {
+                        next: (result: any) => {
+                            const columnResult = result.column;
+                            const profileReult = result.profile;
+                            const columnEditPermissions = columnResult?.permissions?.edit;
+                            if (!columnEditPermissions) {
+                                subscriber.next(false);
+                                subscriber.complete();
+                                return;
+                            }
+                            if (columnEditPermissions?.includes(profileReult?._id)) {
+                                subscriber.next(true);
+                            } else {
+                                subscriber.next(false);
+                            }
+                            subscriber.complete();
+                        },
+                        error: (error: any) => {
+                            console.log(error);
+                            subscriber.next(false);
+                            subscriber.complete();
+                        }
+                    }
+                );
+            }
+        );
+
+    }
 
     canEditTable(module: string, table: string): Observable<boolean> {
         return new Observable<boolean>(
@@ -42,7 +119,7 @@ export class PermissionsService {
                                     subscriber.next(true);
                                     return;
                                 } else {
-                                    subscriber.next(false);  
+                                    subscriber.next(false);
                                     return;
                                 }
                             }
@@ -77,7 +154,7 @@ export class PermissionsService {
                                     subscriber.next(true);
                                     return;
                                 } else {
-                                    subscriber.next(false);  
+                                    subscriber.next(false);
                                     return;
                                 }
                             }
@@ -160,9 +237,14 @@ export class PermissionsService {
     getUserProfile(module: string, user: IUser, callback: (...data: any) => void) {
         this.tablesService.getRowsByColumnAndValue(module, this.usersTable, 'Email', user.email)
             .subscribe(
-                (data: any) => {
-                    if (data.length !== 0) {
-                        this.getProfileData(module, data[0].Perfil, callback);
+                {
+                    next: (data: any) => {
+                        if (data.length !== 0) {
+                            this.getProfileData(module, data[0].Perfil, callback);
+                        }
+                    },
+                    error: (error: any) => {
+                        console.log(error)
                     }
                 }
             )
@@ -199,6 +281,29 @@ export class PermissionsService {
                 }
             })
     }
+
+    setEditableColumns(columns: Array<IColumn>) {
+        const colEditObsv: Array<Observable<{ value: boolean, column: string }>> = [];
+        columns.forEach(
+          (col: IColumn) => {
+            const combinedObservable: Observable<{ value: boolean, column: string }> = this.isOwner(col.module).pipe(
+              take(1),
+              switchMap(isOwner => {
+                if (isOwner) {
+                  return of(true);
+                } else {
+                  return this.canEditColumn(col.module, col.table, col._id);
+                }
+              }),
+              map((value: boolean) => {
+                return { value: value, column: col._id }
+              })
+            );
+            colEditObsv.push(combinedObservable)
+          }
+        )
+        return forkJoin(colEditObsv);
+      }
 
 
 }

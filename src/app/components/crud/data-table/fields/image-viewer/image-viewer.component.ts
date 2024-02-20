@@ -25,6 +25,7 @@ export class ImageViewerComponent implements OnInit {
   @Input() value!: any;
   @Output() valueChange = new EventEmitter<any>();
   @Output() openModal = new EventEmitter<ColumnTypes>();
+  @Input() editable: boolean = true;
 
   device!: DeviceType;
   curentIndex: number = 0;

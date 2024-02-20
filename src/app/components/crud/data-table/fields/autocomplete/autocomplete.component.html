@@ -3,9 +3,9 @@
         <div class="w-100 d-inline-flex">
             <input #autocompleteInput class="text-input d-block flex-grow-1"
                 [ngClass]="[!didValueMatchRestrictions()? 'invalid-field': '', !value ? 'eidt-subline' : '']"
-                [disabled]="isDisabled" [matAutocomplete]="auto" (focus)="onFocus($event)" [(ngModel)]="value"
+                [disabled]="isDisabled || !editable" [matAutocomplete]="auto" (focus)="onFocus($event)" [(ngModel)]="value"
                 (ngModelChange)="checkValue()">
-            <button *ngIf="value" class="btn btn-light d-block go-to-form ms-1" (click)="goToForm($event)">
+            <button *ngIf="value" class="btn btn-outline-secondary d-block go-to-form ms-1" (click)="goToForm($event)">
                 <fa-icon [icon]="icons.goToForm"></fa-icon>
             </button>
         </div>

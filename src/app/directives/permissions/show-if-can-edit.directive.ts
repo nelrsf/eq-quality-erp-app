@@ -4,7 +4,7 @@ import { PermissionsService } from "src/app/services/permissions.service";
 import { UserService } from "src/app/services/user.service";
 
 @Directive({
-    selector: '[showIfCanDelete]',
+    selector: '[showIfCanEdit]',
     standalone: true
 })
 export class ShowIfCanEdit implements OnInit {

@@ -54,7 +54,7 @@ export class UserService {
                             _id: data._id,
                             email: data.Email,
                             name: data.Nombre,
-                            image: data.Imagen ? data.Imagen : 'https://bootdey.com/img/Content/avatar/avatar7.png'
+                            image: data.Imagen ? data.Imagen : ''
                         }
                     )
                 })

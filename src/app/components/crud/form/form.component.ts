@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { ColumnTypes, IColumn } from 'src/app/Model/interfaces/IColumn';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -15,14 +15,15 @@ import { ShowIfIsAdmin } from 'src/app/directives/permissions/show-if-is-admin.d
 import { ShowIfIsOwner } from 'src/app/directives/permissions/show-if-is-owner.directive';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { DnDOrderDirective } from 'src/app/directives/order.directive';
-import { concatMap, from } from 'rxjs';
+import { Observable, concatMap, forkJoin, from, mergeMap, of, switchMap } from 'rxjs';
 import { SubtableComponent } from '../../subtable/subtable.component';
 import { ISubtableValue } from 'src/app/Model/interfaces/ISubtableValue';
 import { ActivatedRoute } from '@angular/router';
 import { ICellRestriction } from 'src/app/Model/interfaces/ICellRestrictions';
 import { RowsRestrictionsService } from 'src/app/services/rows-restrictions.service';
 import { FieldRendererComponent } from '../data-table/fields/field-renderer/field-renderer.component';
-import { error } from 'console';
+import { PermissionsService } from 'src/app/services/permissions.service';
+import { ShowIfCanEdit } from 'src/app/directives/permissions/show-if-can-edit.directive';
 
 
 @Component({
@@ -72,21 +73,25 @@ export class FormComponent implements OnInit {
   autocompleteRestrictions: Array<{ columnId: string, restriction: Array<Partial<ICellRestriction>> }> = [];
   autocompleteSelections: Array<{ columnId: string, restriction: Partial<ICellRestriction> }> = [];
   restriction: ICellRestriction[] = [];
+  fieldsEditPermissions: Array<{ value: boolean, column: string }> = [];
 
   form!: FormGroup;
   COLUMN_TYPES_ENUM = ColumnTypes;
+  readMode: boolean = true;
 
   @Input() columns: any;
   @Input() module!: string;
   @Input() table!: string;
   @Input() row: any = { _id: '_tempId' };
-  @Input() readMode: boolean = false;
   @Input() padding: string = '';
+  @Input() closeButton: boolean = false;
+  @Output() onCloseButton = new EventEmitter();
   @Output() columnsChange = new EventEmitter();
   @Output() formOperationEnd = new EventEmitter();
   @ViewChild("DnDContainer") DnDContainer!: ElementRef;
+  @ViewChild("formElement") formElement!: ElementRef;
 
-  constructor(private tableService: TablesService, private activatedRoute: ActivatedRoute, private rowsRestrictionService: RowsRestrictionsService) { }
+  constructor(private rederer2: Renderer2, private permissionsService: PermissionsService, private tableService: TablesService, private activatedRoute: ActivatedRoute, private rowsRestrictionService: RowsRestrictionsService) { }
 
 
   ngOnInit(): void {
@@ -95,6 +100,64 @@ export class FormComponent implements OnInit {
     } else {
       this.initializeForm();
     }
+
+    this.checkFormPermissions();
+  }
+
+  disableFields() {
+    if (this.formElement) {
+      const inputElements = this.formElement.nativeElement.querySelectorAll('input');
+      Array.from(inputElements).forEach(
+        (element) => {
+          this.rederer2.setAttribute(element, "disabled", "true")
+        }
+      )
+    }
+
+  }
+
+  checkFieldsPermissions() {
+    this.permissionsService.setEditableColumns(this.getColumnsAsArray())
+      .subscribe(
+        {
+          next: (fieldsEditPermissions: Array<{ value: boolean, column: string }>) => {
+            this.fieldsEditPermissions = fieldsEditPermissions;
+            fieldsEditPermissions.forEach(
+              (fp: { value: boolean, column: string }) => {
+                const control = this.form.controls[fp.column];
+                if(control && !fp.value){
+                  control.disable();
+                }
+              }
+            )
+          }
+        }
+      );
+  }
+
+  checkFormPermissions() {
+
+    const combinedObservable: Observable<boolean> = this.permissionsService.isOwner(this.module).pipe(
+      switchMap(isOwner => {
+        if (isOwner) {
+          return of(true);
+        } else {
+          return this.permissionsService.canEditTable(this.module, this.table);
+        }
+      })
+    );
+
+    combinedObservable.subscribe(result => {
+      this.readMode = !result;
+      if (this.readMode) {
+        this.disableFields();
+      }
+    });
+
+  }
+
+  closeForm() {
+    this.onCloseButton.emit();
   }
 
   initializeForm() {
@@ -103,6 +166,7 @@ export class FormComponent implements OnInit {
     this.createListFormData();
     this.createSubtableFormData();
     this.initializeAutocompleteRestrictions();
+    this.checkFieldsPermissions()
     let orderedColumns = Object.keys(this.columns).sort((a, b) => this.columns[a].formOrder - this.columns[b].formOrder).map(k => this.columns[k]);
     this.columns = orderedColumns;
     this.columnsJson = this.getColumnsAsJson();
@@ -123,7 +187,7 @@ export class FormComponent implements OnInit {
                 columnId: columnName,
                 restriction: restriction
               });
-              
+
               this.setRestrictionByColumn(currColumn);
             },
             error: (error: any) => {
@@ -342,7 +406,7 @@ export class FormComponent implements OnInit {
     this.asignListFormData(newRow);
     this.asignFilesFormData(newRow);
     this.asignSubtableFormData(newRow);
-    if (this.row?._id) {
+    if (this.row?._id && this.row?._id !== '_tempId') {
       this.updateRow(this.module, this.table, newRow, this.row._id);
     } else {
       this.createRow(this.module, this.table, newRow);
@@ -395,7 +459,7 @@ export class FormComponent implements OnInit {
           next: (res: any) => {
             if (!res && !res?.rowIdRestriction) {
               this.restriction.push({
-                column:column,
+                column: column,
                 rowId: '_tempId',
                 value: ''
               })
@@ -479,6 +543,16 @@ export class FormComponent implements OnInit {
     return jsonCols;
   }
 
+  getColumnsAsArray() {
+    const cols: Array<IColumn> = [];
+    Object.keys(this.columns).forEach(
+      (colId: string) => {
+        cols.push(this.columns[colId])
+      }
+    );
+    return cols;
+  }
+
 
   updateColumns() {
     const columns: IColumn[] = this.columns;
@@ -536,6 +610,18 @@ export class FormComponent implements OnInit {
       el?.classList.add('fade-out');
     }, 3000)
 
+  }
+
+  isFieldEditable(columnId: string) {
+    const fieldEditPermission = this.fieldsEditPermissions.find(
+      (fieldData: { value: boolean, column: string }) => {
+        return columnId === fieldData.column;
+      }
+    );
+    if (!fieldEditPermission) {
+      return false;
+    };
+    return fieldEditPermission.value;
   }
 
 

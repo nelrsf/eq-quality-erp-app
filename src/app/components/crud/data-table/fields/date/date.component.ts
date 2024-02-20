@@ -15,6 +15,7 @@ export class DateComponent {
 
   @Input() value!: string;
   @Input() isRestricted!: boolean;
+  @Input() editable: boolean = true;
   @Output() valueChange = new EventEmitter<string>();
 
   onChange(event: any){

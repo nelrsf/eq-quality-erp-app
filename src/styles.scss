@@ -1,8 +1,13 @@
 @import url('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
 
 
-.backdrop-infinite-form{
-  opacity: 0!important;
+.backdrop-infinite-form {
+  opacity: 0 !important;
+}
+
+.modal-infinite-form {
+  box-shadow: -8px -4px 20px 0px var(--bs-modal-border-color);
+  border-radius: 11px;
 }
 
 .eq-tooltip {
@@ -21,13 +26,15 @@
   max-width: 20rem;
 }
 
-[data-bs-theme="dark"]{
-  input, textarea {
+[data-bs-theme="dark"] {
+
+  input,
+  textarea {
     color-scheme: dark;
   }
 
   ::-webkit-scrollbar-track {
-    background: rgb(53 58 63)!important;
+    background: rgb(53 58 63) !important;
   }
 }
 
@@ -36,11 +43,12 @@
   background-color: var(--bs-body-bg);
 }
 
-.mdc-list-item__primary-text{
+.mdc-list-item__primary-text {
   color: var(--bs-emphasis-color);
 }
 
-.mdc-list-item--selected .mdc-list-item__primary-text, .mdc-list-item--activated .mdc-list-item__primary-text {
+.mdc-list-item--selected .mdc-list-item__primary-text,
+.mdc-list-item--activated .mdc-list-item__primary-text {
   color: var(--bs-emphasis-color);
 }
 
@@ -66,13 +74,13 @@
 }
 
 .cm-content {
-  padding: 6px 0px!important;
+  padding: 6px 0px !important;
 }
 
 /* You can add global styles to this file, and also import other style files */
 .content {
-    position: relative;
-    z-index: -5;
+  position: relative;
+  z-index: -5;
 }
 
 .cdk-overlay-container {
@@ -81,27 +89,32 @@
 
 /* width */
 ::-webkit-scrollbar {
-    width: 10px;
-    height: 8px;
-  }
-  
-  /* Track */
-  ::-webkit-scrollbar-track {
-    background: rgb(240, 240, 240);
-  }
-  
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
-    background: #d4d4d468;
-    border-radius: 6px;
-  }
-  
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(163, 163, 163, 0.373);
-  }
-html, body { height: 100%; }
-body { 
-  margin: 0; 
-  font-family: Roboto, "Helvetica Neue", sans-serif; 
+  width: 10px;
+  height: 8px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: rgb(240, 240, 240);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #d4d4d468;
+  border-radius: 6px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(163, 163, 163, 0.373);
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
 }

@@ -28,6 +28,7 @@ export class NumberComponent implements OnInit, AfterViewInit, OnChanges {
 
   @Input() value!: string;
   @Input() isRestricted: boolean = false;
+  @Input() editable: boolean = true;
   @Input() restriction!: Partial<ICellRestriction>;
   @Input() isDisabled: boolean = false;
   @Input() dataRestrictions!: Partial<ICellRestriction>[];

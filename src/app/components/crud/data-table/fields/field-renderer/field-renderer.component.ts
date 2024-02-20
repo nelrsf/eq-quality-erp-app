@@ -29,6 +29,7 @@ export class FieldRendererComponent implements AfterViewInit, OnDestroy, OnChang
   @Input() column!: IColumn | undefined;
   @Input() rowId!: string;
   @Input() value!: string;
+  @Input() editable: boolean = true;
   @Input() restriction: ICellRestriction | undefined;
   @Input() restrictions: Array<Partial<ICellRestriction>> | undefined;
   @Output() valueChange = new EventEmitter<string>();
@@ -56,6 +57,13 @@ export class FieldRendererComponent implements AfterViewInit, OnDestroy, OnChang
       const restrictions = changes['restrictions'].currentValue;
       if(Array.isArray(restrictions) && restrictions.length > 0){
         this.component.instance.dataRestrictions = changes['restrictions'].currentValue;
+      }
+
+    }
+    if (changes.hasOwnProperty('editable') && this.component?.instance) {
+      const editable = changes['editable'].currentValue;
+      if(editable !== undefined || editable === null){
+        this.component.instance.editable = changes['editable'].currentValue;
       }
 
     }
@@ -190,6 +198,7 @@ export class FieldRendererComponent implements AfterViewInit, OnDestroy, OnChang
   createComponent(fieldComponent: Type<unknown>) {
     const componentInstance: any = this.fieldRenderer.createComponent(fieldComponent);
     componentInstance.instance.value = this.value;
+    componentInstance.instance.editable = this.editable;
     componentInstance.instance.valueChange.subscribe(
       (value: string) => {
         this.valueChange.emit(value);

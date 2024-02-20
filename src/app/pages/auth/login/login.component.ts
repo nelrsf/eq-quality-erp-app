@@ -87,7 +87,7 @@ export class LoginComponent implements OnInit {
               _id: data._id,
               email: data.email,
               name: data.name,
-              image: data.image ? data.image : 'https://bootdey.com/img/Content/avatar/avatar7.png'
+              image: data.image ? data.image : ''
             })
             this.router.navigate(['/']);
             this.loading = false;
