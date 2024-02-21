@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FileUploaderComponent } from 'src/app/components/miscelaneous/file-uploader/file-uploader.component';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'eq-file-field',
@@ -15,6 +16,7 @@ import { FileUploaderComponent } from 'src/app/components/miscelaneous/file-uplo
 export class FileFieldComponent implements OnInit {
 
   @Input() files!: Array<string>;
+  @Input() editable: boolean = true;
   @Output() filesChange = new EventEmitter<Array<string>>();
 
 
@@ -26,4 +28,7 @@ export class FileFieldComponent implements OnInit {
     this.filesChange.emit(event);
   }
 
+  getDownloadLink(fileUrl: string){
+    return environment.filesUrl + '/download/' + encodeURIComponent(fileUrl);
+  }
 }

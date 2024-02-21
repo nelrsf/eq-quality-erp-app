@@ -40,6 +40,7 @@ export class ImgFieldComponent implements OnInit {
   @Input() column: any;
   @Input() images!: Array<string>
   @Input() module!: string;
+  @Input() editable: boolean = true;
   @Output() imagesChange = new EventEmitter<Array<string>>();
   @ViewChild('modalError') modalError!: TemplateRef<any>;
 

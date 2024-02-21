@@ -62,7 +62,7 @@ export class FieldRendererComponent implements AfterViewInit, OnDestroy, OnChang
     }
     if (changes.hasOwnProperty('editable') && this.component?.instance) {
       const editable = changes['editable'].currentValue;
-      if(editable !== undefined || editable === null){
+      if(editable !== undefined || editable !== null){
         this.component.instance.editable = changes['editable'].currentValue;
       }
 

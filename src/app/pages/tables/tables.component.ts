@@ -394,6 +394,10 @@ export class TablesComponent implements OnInit, AfterViewInit {
   }
 
 
+  setTableEditPermission(){
+    this.dataTable.editable = true;
+  }
+
   setButtonsFunctions() {
     const subscriberEditCallback = () => {
       if (!this.buttonsList.includes('add')) {
@@ -415,7 +419,8 @@ export class TablesComponent implements OnInit, AfterViewInit {
         next: (canEdit: boolean) => {
           if (canEdit) {
             subscriberEditCallback();
-          }
+            this.setTableEditPermission();
+          };
         }
       });
 
@@ -444,6 +449,7 @@ export class TablesComponent implements OnInit, AfterViewInit {
             this.canConfig = true;
             subscriberEditCallback();
             subscriberDeleteCallback();
+            this.setTableEditPermission();
           }
         }
       })
@@ -455,6 +461,7 @@ export class TablesComponent implements OnInit, AfterViewInit {
             this.canConfig = true;
             subscriberEditCallback();
             subscriberDeleteCallback();
+            this.setTableEditPermission();
           }
         }
       })
@@ -506,6 +513,5 @@ export class TablesComponent implements OnInit, AfterViewInit {
     const backUrl = `/tables/data/${event?.valueHost?.module}/${event?.valueHost?.table}`;
     this.router.navigate(['./subtable'], { state: { data: event, backUrl: backUrl } });
   }
-
 
 }

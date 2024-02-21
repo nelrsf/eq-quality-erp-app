@@ -16,6 +16,6 @@
     </a>
   </span>
 </div>
-<eq-buttons-pad [showIfCanEdit]="getModuleAndTable()" [buttonsList]="['add', 'delete','save']" (_newRow)="createEmptyRow()"
+<eq-buttons-pad *ngIf="isEditable"  [buttonsList]="['add', 'delete','save']" (_newRow)="createEmptyRow()"
     (_deleteRows)="deleteRows()" (_updateRows)="saveRows()"></eq-buttons-pad>
 <eq-data-table (rowsSelectionChange)="rowsSelectionChange($event)" (openTableViewerEvent)="openTableViewer($event)"></eq-data-table>

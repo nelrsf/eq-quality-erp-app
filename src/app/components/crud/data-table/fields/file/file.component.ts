@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FileUploaderComponent } from 'src/app/components/miscelaneous/file-uploader/file-uploader.component';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'eq-file',
@@ -36,6 +37,10 @@ export class FileComponent implements OnInit {
   onFileChange(event: any){
     this.value = [event[event.length - 1]];
     this.valueChange.emit(this.value);
+  }
+
+  getImageUrl(imageUrl: string){
+    return environment.filesUrl + '/download/' + imageUrl;
   }
 
 }

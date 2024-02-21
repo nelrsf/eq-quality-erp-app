@@ -10,20 +10,20 @@
     <div class="image-tools d-flex justify-content-end">
 
         <div *ngIf="imageUrl">
-            <button #uploadImageButton class="button-tool btn btn-danger mx-1" (click)="deleteImg($event,imagePos)">
+            <button [disabled]="!editable" #uploadImageButton class="button-tool btn btn-danger mx-1" (click)="deleteImg($event,imagePos)">
                 <fa-icon [icon]="icons.delete"></fa-icon>
             </button>
         </div>
 
         <div *ngIf="device !== 'web'">
             <!-- <eq-image-uploader [uploadButton]="uploadImageButton" ></eq-image-uploader> -->
-            <button #uploadImageButton class="button-tool btn btn-light mx-1" (click)="switchToCameraMode($event)">
+            <button [disabled]="!editable" #uploadImageButton class="button-tool btn btn-light mx-1" (click)="switchToCameraMode($event)">
                 <fa-icon [icon]="icons.camera"></fa-icon>
             </button>
         </div>
 
         <div *ngIf="device === 'web'">
-            <eq-file-uploader (onError)="showErrorModal($event)" [files]="images"
+            <eq-file-uploader [editable]="editable" (onError)="showErrorModal($event)" [files]="images"
                 (filesChange)="appendImagesChange($event)" [uploadButton]="uploadButton"></eq-file-uploader>
             <button #uploadButton class="button-tool btn btn-light mx-1" (click)="$event.preventDefault()">
                 <fa-icon [icon]="icons.upload"></fa-icon>

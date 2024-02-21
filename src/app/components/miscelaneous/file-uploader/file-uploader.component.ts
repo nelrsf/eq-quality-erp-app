@@ -31,6 +31,7 @@ export class FileUploaderComponent implements AfterViewInit {
   @Input() multiple: boolean = true;
   @Input() accept: string = "image/*";
   @Input() returnBlob: boolean = false;
+  @Input() editable: boolean = true;
   @Output() blobChange = new EventEmitter<any>();
   @Output() onError = new EventEmitter<string>();
   @Output() filesChange = new EventEmitter<Array<string>>();

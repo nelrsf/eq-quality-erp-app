@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-start align-items-center">
     <eq-file-uploader *ngIf="!isRestricted && editable" [multiple]="false" [(files)]="value" (filesChange)="onFileChange($event)" [accept]="'*'"></eq-file-uploader>
     <div *ngIf="value.length > 0">
-        <a role="button" class="mx-2" [href]="value[value.length - 1]" target="_blank">Descargar</a>
+        <a role="button" class="mx-2" [href]="getImageUrl(value[value.length - 1])" target="_blank">Descargar</a>
     </div>
 </div>

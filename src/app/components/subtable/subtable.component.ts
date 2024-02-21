@@ -12,6 +12,11 @@ import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { generateObjectId } from 'src/app/functions/generateObjectId';
 import { ShowIfCanEdit } from 'src/app/directives/permissions/show-if-can-edit.directive';
+import { ShowIfIsAdmin } from 'src/app/directives/permissions/show-if-is-admin.directive';
+import { ShowIfIsOwner } from 'src/app/directives/permissions/show-if-is-owner.directive';
+import { PermissionsService } from 'src/app/services/permissions.service';
+import { combineLatest, map, of, switchMap, take } from 'rxjs';
+import { UserService } from 'src/app/services/user.service';
 
 
 @Component({
@@ -27,7 +32,9 @@ import { ShowIfCanEdit } from 'src/app/directives/permissions/show-if-can-edit.d
     LoadingComponent,
     FontAwesomeModule,
     RouterModule,
-    ShowIfCanEdit
+    ShowIfCanEdit,
+    ShowIfIsAdmin,
+    ShowIfIsOwner
   ]
 })
 export class SubtableComponent implements AfterViewInit {
@@ -48,6 +55,7 @@ export class SubtableComponent implements AfterViewInit {
   backUrl!: string | (() => void);
   homeUrl!: string;
   oldData: Array<ISubtableValue> = [];
+  isEditable: boolean = false;
 
 
 
@@ -55,15 +63,74 @@ export class SubtableComponent implements AfterViewInit {
     back: faArrowLeftLong
   }
 
-  constructor(private tableService: TablesService, private cdr: ChangeDetectorRef) { }
+  constructor(private userService: UserService, private permissionsService: PermissionsService, private tableService: TablesService, private cdr: ChangeDetectorRef) { }
 
   ngAfterViewInit(): void {
     this.overrideCreateSubtableDataFcn();
     this.initializeTable();
     this.initializeTableData();
+    this.subscribeToEditPermissions();
+
+    this.userService.getUserSubject()
+      .subscribe(
+        (user: any) => {
+          if (!user) return
+          this.subscribeToEditPermissions();
+          this.permissionsService.setEditableColumns(this.replicateColumns(this.data))
+            .subscribe(
+              (columnsPermissions: Array<{ value: boolean, column: string }>) => {
+                this.dataTable.columnsEditPermissions = columnsPermissions;
+              }
+            )
+        }
+      )
   }
 
-  getModuleAndTable(){
+  subscribeToEditPermissions() {
+    this.getEditPermission()
+      .subscribe(
+        (isEditable) => {
+          this.isEditable = isEditable;
+          this.dataTable.editable = isEditable;
+        }
+      );
+  }
+
+  getEditPermission() {
+    // Primero, chequeamos si el usuario es el propietario.
+    return this.permissionsService.isOwner(this.data.module).pipe(
+      switchMap(isOwner => {
+        if (isOwner) {
+          // Si el usuario es propietario, entonces tiene permisos de edición.
+          return of(true);
+        } else {
+          // Si no es propietario, chequeamos si es administrador.
+          return this.permissionsService.isAdmin(this.data.module).pipe(
+            switchMap(isAdmin => {
+              if (isAdmin) {
+                // Si el usuario es administrador, entonces tiene permisos de edición.
+                return of(true);
+              } else {
+
+                // Si no es administrador, necesitamos verificar ambos, canEditColumn y canEditTable.
+                const canEditColumnObs = this.permissionsService.canEditColumn(this.data.valueHost.module, this.data.valueHost.table, this.data.valueHost.column);
+                const canEditTableObs = this.permissionsService.canEditTable(this.data.module, this.data.table);
+
+                // Utilizamos combineLatest para obtener ambos valores simultáneamente.
+                return combineLatest([canEditColumnObs, canEditTableObs]).pipe(
+                  map(([canEditColumn, canEditTable]) => {
+                    // El resultado final depende de ambos permisos.
+                    return canEditColumn && canEditTable;
+                  })
+                );
+              }
+            })
+          );
+        }
+      })
+    );
+  }
+  getModuleAndTable() {
     return {
       module: this.data?.valueHost?.module,
       table: this.data?.valueHost?.table

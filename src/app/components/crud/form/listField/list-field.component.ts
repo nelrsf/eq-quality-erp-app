@@ -18,6 +18,7 @@ import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 export class ListFieldComponent {
 
   @Input() listData: Array<any> = [];
+  @Input() editable: boolean = true;
   @Output() listDataChange = new EventEmitter<Array<any>>();
 
   icons = {

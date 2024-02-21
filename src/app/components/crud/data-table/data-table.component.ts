@@ -80,6 +80,7 @@ export class DataTableComponent implements OnInit, AfterViewInit {
 
   @Input('mapAsUrl') mapAsUrl: IMapAsUrl[] = [];
   @Input() fullAccess: boolean = false;
+  @Input() editable: boolean = false;
   @Output() rowsSelectionChange = new EventEmitter<Array<IRowChecked>>();
   @Output() columnsOrderChange = new EventEmitter<Array<IColumn>>();
   @Output() columnsWidthChange = new EventEmitter<Array<IColumn>>();
@@ -254,7 +255,7 @@ export class DataTableComponent implements OnInit, AfterViewInit {
     const columnId = column._id;
     this.modalReferenceId = row._id;
     this.modalReferenceColumn = columnId;
-    this.modalDisabled = column.isRestricted;
+    this.modalDisabled = column.isRestricted || !this.isColumnEditable(column);
     switch (event) {
       case ColumnTypes.image:
         this.openImageViewer(row[columnId]);
@@ -518,6 +519,9 @@ export class DataTableComponent implements OnInit, AfterViewInit {
   isColumnEditable(column: IColumn) {
     if (this.fullAccess) {
       return true;
+    }
+    if(!this.editable){
+      return false;
     }
     const colPermission = this.columnsEditPermissions.find(
       (colEd: { value: boolean, column: string }) => {

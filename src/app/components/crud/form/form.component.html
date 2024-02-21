@@ -74,13 +74,13 @@
                                 <fa-icon [icon]="icons.cog"></fa-icon>
                             </div>
                         </label>
-                        <eq-file-field [(files)]="this.imagesFormData[column._id]"></eq-file-field>
+                        <eq-file-field [editable]="isFieldEditable(column._id)" [(files)]="this.imagesFormData[column._id]"></eq-file-field>
                     </div>
                 </div>
 
 
                 <div *ngSwitchCase="COLUMN_TYPES_ENUM.image">
-                    <eq-img-field [column]="column" [module]="module"
+                    <eq-img-field [editable]="isFieldEditable(column._id)" [column]="column" [module]="module"
                         [(images)]="this.imagesFormData[column._id]"></eq-img-field>
                 </div>
 
@@ -109,7 +109,7 @@
                                 <fa-icon [icon]="icons.cog"></fa-icon>
                             </div>
                         </label>
-                        <eq-list-field [listData]="listFormData[column._id]"></eq-list-field>
+                        <eq-list-field [editable]="isFieldEditable(column._id)" [listData]="listFormData[column._id]"></eq-list-field>
                     </div>
                 </div>
 

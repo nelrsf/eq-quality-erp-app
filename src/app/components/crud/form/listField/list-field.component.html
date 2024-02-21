@@ -1,15 +1,15 @@
 <div class="list-field card">
     <div class="card-header d-flex justify-content-end">
-        <input type="email" class="form-control mx-2" placeholder="Nuevo Item" [(ngModel)]="newItem" name="newItem">
-        <button class="btn btn-outline-secondary p-1" (click)="addItem($event)">
+        <input [disabled]="!editable" type="email" class="form-control mx-2" placeholder="Nuevo Item" [(ngModel)]="newItem" name="newItem">
+        <button [disabled]="!editable" class="btn btn-outline-secondary p-1" (click)="addItem($event)">
             <fa-icon [icon]="icons.add"></fa-icon>
         </button>
     </div>
     <div class="card-body">
         <ul class="list-group">
                 <li *ngFor="let item of listData; let i = index" class="list-group-item d-flex justify-content-between align-items-centers">
-                    <input type="email" class="form-control mx-1" [(ngModel)]="listData[i]" name="item_{{i}}">
-                    <button class="btn btn-outline-danger" (click)="deleteItem($event, i)">
+                    <input [disabled]="!editable" type="email" class="form-control mx-1" [(ngModel)]="listData[i]" name="item_{{i}}">
+                    <button [disabled]="!editable" class="btn btn-outline-danger" (click)="deleteItem($event, i)">
                         <fa-icon [icon]="icons.delete"></fa-icon>
                     </button>
                 </li>
