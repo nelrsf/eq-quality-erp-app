@@ -1,0 +1,11 @@
+.fields-container {
+    display: contents!important;
+}
+
+.data-container {
+    display: grid!important;
+}
+
+.control-label{
+    font-weight: bold;
+}

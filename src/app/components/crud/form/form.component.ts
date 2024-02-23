@@ -18,7 +18,7 @@ import { DnDOrderDirective } from 'src/app/directives/order.directive';
 import { Observable, concatMap, forkJoin, from, mergeMap, of, switchMap } from 'rxjs';
 import { SubtableComponent } from '../../subtable/subtable.component';
 import { ISubtableValue } from 'src/app/Model/interfaces/ISubtableValue';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ICellRestriction } from 'src/app/Model/interfaces/ICellRestrictions';
 import { RowsRestrictionsService } from 'src/app/services/rows-restrictions.service';
 import { FieldRendererComponent } from '../data-table/fields/field-renderer/field-renderer.component';
@@ -85,23 +85,23 @@ export class FormComponent implements OnInit {
   @Input() row: any = { _id: '_tempId' };
   @Input() padding: string = '';
   @Input() closeButton: boolean = false;
+  @Input() componentAccesMode: 'byRoute' | 'bySelector' = 'byRoute';
   @Output() onCloseButton = new EventEmitter();
   @Output() columnsChange = new EventEmitter();
   @Output() formOperationEnd = new EventEmitter();
   @ViewChild("DnDContainer") DnDContainer!: ElementRef;
   @ViewChild("formElement") formElement!: ElementRef;
 
-  constructor(private rederer2: Renderer2, private permissionsService: PermissionsService, private tableService: TablesService, private activatedRoute: ActivatedRoute, private rowsRestrictionService: RowsRestrictionsService) { }
+  constructor(private router: Router, private rederer2: Renderer2, private permissionsService: PermissionsService, private tableService: TablesService, private activatedRoute: ActivatedRoute, private rowsRestrictionService: RowsRestrictionsService) { }
 
 
   ngOnInit(): void {
+
     if (!this.columns) {
       this.getColumnsFromServer();
     } else {
       this.initializeForm();
     }
-
-    this.checkFormPermissions();
   }
 
   disableFields() {
@@ -125,7 +125,7 @@ export class FormComponent implements OnInit {
             fieldsEditPermissions.forEach(
               (fp: { value: boolean, column: string }) => {
                 const control = this.form.controls[fp.column];
-                if(control && !fp.value){
+                if (control && !fp.value) {
                   control.disable();
                 }
               }
@@ -170,6 +170,7 @@ export class FormComponent implements OnInit {
     let orderedColumns = Object.keys(this.columns).sort((a, b) => this.columns[a].formOrder - this.columns[b].formOrder).map(k => this.columns[k]);
     this.columns = orderedColumns;
     this.columnsJson = this.getColumnsAsJson();
+    this.checkFormPermissions();
   }
 
   initializeAutocompleteRestrictions() {
@@ -195,19 +196,6 @@ export class FormComponent implements OnInit {
             }
           }
         );
-
-      // if (!this.row && !this.row?._id) {
-      //   return;
-      // }
-
-      // this.tableService.getRestrictionByIdAndColumn(this.module, this.table, currColumn._id, this.row._id)
-      //   .subscribe(
-      //     {
-      //       next: (res: any) => {
-      //         this.restriction.push(res);
-      //       }
-      //     }
-      //   )
     })
   }
 
@@ -244,10 +232,10 @@ export class FormComponent implements OnInit {
   getColumnsFromServer() {
     this.activatedRoute.params.subscribe(
       (params) => {
-        const module = params['module'] ? params['module'] : this.module;
-        const table = params['table'] ? params['table'] : this.table;
-        if (module && table) {
-          this.tableService.getAllColumns(module, table)
+        this.module = params['module'] ? params['module'] : this.module;
+        this.table = params['table'] ? params['table'] : this.table;
+        if (this.module && this.table) {
+          this.tableService.getAllColumns(this.module, this.table)
             .subscribe(
               {
                 next: (columnsData) => {
@@ -503,15 +491,14 @@ export class FormComponent implements OnInit {
       }
     );
     if (newRestrictions.length === 0 || !newRestrictions) {
-      this.rowCreationEnd({
-        _id: rowiId
-      })
+      this.rowCreationEnd({ _id: rowiId });
+      return;
     }
     this.tableService.updateRestrictions(this.module, this.table, newRestrictions)
       .subscribe(
         {
-          next: (result: any) => {
-            this.rowCreationEnd(result);
+          next: (_result: any) => {
+            this.rowCreationEnd({ _id: rowiId });
           },
           error: (error) => {
             this.loading = false;
@@ -527,6 +514,17 @@ export class FormComponent implements OnInit {
     console.log(result);
     this.loading = false;
     this.formOperationEnd.emit();
+    if (this.componentAccesMode === 'byRoute') {
+      this.router.navigate(['/formend'], {
+        state: {
+          row: result,
+          columns: this.columns,
+          module: this.module,
+          table: this.table,
+          restriction: this.restriction
+        }
+      });
+    }
   }
 
   submitConfiguration(event: Event) {

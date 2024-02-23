@@ -84,7 +84,7 @@
                         [(images)]="this.imagesFormData[column._id]"></eq-img-field>
                 </div>
 
-                <div *ngSwitchCase="'boolean'">
+                <div *ngSwitchCase="COLUMN_TYPES_ENUM.boolean">
                     <div class="form-check m-2">
                         <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"
                             formControlName="{{column._id}}">

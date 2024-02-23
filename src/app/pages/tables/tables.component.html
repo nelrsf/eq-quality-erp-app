@@ -32,7 +32,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="closeModal()"></button>
       </div>
       <div class="modal-body">
-        <eq-form [(columns)]="columnData" [module]="module" [table]="table" (formOperationEnd)="onCreatedRow()"></eq-form>
+        <eq-form [componentAccesMode]="'bySelector'" [(columns)]="columnData" [module]="module" [table]="table" (formOperationEnd)="onCreatedRow()"></eq-form>
       </div>
     </div>
   </div>

@@ -12,7 +12,7 @@
 			[ngbTypeahead]="search" [inputFormatter]="resultFormatter" [resultFormatter]="resultFormatter" />
 
 		<div *ngIf="columnMetadata">
-			<eq-form [row]="formItem" [module]="mapElement.moduleRef" [table]="mapElement.tableRef"
+			<eq-form [componentAccesMode]="'bySelector'" [row]="formItem" [module]="mapElement.moduleRef" [table]="mapElement.tableRef"
 				[columns]="columnMetadata"></eq-form>
 		</div>
 

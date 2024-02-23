@@ -1,0 +1,99 @@
+<div *ngIf="loading">
+    <eq-loading></eq-loading>
+</div>
+
+<span class="text-success my-2 h5">
+    Formulario enviado
+</span>
+<div #FormContainer *ngIf="row" class="fields-container d-flex w-100">
+    <div *ngFor="let column of columns" class="field d-flex align-items-center">
+        <div [ngSwitch]="column.type">
+            <div *ngSwitchCase="COLUMN_TYPES_ENUM.string" class="data-container">
+                    <label class="my-1 control-label">
+                        {{column.columnName}}
+                    </label>
+                    <span *ngIf="!column.isRestricted">
+                        {{row[column?._id]}}
+                    </span>
+                    <span *ngIf="column.isRestricted">
+                        {{row[column?.columnRestriction]}}
+                    </span>
+            </div>
+
+            <div *ngSwitchCase="COLUMN_TYPES_ENUM.date">
+                <label class="my-1 control-label">
+                    {{column.columnName}}
+                </label>
+                <span>
+                    {{row[column?._id] | date}}
+                </span>
+            </div>
+
+            <div *ngSwitchCase="COLUMN_TYPES_ENUM.number">
+                <label class="my-1 control-label">
+                    {{column.columnName}}
+                </label>
+                <span *ngIf="!column.isRestricted">
+                    {{row[column?._id]}}
+                </span>
+                <span *ngIf="column.isRestricted">
+                    {{row[column?.columnRestriction]}}
+                </span>
+            </div>
+
+
+            <div *ngSwitchCase="COLUMN_TYPES_ENUM.file">
+                <label class="my-1 control-label">
+                    {{column.columnName}}
+                </label>
+                <span>
+                    <a [href]="row[column?._id]">Descargar</a>
+                </span>
+            </div>
+
+
+            <div *ngSwitchCase="COLUMN_TYPES_ENUM.image">
+                <label class="my-1 control-label">
+                    {{column.columnName}}
+                </label>
+                <div *ngFor="let img of row[column?._id]">
+                    <img [src]="filesUrl+img" alt="img" class="d-flex m-2" [width]="50">
+                </div>
+            </div>
+
+            <div *ngSwitchCase="COLUMN_TYPES_ENUM.boolean">
+                <label class="my-1 control-label">
+                    {{column.columnName}}
+                </label>
+                <span>
+                    {{row[column?._id]}}
+                </span>
+            </div>
+
+            <div *ngSwitchCase="COLUMN_TYPES_ENUM.list">
+                <label class="my-1 control-label">
+                    {{column.columnName}}
+                </label>
+                <div *ngFor="let r of row[column?._id]" class="d-contents">
+                    <span>{{r}}</span>
+                </div>
+            </div>
+
+            <div *ngSwitchCase="COLUMN_TYPES_ENUM.table">
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<hr class="hr" />
+
+<div class="buttons d-flex justify-content-between align-items-center w-100">
+    <button type="submit" class="btn btn-primary d-flex align-items-center">
+        <span class="mx-1">Nuevo Registro</span>
+    </button>
+    <button type="button" class="btn btn-outline-primary ms-2 d-flex align-items-center" (click)="shareRow()">
+        <fa-icon [icon]="icons.share"></fa-icon>
+    </button>
+</div>

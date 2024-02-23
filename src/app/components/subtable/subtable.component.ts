@@ -97,29 +97,22 @@ export class SubtableComponent implements AfterViewInit {
   }
 
   getEditPermission() {
-    // Primero, chequeamos si el usuario es el propietario.
     return this.permissionsService.isOwner(this.data.module).pipe(
       switchMap(isOwner => {
         if (isOwner) {
-          // Si el usuario es propietario, entonces tiene permisos de edición.
           return of(true);
         } else {
-          // Si no es propietario, chequeamos si es administrador.
           return this.permissionsService.isAdmin(this.data.module).pipe(
             switchMap(isAdmin => {
               if (isAdmin) {
-                // Si el usuario es administrador, entonces tiene permisos de edición.
                 return of(true);
               } else {
 
-                // Si no es administrador, necesitamos verificar ambos, canEditColumn y canEditTable.
                 const canEditColumnObs = this.permissionsService.canEditColumn(this.data.valueHost.module, this.data.valueHost.table, this.data.valueHost.column);
                 const canEditTableObs = this.permissionsService.canEditTable(this.data.module, this.data.table);
 
-                // Utilizamos combineLatest para obtener ambos valores simultáneamente.
                 return combineLatest([canEditColumnObs, canEditTableObs]).pipe(
                   map(([canEditColumn, canEditTable]) => {
-                    // El resultado final depende de ambos permisos.
                     return canEditColumn && canEditTable;
                   })
                 );
