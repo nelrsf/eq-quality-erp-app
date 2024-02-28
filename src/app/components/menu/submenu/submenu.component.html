@@ -12,9 +12,10 @@
             <ng-template #tableTemplate>
                 <a routerLinkActive="active" class="menu-item nav-link"
                     routerLink="/tables/data/{{moduleName}}/{{table.name}}" aria-current="page">
-                    <span class="fs-8 text-capitalize">
-                        {{table.label}}
-                    </span>
+                    <div class="d-flex justify-content-between me-2">
+                        <span class="fs-6 text-uppercase">{{table.label}}</span>
+                        <fa-icon [icon]="table.getIcon()"></fa-icon>
+                    </div>
                 </a>
             </ng-template>
             <ng-template #folderTemplate>

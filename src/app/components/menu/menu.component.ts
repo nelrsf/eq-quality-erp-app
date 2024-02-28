@@ -4,6 +4,9 @@ import { RouterModule } from '@angular/router';
 import { IModule } from 'src/app/Model/interfaces/IModule';
 import { MenuService } from './menu.service';
 import { SubmenuComponent } from './submenu/submenu.component';
+import { Module } from 'src/app/Model/entities/Module';
+import { ModulesFactory } from 'src/app/pages/modules/modulesFactory';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
   selector: 'eq-menu',
@@ -13,19 +16,21 @@ import { SubmenuComponent } from './submenu/submenu.component';
   imports: [
     CommonModule,
     RouterModule,
-    SubmenuComponent
+    SubmenuComponent,
+    FontAwesomeModule
   ]
 })
 export class MenuComponent implements OnInit {
 
-  modules!: IModule[];
+  modules!: Module[];
+  modulesFactory: ModulesFactory = new ModulesFactory();
 
   constructor(private menuService: MenuService) { }
 
   ngOnInit(): void {
     this.menuService.getModules().subscribe(
       (modulesTables: any) => {
-        this.modules = modulesTables;
+        this.modules = this.modulesFactory.convertManyEntities(modulesTables);
       }
     );
   }

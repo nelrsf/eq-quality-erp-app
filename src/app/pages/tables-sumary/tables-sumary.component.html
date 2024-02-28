@@ -5,8 +5,8 @@
 <eq-breadcrumb [linkGetterFuntion]="getLinkFunction" [module]="module" [mainRoute]="mainRoute"></eq-breadcrumb>
 
 <eq-buttons-pad [buttonsList]="buttonsList" (_newRow)="openCreateModal()"
-    (_addFolder)="openCreateFolder()"></eq-buttons-pad>
-<eq-grid-view [linkGetterFuntion]="getLinkFunction" [data]="data" (delete)="openDeleteModal($event)"
+    (_addFolder)="openCreateFolder()" (_addForm)="openCreateEntity('form')" (_addMap)="openCreateEntity('map')"></eq-buttons-pad>
+<eq-grid-view [data]="data" (delete)="openDeleteModal($event)"
     (configItem)="openCustomizerTable($event)" [moduleName]="module"></eq-grid-view>
 
 <!-- Customize Table -->
@@ -102,6 +102,31 @@
                     </div>
                     <hr>
                     <button type="submit" class="btn btn-primary">Crear folder</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!-- Create Entity -->
+<ng-template #createEntity let-modal>
+    <div class="m-0 modal-dialog mw-100">
+        <div class="modal-content">
+            <div class="modal-header px-3 py-2">
+                <h5 class="modal-title m-0" id="exampleModalLabel">Crear nueva vista</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="closeModal()"></button>
+            </div>
+            <div class="modal-body">
+                <form (submit)="createNewEntity()">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Nombre</label>
+                        <input type="text" class="form-control" placeholder="" name="newModule"
+                            [(ngModel)]="newEntity.name">
+                        <div class="mt-2" columnSelector [hideColumnLevel]="true" (tableChange)="tableSelectorChange($event)" (moduleChange)="moduleSelectorChange($event)"></div>
+                    </div>
+                    <hr>
+                    <button type="submit" class="btn btn-primary">Crear</button>
                 </form>
             </div>
         </div>

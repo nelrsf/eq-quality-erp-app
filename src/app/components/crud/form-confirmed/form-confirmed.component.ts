@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { ColumnTypes, IColumn } from "src/app/Model/interfaces/IColumn";
 import { LoadingComponent } from "../../miscelaneous/loading/loading.component";
 import { TablesService } from "src/app/pages/tables/tables.service";
@@ -28,7 +28,7 @@ export class FormConfirmedComponent implements OnInit {
 
     COLUMN_TYPES_ENUM = ColumnTypes;
     row: any;
-    columns: Array<any> = [];
+    columns: Array<IColumn> = [];
     module!: string;
     table!: string;
     loading: boolean = false;
@@ -37,77 +37,26 @@ export class FormConfirmedComponent implements OnInit {
         share: faShare
     }
 
-    constructor(private tableService: TablesService) { }
+    constructor(private router: Router) { }
 
     ngOnInit(): void {
         this.row = history.state['row'];
         this.columns = history.state['columns'];
         this.module = history.state['module'];
         this.table = history.state['table'];
-        const restriction = history.state['restriction'];
-
-        if (!this.row?._id || !this.columns) {
-            return
-        }
-
-        this.loading = true;
-        this.tableService.getRowById(this.module, this.table, this.row._id)
-            .subscribe(
-                {
-                    next: (newRow: any) => {
-                        this.row = newRow;
-                        this.getRestrictedFields(this.row._id, restriction)
-                        this.loading = false;
-                    },
-                    error: (error: any) => {
-                        console.log(error);
-                    }
-                }
-            )
 
     }
 
-    getRestrictedFields(rowId: string, restriction: Array<ICellRestriction>) {
-        const restrictedColumnsObs = from(restriction);
-        restrictedColumnsObs.pipe(
-            concatMap(
-                (cr: ICellRestriction) => {
-                    if (!cr?.column.moduleRestriction || !cr?.column.tableRestriction) {
-                        return of('')
-                    }
-                    if (!cr.rowIdRestriction) {
-                        return of('')
-                    }
-                    return this.tableService.getRowById(cr.column.moduleRestriction, cr.column.tableRestriction, cr.rowIdRestriction);
-                }
-            )
-        ).subscribe(
-            {
-                next: (result: any) => {
-                    restriction.forEach(
-                        (f: ICellRestriction) => {
-                            if(!result){
-                                return;
-                            }
-                            this.row[f.column.columnRestriction as string] =  result[f.column.columnRestriction as string];
-                        })
-                    this.loading = false;
-                },
-                error: (error: any) => {
-                    console.log(error);
-                    this.loading = false;
-                },
-                complete: () => {
-                    this.loading = false;
-                }
-            }
-        )
-    }
 
     shareRow(){
         const text = this.formContainer.nativeElement.innerText;
         navigator.share({
             text: text
         })
+    }
+
+    goToNewForm(){
+        const newFormMuRL = '/form/' + this.module + '/' + this.table;
+        this.router.navigate([newFormMuRL])
     }
 }

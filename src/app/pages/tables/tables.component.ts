@@ -8,11 +8,11 @@ import { ChangesTrackerService } from 'src/app/services/changes-tracker.service'
 import { TablesService } from './tables.service';
 
 import { PermissionsService } from 'src/app/services/permissions.service';
-import { buttonType } from 'src/app/components/crud/buttons-pad/buttons-pad.component';
 import { UserService } from 'src/app/services/user.service';
 import { IUser } from 'src/app/Model/interfaces/IUser';
 import { Observable, concatMap, forkJoin, from, map, of, switchMap, take } from 'rxjs';
 import { ISubtableValue } from 'src/app/Model/interfaces/ISubtableValue';
+import { buttonType } from 'src/app/components/crud/buttons-pad/Ibutton';
 
 @Component({
   selector: 'eq-tables',

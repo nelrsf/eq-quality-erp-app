@@ -1,13 +1,19 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { ITable } from 'src/app/Model/interfaces/ITable';
+import { ITable, TableModes } from 'src/app/Model/interfaces/ITable';
 import { TablesService } from '../tables/tables.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, forkJoin, takeUntil } from 'rxjs';
 import { PermissionsService } from 'src/app/services/permissions.service';
-import { buttonType } from 'src/app/components/crud/buttons-pad/buttons-pad.component';
 import { UserService } from 'src/app/services/user.service';
 import { IUser } from 'src/app/Model/interfaces/IUser';
+import { buttonType } from 'src/app/components/crud/buttons-pad/Ibutton';
+import { IModule } from 'src/app/Model/interfaces/IModule';
+import { faFolder, faMapLocationDot, faTable } from '@fortawesome/free-solid-svg-icons';
+import { faWpforms } from '@fortawesome/free-brands-svg-icons';
+import { Form, Table } from 'src/app/Model/entities/Table';
+import { TablesFactory } from './tables-factory';
+import { Module } from 'src/app/Model/entities/Module';
 
 @Component({
   selector: 'eq-tables-sumary',
@@ -21,20 +27,31 @@ export class TablesSumaryComponent implements OnInit, OnDestroy {
   @ViewChild('modalError') modalError!: ElementRef;
   @ViewChild('customizeTable') customizeTable!: ElementRef;
   @ViewChild('createFolder') createFolder!: ElementRef;
+  @ViewChild('createEntity') createEntity!: ElementRef;
 
   module!: string;
   route!: string;
   loading: boolean = false;
   newFolderName!: string;
+  newEntity!: Table;
   confirmDeleteTableText!: string;
   currentTable!: string;
-  data!: ITable[];
+  data!: Table[];
   tableData!: ITable;
   mainRoute: string = "";
   errorMessage!: string;
   buttonsList: buttonType[] = [];
-
+  tableViewMode!: TableModes;
   newTableName!: string;
+  tablesFactory: TablesFactory = new TablesFactory();
+
+
+  icons = {
+    table: faTable,
+    form: faWpforms,
+    map: faMapLocationDot,
+    folder: faFolder
+  }
 
   private unsubscribeAll = new Subject<void>();
   private currentTableId!: string;
@@ -63,14 +80,18 @@ export class TablesSumaryComponent implements OnInit, OnDestroy {
       )
   }
 
+
+  addButtonIfDoesntExist(buttonTag: buttonType) {
+    if (!this.buttonsList.includes(buttonTag)) {
+      this.buttonsList.push(buttonTag);
+    }
+  }
+
   setButtonsFunctions(module: string) {
     const subscriberCallback = () => {
-      if (!this.buttonsList.includes('add')) {
-        this.buttonsList.push('add');
-      }
-      if (!this.buttonsList.includes('add-folder')) {
-        this.buttonsList.push('add-folder');
-      }
+      this.addButtonIfDoesntExist('add-entity');
+      this.addButtonIfDoesntExist('add');
+      this.addButtonIfDoesntExist('add-folder');
     }
 
     this.permissionsService.canEditTable(module, this.route)
@@ -122,7 +143,7 @@ export class TablesSumaryComponent implements OnInit, OnDestroy {
     this.tableService.getTablesByRoute(module, route).subscribe(
       {
         next: (result: any) => {
-          this.data = result;
+          this.data = this.tablesFactory.convertManyEntities(result);
           if (this.data.length > 0) {
             this.mainRoute = this.data[0].route ? this.data[0].route : '';
           }
@@ -144,7 +165,7 @@ export class TablesSumaryComponent implements OnInit, OnDestroy {
     this.tableService.getAllTables(module).subscribe(
       {
         next: (result: any) => {
-          this.data = result;
+          this.data = this.tablesFactory.convertManyEntities(result);;
           this.loading = false;
         },
         error: (error: any) => {
@@ -162,6 +183,51 @@ export class TablesSumaryComponent implements OnInit, OnDestroy {
     this.ngbModal.open(this.createFolder);
   }
 
+  openCreateEntity(viewMode: TableModes) {
+    this.tableViewMode = viewMode;
+    const enityType = this.tablesFactory.entities.get(viewMode);
+    if(enityType){
+      this.newEntity = new enityType();
+      this.newEntity.viewMode = viewMode;
+      this.ngbModal.open(this.createEntity);
+    }
+  }
+
+  moduleSelectorChange(module: Module){
+    if(this.newEntity instanceof Form){
+      this.newEntity.targetModule = module.name;
+    } 
+  }
+
+  tableSelectorChange(table: Table){
+    if(this.newEntity instanceof Form){
+      this.newEntity.targetTable = table.name;
+    } 
+  }
+  
+  createNewEntity() {
+    if (!this.newEntity || !this.newEntity?.name) {
+      return;
+    }
+    this.closeModal();
+    this.loading = true;
+    this.tableService.createTable(this.module, this.newEntity.name, this.route, this.newEntity)
+      .subscribe(
+        {
+          next: (data: any) => {
+            this.data = this.tablesFactory.convertManyEntities(data);
+            this.loading = false;
+          },
+          error: (error: any) => {
+            this.loading = false;
+            this.errorMessage = error.message ? error.message : 'Error desconocido';
+            this.openErrorModal();
+            console.log(error);
+          }
+        }
+      );
+  }
+
   createNewFolder() {
     if (!this.newFolderName) {
       return;
@@ -172,7 +238,7 @@ export class TablesSumaryComponent implements OnInit, OnDestroy {
       .subscribe(
         {
           next: (data: any) => {
-            this.data = data;
+            this.data = this.tablesFactory.convertManyEntities(data);
             this.loading = false;
           },
           error: (error: any) => {
@@ -205,7 +271,7 @@ export class TablesSumaryComponent implements OnInit, OnDestroy {
       .subscribe(
         {
           next: (data: any) => {
-            this.data = data;
+            this.data = this.tablesFactory.convertManyEntities(data);
             this.loading = false;
           },
           error: (error: any) => {
@@ -227,15 +293,15 @@ export class TablesSumaryComponent implements OnInit, OnDestroy {
   }
 
 
-  openDeleteModal(table: ITable) {
+  openDeleteModal(table: ITable | IModule) {
     this.currentTable = table?.label ? table.label : 'Eliminar tabla';
     this.currentTableId = table?.name ? table?.name : '';
     this.confirmDeleteTableText = "";
     this.ngbModal.open(this.deleteTable);
   }
 
-  openCustomizerTable(table: ITable) {
-    this.tableData = table;
+  openCustomizerTable(table: ITable | IModule) {
+    this.tableData = table as ITable;
     this.ngbModal.open(this.customizeTable, { size: 'xl' });
   }
 
@@ -277,5 +343,17 @@ export class TablesSumaryComponent implements OnInit, OnDestroy {
           }
         }
       );
+  }
+
+  getIcon(table: ITable) {
+    if (table.isFolder) {
+      return this.icons.folder;
+    } else if (table?.viewMode === 'form') {
+      return this.icons.form;
+    } else if (table.viewMode === 'map') {
+      return this.icons.map;
+    } else {
+      return this.icons.table;
+    }
   }
 }

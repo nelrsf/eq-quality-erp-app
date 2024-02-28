@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, Type, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { filter, Subject, takeUntil } from 'rxjs';
+import { debounce, distinctUntilChanged, filter, Subject, takeUntil } from 'rxjs';
 import { ICellRestriction, IColumnRestriction } from 'src/app/Model/interfaces/ICellRestrictions';
 import { ColumnTypes, IColumn } from 'src/app/Model/interfaces/IColumn';
 import { RowsRestrictionsService } from 'src/app/services/rows-restrictions.service';
@@ -49,20 +49,20 @@ export class FieldRendererComponent implements AfterViewInit, OnDestroy, OnChang
     }
     if (changes.hasOwnProperty('restriction') && this.component?.instance) {
       const restriction = changes['restriction'].currentValue;
-      if(restriction){
+      if (restriction) {
         this.component.instance.restriction = restriction;
       }
     }
     if (changes.hasOwnProperty('restrictions') && this.component?.instance) {
       const restrictions = changes['restrictions'].currentValue;
-      if(Array.isArray(restrictions) && restrictions.length > 0){
+      if (Array.isArray(restrictions) && restrictions.length > 0) {
         this.component.instance.dataRestrictions = changes['restrictions'].currentValue;
       }
 
     }
     if (changes.hasOwnProperty('editable') && this.component?.instance) {
       const editable = changes['editable'].currentValue;
-      if(editable !== undefined || editable !== null){
+      if (editable !== undefined || editable !== null) {
         this.component.instance.editable = changes['editable'].currentValue;
       }
 
@@ -82,7 +82,8 @@ export class FieldRendererComponent implements AfterViewInit, OnDestroy, OnChang
 
   subscribeToDataRestrictionChanges() {
     this.rowsRestriction.restrictionsDataSubject
-      .pipe(filter(m => m.column?._id === this.column?._id))
+      .pipe(
+        filter(m => m.column?._id === this.column?._id))
       .subscribe(
         (columnRestriction: IColumnRestriction) => {
           this.restrictions = columnRestriction.restrictions;
@@ -101,13 +102,15 @@ export class FieldRendererComponent implements AfterViewInit, OnDestroy, OnChang
     }
     const checkRestrictionsObserver = this.checkRestriction();
     if (checkRestrictionsObserver) {
-      checkRestrictionsObserver.subscribe(
-        (value: any) => {
-          this.value = value;
-          this.valueChange.emit(this.value);
-          this.component.instance.value = value;
-        }
-      );
+      checkRestrictionsObserver
+        .pipe(distinctUntilChanged())
+        .subscribe(
+          (value: any) => {
+            this.value = value;
+            this.valueChange.emit(this.value);
+            this.component.instance.value = value;
+          }
+        );
     }
     this.component.instance.dataRestrictions = this.restrictions;
     this.component.instance.isRestricted = this.column?.isRestricted;
@@ -240,6 +243,7 @@ export class FieldRendererComponent implements AfterViewInit, OnDestroy, OnChang
   subscribeToForeignRestrictionChange() {
     const onRestrictionsChange = this.rowsRestriction.onRestrictionsChange;
     onRestrictionsChange.pipe(
+      distinctUntilChanged((prev, curr) => { return curr.rowIdRestriction === this.restriction?.rowIdRestriction }),
       filter(this.filterForeignRestrictions),
       takeUntil(this.unsubscribeAll)
     )
@@ -259,7 +263,7 @@ export class FieldRendererComponent implements AfterViewInit, OnDestroy, OnChang
             this.component.instance.value = "";
             return;
           }
-          this.checkRestriction()?.subscribe(
+          this.checkRestriction()?.pipe(distinctUntilChanged()).subscribe(
             (value: any) => {
               this.component.instance.value = value;
               this.valueChange.emit(value);

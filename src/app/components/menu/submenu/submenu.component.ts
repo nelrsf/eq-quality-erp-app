@@ -5,6 +5,7 @@ import { MenuComponent } from "../menu.component";
 import { RouterModule } from "@angular/router";
 import { faFolder } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { Table } from "src/app/Model/entities/Table";
 
 @Component(
     {
@@ -20,7 +21,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     }
 )
 export class SubmenuComponent {
-    @Input() submenu!: ITable;
+    @Input() submenu!: Table;
     @Input() moduleName!: string;
 
     icons = {

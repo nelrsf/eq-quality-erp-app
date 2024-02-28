@@ -107,6 +107,7 @@ export class DataTableComponent implements OnInit, AfterViewInit {
   columnsProperties!: IColumn[];
   columnsPropertiesObj!: any;
   modalDisabled: boolean = false;
+  
   createSubtableDataFcn: (rowId: string, column: IColumn, rows: any) => ISubtableValue = (rowId: string, column: IColumn, rows: any): ISubtableValue => {
     return {
       column: column.linkedTable?.column ? column.linkedTable?.column : '',
@@ -397,11 +398,7 @@ export class DataTableComponent implements OnInit, AfterViewInit {
   }
 
   getCellRestriction(column: IColumn, rowId: string) {
-    const restrictions = this.rows.find(
-      (row: any) => {
-        return Object.hasOwn(row, "__rows_restrictions__data__");
-      }
-    )
+    const restrictions = this.rowsRestrictionService.findRowsRestrictions(this.rows);
     if (!column) {
       return;
     }

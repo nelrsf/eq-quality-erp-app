@@ -1,5 +1,5 @@
 <div *ngIf="loading">
-    <eq-loading></eq-loading>
+  <eq-loading></eq-loading>
 </div>
 <eq-breadcrumb *ngIf="showBreadCrumb" [module]="getModule()"></eq-breadcrumb>
 <div class="d-inline-flex justify-content-end w-100">
@@ -16,6 +16,8 @@
     </a>
   </span>
 </div>
-<eq-buttons-pad *ngIf="isEditable"  [buttonsList]="['add', 'delete','save']" (_newRow)="createEmptyRow()"
-    (_deleteRows)="deleteRows()" (_updateRows)="saveRows()"></eq-buttons-pad>
-<eq-data-table (rowsSelectionChange)="rowsSelectionChange($event)" (openTableViewerEvent)="openTableViewer($event)"></eq-data-table>
+<eq-buttons-pad *ngIf="isEditable" [buttonsList]="['add', 'add-row', 'delete','save']" (_addEmptyRow)="createEmptyRow()"
+  (_deleteRows)="deleteRows()" (_updateRows)="saveRows()" (_newRow)="addNewRow()"></eq-buttons-pad>
+<eq-data-table (rowsSelectionChange)="rowsSelectionChange($event)"
+  (openTableViewerEvent)="openTableViewer($event)"></eq-data-table>
+

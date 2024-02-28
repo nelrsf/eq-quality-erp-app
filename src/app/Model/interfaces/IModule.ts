@@ -1,3 +1,4 @@
+import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import { IPermission } from "./IPermission";
 
 export interface IModule {
@@ -7,5 +8,7 @@ export interface IModule {
     tables: any[],
     route?: string,
     owner?: string,
-    permissions: IPermission
+    permissions: IPermission,
+    getLink: (module: string) => string;
+    getIcon: () => IconDefinition;
 }

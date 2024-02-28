@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faArrowUpRightFromSquare, faCogs, faEdit, faFileImport, faFolderTree, faInfoCircle, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faArrowUpRightFromSquare, faCircle, faCogs, faEdit, faFileImport, faFolderTree, faInfoCircle, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IModule } from 'src/app/Model/interfaces/IModule';
 import { ITable } from 'src/app/Model/interfaces/ITable';
@@ -11,6 +11,9 @@ import { ShowIfIsAdmin } from 'src/app/directives/permissions/show-if-is-admin.d
 import { ShowIfIsOwner } from 'src/app/directives/permissions/show-if-is-owner.directive';
 import { ShowIfCanDelete } from 'src/app/directives/permissions/show-if-can-delete.directive';
 import { TooltipDirective } from 'src/app/directives/tooltip.directive';
+import { Table } from 'src/app/Model/entities/Table';
+import { Module } from 'src/app/Model/entities/Module';
+
 
 
 @Component({
@@ -36,10 +39,10 @@ export class GridViewComponent {
   @ViewChild('navigatorModal') navigatorModal!: ElementRef;
   @ViewChild('infoModal') infoModal!: ElementRef;
 
-  @Input() data!: Array<IModule | ITable>;
+  @Input() data!: Array<Module | Table>;
   @Input() moduleName!: string;
 
-  @Input() linkGetterFuntion!: (value: string | undefined, object?: any) => string
+  // @Input() linkGetterFuntion!: (value: string | undefined, object?: any) => string
 
   @Output() delete = new EventEmitter<IModule | ITable>();
   @Output() configItem = new EventEmitter<IModule | ITable>();
@@ -55,7 +58,8 @@ export class GridViewComponent {
     delete: faTrash,
     cogs: faCogs,
     move: faFileImport,
-    info: faInfoCircle
+    info: faInfoCircle,
+    default: faCircle
   }
 
   onDeleteItem(item: ITable | IModule) {
@@ -98,6 +102,14 @@ export class GridViewComponent {
     this.infoText = item.description ? item.description: '';
     this.infoTitle = item.label ? item.label: '';
     this.ngbModal.open(this.infoModal);
+  }
+
+  getArrayDataAsTable(data: (ITable | IModule)[]){
+    return data as ITable[];
+  }
+  
+  getDataAsTable(data: ITable | IModule){
+    return data as ITable;
   }
 
 }

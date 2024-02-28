@@ -25,8 +25,9 @@ export class ColumnSelector implements OnInit {
     @Input() table!: ITable;
     @Input() column!: IColumn;
     @Input() data!: { module: string, table: string, column: string } | undefined;
-    @Input() tableFilterCallback: (table: ITable, columnData?: IColumn) => boolean = (table: ITable, columnData?: IColumn) => !table.isFolder;
+    @Input() tableFilterCallback: (table: ITable, columnData?: IColumn) => boolean = (table: ITable, columnData?: IColumn) => !table.isFolder && (table.viewMode === 'default' || !table.viewMode);
     @Input() columnData!: IColumn;
+    @Input() hideColumnLevel: boolean = false;
     @Output() moduleChange = new EventEmitter<IModule>();
     @Output() tableChange = new EventEmitter<ITable>();
     @Output() columnChange = new EventEmitter<IColumn>();
@@ -117,6 +118,9 @@ export class ColumnSelector implements OnInit {
     }
 
     searchColumns() {
+        if (this.hideColumnLevel) {
+            return;
+        }
         if (!this.table?.name) {
             return
         }

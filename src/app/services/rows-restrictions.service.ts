@@ -66,9 +66,7 @@ export class RowsRestrictionsService {
       rowIdRestriction: data.rowIdRestriction,
       value: data.value
     }
-    let restrictions = rows.find(r => {
-      return Object.hasOwn(r, "__rows_restrictions__data__")
-    });
+    let restrictions = this.findRowsRestrictions(rows)
     if (!restrictions) {
       restrictions = {
         __rows_restrictions__data__: "rows_restrictions",
@@ -85,10 +83,14 @@ export class RowsRestrictionsService {
     restrictions.data.push(newRestriction);
   }
 
-  deleteRestriction(rowId: string, rows: any[], column: IColumn) {
-    let restrictions = rows.find(r => {
+  findRowsRestrictions(rows: Array<any>) {
+    return rows.find(r => {
       return Object.hasOwn(r, "__rows_restrictions__data__")
     });
+  }
+
+  deleteRestriction(rowId: string, rows: any[], column: IColumn) {
+    let restrictions = this.findRowsRestrictions(rows);
     if (!restrictions) {
       return
     }

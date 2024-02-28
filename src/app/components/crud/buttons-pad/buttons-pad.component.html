@@ -7,41 +7,29 @@
             </button> -->
         </div>
         <div class="p-1 buttons-wrapper d-none d-md-block">
-            <div class="button-div" *ngIf="isDisabled('add-folder')">
-                <button type="button" [eqTooltip]="'Añadir folder'" class="btn btn-outline-secondary" (click)="addFolder()">
-                    <fa-icon [icon]="icons.addFolder"></fa-icon>
+            <div *ngFor="let button of getActiveButtons()" class="button-div">
+                <button *ngIf="!isDropDown(button)" type="button" [eqTooltip]="button.tooltip"
+                    class="btn btn-outline-secondary" (click)="clickButton($event, button)">
+                    <fa-icon [icon]="button.icon"></fa-icon>
                 </button>
-            </div>
-            <div class="button-div" *ngIf="isDisabled('delete')">
-                <button type="button" [eqTooltip]="'Eliminar'" class="btn btn-outline-danger" (click)="deleteRows()">
-                    <fa-icon [icon]="icons.delete"></fa-icon>
-                </button>
-            </div>
-            <div class="button-div" *ngIf="isDisabled('add')">
-                <button type="button" [eqTooltip]="'Agregar'"
-                    class="btn btn-outline-secondary" (click)="createRow()">
-                    <fa-icon [icon]="icons.new"></fa-icon>
-                </button>
-            </div>
-            <div class="button-div" *ngIf="isDisabled('save')">
-                <button type="button" [eqTooltip]="'Guardar cambios'"
-                    class="btn btn-outline-secondary" (click)="editRows()">
-                    <fa-icon [icon]="icons.update"></fa-icon>
-                </button>
-            </div>
-            
-            <div class="button-div" *ngIf="isDisabled('add-column')">
-                <button type="button" [eqTooltip]="'Nueva columna'"
-                    class="btn btn-outline-secondary" (click)="createColumn()">
-                    <fa-icon [icon]="icons.newColumn"></fa-icon>
-                </button>
+
+                <div *ngIf="isDropDown(button)" ngbDropdown class="d-inline-block">
+                    <button type="button" class="btn btn-outline-secondary" id="dropdownBasic1" ngbDropdownToggle>
+                        <fa-icon [icon]="button.icon"></fa-icon>
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1" class="p-2">
+                        <a *ngFor="let option of getDropDownOptions(button)" role="button" ngbDropdownItem
+                            class="d-flex nav-link text-secondary" (click)="clickButton($event, option)">
+                            <div class="opt-icon">
+                                <fa-icon [icon]="option.icon"></fa-icon>
+                            </div>
+                            <span class="mx-2">{{option.text}}</span>
+                        </a>
+                    </div>
+                </div>
+
             </div>
 
-            <div class="button-div" *ngIf="isDisabled('update-column')">
-                <button type="button" [eqTooltip]="'Actualizar Columnas'" class="btn btn-outline-secondary" (click)="updateColumn()">
-                    <fa-icon [icon]="icons.refreshColumns"></fa-icon>
-                </button>
-            </div>
         </div>
         <div *ngIf="buttonsList.length !== 0" class="p-1 buttons-wrapper d-block d-md-none">
             <div class="dropdown">
@@ -58,54 +46,34 @@
         <div class="modal-content">
             <div class="modal-body">
                 <ul class="list-group">
-                    <li *ngIf="isDisabled('delete')" class="list-group-item">
-                        <a role="button" class="d-flex nav-link text-danger" (click)="deleteRows()">
+                    <li *ngFor="let button of getActiveButtons()" class="list-group-item">
+                        <a *ngIf="!isDropDown(button)" role="button" class="d-flex nav-link text-secondary" (click)="clickButton($event, button)">
                             <div class="opt-icon">
-                                <fa-icon [icon]="icons.delete"></fa-icon>
+                                <fa-icon [icon]="button.icon"></fa-icon>
                             </div>
-                            <span class="mx-2">Eliminar</span>
+                            <span class="mx-2">{{button.text}}</span>
                         </a>
-                    </li>
-                    <li *ngIf="isDisabled('add-folder')" class="list-group-item">
-                        <a role="button" class="d-flex nav-link" (click)="addFolder()">
-                            <div class="opt-icon">
-                                <fa-icon [icon]="icons.addFolder"></fa-icon>
+
+                        <div *ngIf="isDropDown(button)" ngbDropdown class="d-inline-block">
+                            <a role="button" class="d-flex align-items-center nav-link text-secondary" ngbDropdownToggle>
+                                <div class="opt-icon">
+                                    <fa-icon [icon]="button.icon"></fa-icon>
+                                </div>
+                                <span class="mx-2">{{button.text}}</span>
+                            </a>
+                            <div ngbDropdownMenu class="p-2">
+                                <a *ngFor="let option of getDropDownOptions(button)" role="button" ngbDropdownItem
+                                    class="d-flex nav-link text-secondary" (click)="clickButton($event, option)">
+                                    <div class="opt-icon">
+                                        <fa-icon [icon]="option.icon"></fa-icon>
+                                    </div>
+                                    <span class="mx-2">{{option.text}}</span>
+                                </a>
                             </div>
-                            <span class="mx-2">Nuevo Folder</span>
-                        </a>
+                        </div>
                     </li>
-                    <li *ngIf="isDisabled('add')" class="list-group-item">
-                        <a role="button" class="d-flex nav-link" (click)="createRow()">
-                            <div class="opt-icon">
-                                <fa-icon [icon]="icons.new"></fa-icon>
-                            </div>
-                            <span class="mx-2">Agregar</span>
-                        </a>
-                    </li>
-                    <li *ngIf="isDisabled('save')" class="list-group-item">
-                        <a role="button" class="d-flex nav-link" (click)="editRows()">
-                            <div class="opt-icon">
-                                <fa-icon [icon]="icons.update"></fa-icon>
-                            </div>
-                            <span class="mx-2">Guardar cambios</span>
-                        </a>
-                    </li>
-                    <li *ngIf="isDisabled('add-column')" class="list-group-item">
-                        <a role="button" class="d-flex nav-link" (click)="createColumn()">
-                            <div class="opt-icon">
-                                <fa-icon [icon]="icons.newColumn"></fa-icon>
-                            </div>
-                            <span class="mx-2">Nueva columna</span>
-                        </a>
-                    </li>
-                    <li *ngIf="isDisabled('update-column')" class="list-group-item">
-                        <a role="button" class="d-flex nav-link" (click)="updateColumn()">
-                            <div class="opt-icon">
-                                <fa-icon [icon]="icons.refreshColumns"></fa-icon>
-                            </div>
-                            <span class="mx-2">Actualizar columnas</span>
-                        </a>
-                    </li>
+
+
                 </ul>
             </div>
         </div>

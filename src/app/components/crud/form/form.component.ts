@@ -407,7 +407,7 @@ export class FormComponent implements OnInit {
       .subscribe(
         {
           next: (response: any) => {
-            this.saveRestrictions(id)
+            this.rowCreationEnd(this.row);
           },
           error: (error) => {
             this.loading = false;
@@ -420,11 +420,12 @@ export class FormComponent implements OnInit {
   }
 
   createRow(module: string, table: string, newRow: any) {
-    this.tableService.createRow(module, table, newRow)
+    const restrictions = this.getRestrictions(newRow);
+    this.tableService.createRow(module, table, newRow, restrictions)
       .subscribe(
         {
           next: (response: any) => {
-            this.saveRestrictions(response.insertedId)
+            this.rowCreationEnd(response);
           },
           error: (error) => {
             this.loading = false;
@@ -479,49 +480,48 @@ export class FormComponent implements OnInit {
 
   }
 
-  saveRestrictions(rowiId: string) {
+  getRestrictions(row: any) {
     this.autocompleteSelections.forEach(
       (acs: { columnId: string, restriction: Partial<ICellRestriction> }) => {
-        acs.restriction.rowId = rowiId;
+        acs.restriction.rowId = row._id;
       }
     )
-    const newRestrictions = this.autocompleteSelections.map(
+    return this.autocompleteSelections.map(
       (acs: { columnId: string, restriction: Partial<ICellRestriction> }) => {
         return acs.restriction
       }
     );
-    if (newRestrictions.length === 0 || !newRestrictions) {
-      this.rowCreationEnd({ _id: rowiId });
-      return;
-    }
-    this.tableService.updateRestrictions(this.module, this.table, newRestrictions)
-      .subscribe(
-        {
-          next: (_result: any) => {
-            this.rowCreationEnd({ _id: rowiId });
-          },
-          error: (error) => {
-            this.loading = false;
-            this.hasError = true;
-            this.errorMessage = error.error;
-            console.log(error)
-          }
-        }
-      )
+    // if (newRestrictions.length === 0 || !newRestrictions) {
+    //   this.rowCreationEnd(row);
+    //   return;
+    // }
+    // this.tableService.updateRestrictions(this.module, this.table, newRestrictions)
+    //   .subscribe(
+    //     {
+    //       next: (_result: any) => {
+    //         this.rowCreationEnd(row);
+    //       },
+    //       error: (error) => {
+    //         this.loading = false;
+    //         this.hasError = true;
+    //         this.errorMessage = error.error;
+    //         console.log(error)
+    //       }
+    //     }
+    //   )
   }
 
   rowCreationEnd(result: any) {
     console.log(result);
     this.loading = false;
-    this.formOperationEnd.emit();
+    this.formOperationEnd.emit(result);
     if (this.componentAccesMode === 'byRoute') {
       this.router.navigate(['/formend'], {
         state: {
           row: result,
           columns: this.columns,
           module: this.module,
-          table: this.table,
-          restriction: this.restriction
+          table: this.table
         }
       });
     }

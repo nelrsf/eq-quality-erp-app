@@ -1,5 +1,5 @@
 <div *ngIf="closeButton" class="d-inline-flex justify-content-end w-100">
-    <button class="btn btn-close" (click)="closeForm()"></button>
+    <button class="btn btn-close m-2" (click)="closeForm()"></button>
 </div>
 
 <form #formElement [ngStyle]="{'padding':padding}" *ngIf="columns" class="fields" (submit)="onSubmit()" [formGroup]="form">

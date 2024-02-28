@@ -3,7 +3,10 @@
     <li class="nav-item w-100" *ngFor="let module of modules; let i = index">
       <a role="button" class="d-flex align-items-center mb-1 mt-3 mb-md-0 me-md-auto text-decoration-none"
         (click)="collapseModule(collapsible)">
-        <span class="fs-6 text-uppercase">{{module.label}}</span>
+        <div class="d-flex justify-content-between w-100">
+          <span class="fs-6 text-uppercase">{{module.label}}</span>
+          <fa-icon [icon]="module.getIcon()"></fa-icon>
+        </div>
       </a>
       <div #collapsible class="collapse">
         <ul class="nav nav-pills flex-column mb-auto p-2">
@@ -12,9 +15,10 @@
             <ng-template #tableTemplate>
               <a routerLinkActive="active" routerLink="/tables/data/{{module.name}}/{{table.name}}"
                 class="menu-item  nav-link" aria-current="page">
-                <span class="fs-8 text-capitalize">
-                  {{table.label}}
-                </span>
+                <div class="d-flex justify-content-between w-100 me-2">
+                  <span class="fs-6 text-uppercase">{{table.label}}</span>
+                  <fa-icon [icon]="table.getIcon()"></fa-icon>
+                </div>
               </a>
             </ng-template>
             <ng-template #folderTemplate>

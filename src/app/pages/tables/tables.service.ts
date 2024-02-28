@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Table } from 'src/app/Model/entities/Table';
 import { IColumn } from 'src/app/Model/interfaces/IColumn';
-import { ITable } from 'src/app/Model/interfaces/ITable';
+import { ITable, TableModes } from 'src/app/Model/interfaces/ITable';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -28,12 +29,13 @@ export class TablesService {
     return this.http.post(encodeURI(urlRequest), table);
   }
 
-  createTable(moduleName: string, tableName: string, route: string) {
+  createTable(moduleName: string, tableName: string, route: string, entity?: Table) {
     const urlRequest = environment.apiUrl + this.endpointTables + this.endpointCreate + "/" + moduleName + "/" + tableName;
     return this.http.post(encodeURI(urlRequest), {
+      ...entity,
       module: moduleName,
       table: tableName,
-      ...(route ? { route: route } : {})
+      ...(route ? { route: route } : {}),
     });
   }
 
@@ -96,14 +98,14 @@ export class TablesService {
     return this.http.get(encodeURI(urlRequest));
   }
 
-  getRestrictionByIdAndColumn(moduleName: string, tableName: string, columnId: string, rowId: string){
+  getRestrictionByIdAndColumn(moduleName: string, tableName: string, columnId: string, rowId: string) {
     const urlRequest = environment.apiUrl + this.endpointRows + this.endpointGetRestriction + "/" + moduleName + "/" + tableName + '/' + rowId + "/" + columnId;
     return this.http.get(encodeURI(urlRequest));
   }
 
-  createRow(moduleName: string, tableName: string, rowData: any) {
+  createRow(moduleName: string, tableName: string, rowData: any, restrictions: Array<any>) {
     const urlRequest = environment.apiUrl + this.endpointRows + this.endpointCreate + "/" + moduleName + "/" + tableName;
-    return this.http.post(encodeURI(urlRequest), rowData);
+    return this.http.post(encodeURI(urlRequest), { row: rowData, restrictions: restrictions });
   }
 
   updateRows(moduleName: string, tableName: string, rowData: any) {

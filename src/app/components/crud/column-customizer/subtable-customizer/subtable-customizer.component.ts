@@ -84,7 +84,7 @@ export class SubtableCustomizerComponent implements OnInit {
   }
 
   getTablesFilterCallback(table: ITable, columnData?: IColumn) {
-    return table.name !== columnData?.table && !table.isFolder;
+    return table.name !== columnData?.table && !table.isFolder && (table.viewMode==='default' || !table.viewMode);
   }
 
   onColumnsChange(columns: IColumn[]) {

@@ -10,6 +10,8 @@ import { NavigatorComponent } from '../navigator/navigator.component';
 import { ShowIfIsAdmin } from 'src/app/directives/permissions/show-if-is-admin.directive';
 import { ShowIfIsOwner } from 'src/app/directives/permissions/show-if-is-owner.directive';
 import { ShowIfCanDelete } from 'src/app/directives/permissions/show-if-can-delete.directive';
+import { Module } from 'src/app/Model/entities/Module';
+import { Table } from 'src/app/Model/entities/Table';
 
 
 @Component({
@@ -34,7 +36,7 @@ export class GridModuleViewComponent {
   @ViewChild('navigatorModal') navigatorModal!: ElementRef;
   @ViewChild('infoModal') infoModal!: ElementRef;
 
-  @Input() data!: Array<IModule | ITable>;
+  @Input() data!: Array<Module | Table>;
   @Input() moduleName!: string;
 
   @Input() linkGetterFuntion!: (value: string | undefined, object?: any) => string
@@ -84,7 +86,7 @@ export class GridModuleViewComponent {
     return item.name ? item.name : '';
   }
 
-  showInfo(item: ITable){
+  showInfo(item: ITable | IModule){
     this.infoText = item.description ? item.description: '';
     this.infoTitle = item.label ? item.label: '';
     this.ngbModal.open(this.infoModal);

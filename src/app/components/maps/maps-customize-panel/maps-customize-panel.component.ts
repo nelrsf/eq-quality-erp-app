@@ -11,6 +11,8 @@ import { IModule } from 'src/app/Model/interfaces/IModule';
 import { ITable } from 'src/app/Model/interfaces/ITable';
 import { IColumn } from 'src/app/Model/interfaces/IColumn';
 import { Subject } from 'rxjs';
+import { ShowIfIsAdmin } from 'src/app/directives/permissions/show-if-is-admin.directive';
+import { ShowIfIsOwner } from 'src/app/directives/permissions/show-if-is-owner.directive';
 
 @Component({
   selector: 'eq-maps-customize-panel',
@@ -22,7 +24,9 @@ import { Subject } from 'rxjs';
     FontAwesomeModule,
     ColumnSelector,
     NgbAccordionModule,
-    FormsModule
+    FormsModule,
+    ShowIfIsAdmin,
+    ShowIfIsOwner
   ]
 })
 export class MapsCustomizePanelComponent implements OnInit {

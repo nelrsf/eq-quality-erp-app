@@ -31,9 +31,8 @@ import { GridModuleViewComponent } from '../components/grid-module-view/grid-mod
 import { SubtableComponent } from '../components/subtable/subtable.component';
 import { MapsComponent } from '../components/maps/maps/maps.component';
 import { PlugginGuard } from '../helpers/Pluggin.guard';
-import { ReportsComponent } from './reports/reports.component';
-import { ReportsModulesComponent } from './reports-modules/reports-modules.component';
 import { FormConfirmedComponent } from '../components/crud/form-confirmed/form-confirmed.component';
+import { ColumnSelector } from '../components/crud/column-customizer/columnSelector/column-selector.component';
 
 
 
@@ -48,10 +47,7 @@ const routes: Routes = [
     path: '',
     component: LayoutComponent,
     children: [
-      {path: '', component: ReportsModulesComponent},
-      {path: 'modules', component: ModulesComponent},
-      {path: 'reports/:module', component: ReportsComponent, canActivate: [ParamGuard]},
-      {path: 'reports/:module/:route', component: ReportsComponent, canActivate: [ParamGuard]},
+      {path: '', component: ModulesComponent},
       {path: 'tables/:module/:route', component: TablesSumaryComponent, canActivate: [ParamGuard]},
       {path: 'form/:module/:table', component: FormComponent},
       {path: 'formend', component: FormConfirmedComponent},
@@ -76,8 +72,6 @@ const routes: Routes = [
     LayoutComponent,
     ModulesComponent,
     TablesComponent,
-    ReportsComponent,
-    ReportsModulesComponent,
     TablesSumaryComponent,
     ErrorNotFoundComponent,
     ErrorUnauthorizedPageComponent,
@@ -101,7 +95,8 @@ const routes: Routes = [
     ModuleCustomizerComponent,
     TableCustomizerComponent,
     BreadcrumbComponent,
-    AuthModule
+    AuthModule,    
+    ColumnSelector
   ],
   exports: [
     LayoutComponent,

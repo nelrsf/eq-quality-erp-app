@@ -17,6 +17,10 @@ import { ShowIfIsOwner } from 'src/app/directives/permissions/show-if-is-owner.d
 import { PermissionsService } from 'src/app/services/permissions.service';
 import { combineLatest, map, of, switchMap, take } from 'rxjs';
 import { UserService } from 'src/app/services/user.service';
+import { FormComponent } from '../crud/form/form.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { RowsRestrictionsService } from 'src/app/services/rows-restrictions.service';
+import { ICellRestriction } from 'src/app/Model/interfaces/ICellRestrictions';
 
 
 @Component({
@@ -31,6 +35,7 @@ import { UserService } from 'src/app/services/user.service';
     ButtonsPadComponent,
     LoadingComponent,
     FontAwesomeModule,
+    // FormComponent,
     RouterModule,
     ShowIfCanEdit,
     ShowIfIsAdmin,
@@ -63,7 +68,7 @@ export class SubtableComponent implements AfterViewInit {
     back: faArrowLeftLong
   }
 
-  constructor(private userService: UserService, private permissionsService: PermissionsService, private tableService: TablesService, private cdr: ChangeDetectorRef) { }
+  constructor(private restrictionsService: RowsRestrictionsService,private modal: NgbModal, private userService: UserService, private permissionsService: PermissionsService, private tableService: TablesService, private cdr: ChangeDetectorRef) { }
 
   ngAfterViewInit(): void {
     this.overrideCreateSubtableDataFcn();
@@ -123,6 +128,7 @@ export class SubtableComponent implements AfterViewInit {
       })
     );
   }
+  
   getModuleAndTable() {
     return {
       module: this.data?.valueHost?.module,
@@ -354,6 +360,61 @@ export class SubtableComponent implements AfterViewInit {
         }
       }
     }
+  }
+
+  async addNewRow() {
+    const formComponentImport = await import('../crud/form/form.component');
+    const formComponent = formComponentImport.FormComponent;
+    const modalRef = this.modal.open(formComponent, {
+      backdropClass: 'backdrop-infinite-form',
+      modalDialogClass: 'modal-infinite-form',
+    })
+    modalRef.componentInstance.closeButton = true;
+    modalRef.componentInstance.onCloseButton.subscribe(() => modalRef.close());
+    modalRef.componentInstance.module = this.data.module;
+    modalRef.componentInstance.componentAccesMode = 'bySelector';
+    modalRef.componentInstance.table = this.data.table;
+    modalRef.componentInstance.formOperationEnd.subscribe(this.insertRowFromServer)
+    modalRef.componentInstance.padding = '2rem';
+  }
+
+  insertRowFromServer = (row: any) => {
+    const id = row._id;
+    if (!id) {
+      return;
+    }
+    this.tableService.getRowById(this.data.module, this.data.table, id)
+      .subscribe(
+        (rowData: any) => {
+          const localRowId = generateObjectId();
+          const columns = this.dataTable.columnsProperties;
+          const restrictions = this.restrictionsService.findRowsRestrictions(this.tableRows);
+          const localRow: any = {
+            _id: localRowId
+          }
+          columns.forEach(
+            (col: IColumn) => {       
+              if(col.isRestricted){
+                const rest: Partial<ICellRestriction> = {
+                  column: col,
+                  rowId: localRowId,
+                  rowIdRestriction: rowData._id,
+                  value: rowData[col._id]
+                }
+                restrictions?.data.push(rest);
+              }
+              if(rowData.hasOwnProperty(col?._id)){
+                localRow[col._id] = rowData[col._id]
+              }
+
+            }
+          )
+          this.tableRows.push(localRow);
+          this.dataTable.data.next(this.tableRows);
+          this.cdr.detectChanges();
+          this.modal.dismissAll();
+        }
+      )
   }
 
 

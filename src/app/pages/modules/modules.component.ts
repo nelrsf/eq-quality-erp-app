@@ -4,6 +4,8 @@ import { ModulesService } from './modules.service';
 import { IModule } from 'src/app/Model/interfaces/IModule';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ITable } from 'src/app/Model/interfaces/ITable';
+import { Module } from 'src/app/Model/entities/Module';
+import { ModulesFactory } from './modulesFactory';
 
 
 @Component({
@@ -19,14 +21,15 @@ export class ModulesComponent implements OnInit, AfterViewInit {
   @ViewChild('customizeModule') customizeModule!: ElementRef;
 
 
-  modules!: IModule[];
+  modules!: Module[];
   newModuleName!: string;
   confirmDeleteModuleText!: string;
-  currentModule!: IModule;
+  currentModule!: Module;
   linkedFields: IMapAsUrl[] = [];
   loading: boolean = false;
   errorMessage!: string;
-  moduleData!: IModule;
+  moduleData!: Module;
+  modulesFactory: ModulesFactory = new ModulesFactory();
 
 
   constructor(private modulesService: ModulesService, private cdRef: ChangeDetectorRef, private ngbModal: NgbModal) { }
@@ -45,7 +48,7 @@ export class ModulesComponent implements OnInit, AfterViewInit {
     this.modulesService.getAllModules().subscribe(
       {
         next: (data: any) => {
-          this.modules = data;
+          this.modules = this.modulesFactory.convertManyEntities(data);
           this.loading = false;
         },
         error: (error) => {
@@ -103,7 +106,7 @@ export class ModulesComponent implements OnInit, AfterViewInit {
       .subscribe(
         {
           next: (data: any) => {
-            this.modules = data;
+            this.modules = this.modulesFactory.convertManyEntities(data);;
             this.loading = false;
           },
           error: (error: any) => {
