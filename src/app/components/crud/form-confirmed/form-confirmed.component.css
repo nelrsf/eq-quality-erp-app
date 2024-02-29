@@ -1,11 +1,15 @@
 .fields-container {
-    display: contents!important;
+    display: contents !important;
 }
 
 .data-container {
-    display: grid!important;
+    display: grid !important;
 }
 
-.control-label{
+.control-label {
     font-weight: bold;
+}
+
+.pre-line {
+    white-space: pre-line;
 }

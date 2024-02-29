@@ -60,7 +60,7 @@
                     {{column.columnName}}
                 </label>
                 <span>
-                    {{row[column?._id]}}
+                    {{row[column?._id] ? 'SI' : 'NO'}}
                 </span>
             </div>
 
@@ -74,7 +74,12 @@
             </div>
 
             <div *ngSwitchCase="COLUMN_TYPES_ENUM.table">
-
+                <label class="my-1 control-label">
+                    {{column.columnName}}
+                </label>
+                <div class="d-contents">
+                    <span class="pre-line">{{formatTableRow(row[column?._id])}}</span>
+                </div>
             </div>
         </div>
     </div>

@@ -24,7 +24,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 export class FormConfirmedComponent implements OnInit {
 
 
-    @ViewChild('FormContainer')formContainer!: ElementRef;
+    @ViewChild('FormContainer') formContainer!: ElementRef;
 
     COLUMN_TYPES_ENUM = ColumnTypes;
     row: any;
@@ -48,15 +48,45 @@ export class FormConfirmedComponent implements OnInit {
     }
 
 
-    shareRow(){
+    shareRow() {
         const text = this.formContainer.nativeElement.innerText;
         navigator.share({
             text: text
         })
     }
 
-    goToNewForm(){
+    goToNewForm() {
         const newFormMuRL = '/form/' + this.module + '/' + this.table;
         this.router.navigate([newFormMuRL])
+    }
+
+    formatTableRow(r: Array<any>) {
+        let message = "";
+        if (!r) {
+            return "";
+        }
+        let restrictions = r.find(row => row.hasOwnProperty('__rows_restrictions__data__'));
+        const restrictionsData: ICellRestriction[] = restrictions.data;
+        if (!restrictionsData) {
+            return "";
+        }
+        r.forEach(
+            (subRow: any) => {
+                Object.keys(subRow).forEach(
+                    (srk: string) => {
+                        if (typeof subRow[srk] !== 'string' && typeof subRow[srk] !== 'number') {
+                            return;
+                        }
+                        const column: IColumn | undefined = restrictionsData.find(rd => rd.column._id === srk)?.column;
+                        if (!column) {
+                            return;
+                        }
+                        message += `${column.columnName}:  ${subRow[srk]}, `
+                    }
+                );
+                message += message.endsWith("\n") ? "" : "\n";
+            }
+        );
+        return message;
     }
 }
