@@ -27,3 +27,7 @@ a.menu-item.nav-link {
 fa-icon {
     color: var(--bs-gray);
 }
+
+span {
+    color: var(--bs-emphasis-color);
+}
