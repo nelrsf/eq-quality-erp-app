@@ -7,3 +7,11 @@ span {
 .nav-pills, .nav-link {
     padding-right: 0!important;
 }
+
+a.menu-item.nav-link {
+    font-size: small;
+} 
+
+fa-icon {
+    color: var(--bs-gray);
+}

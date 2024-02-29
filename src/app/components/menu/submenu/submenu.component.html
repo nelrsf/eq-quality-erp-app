@@ -1,6 +1,6 @@
 <a role="button" class="nav-link d-flex align-items-center text-decoration-none px-0 py-2" data-bs-toggle="collapse" href="#{{submenu.name}}">
-    <div class="d-flex justify-content-between w-100 pe-2">
-        <span class="fs-6 text-capitalize">{{submenu.label}}</span>
+    <div class="d-flex justify-content-between align-items-center w-100 pe-2 badge text-decoration-none fw-light">
+        <span class="text-uppercase">{{submenu.label}}</span>
         <fa-icon [icon]="icons.folder"></fa-icon>
     </div>
 </a>
@@ -9,9 +9,9 @@
         <li *ngFor="let table of submenu.tables" class="nav-item w-100">
             <ng-container *ngIf="table.isFolder then folderTemplate; else tableTemplate"></ng-container>
             <ng-template #tableTemplate>
-                <a routerLinkActive="active" class="menu-item nav-link p-2" [routerLink]="table.getLink(moduleName)" aria-current="page">
-                    <div class="d-flex justify-content-between align-items-center pe-2">
-                        <span class="fs-6 text-uppercase">{{table.label}}</span>
+                <a routerLinkActive="active" class="menu-item nav-link p-0" [routerLink]="table.getLink(moduleName)" aria-current="page">
+                    <div class="d-flex justify-content-between align-items-center pe-2 fw-light">
+                        <span class="ms-1 text-capitalize">{{table.label}}</span>
                         <fa-icon [icon]="table.getIcon()"></fa-icon>
                     </div>
                 </a>

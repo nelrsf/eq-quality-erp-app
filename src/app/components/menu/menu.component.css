@@ -20,3 +20,10 @@ a{
     text-overflow: ellipsis;
 }
 
+a.menu-item.nav-link {
+    font-size: small;
+} 
+
+fa-icon {
+    color: var(--bs-gray);
+}
