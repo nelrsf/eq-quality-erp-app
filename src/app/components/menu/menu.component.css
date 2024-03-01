@@ -18,7 +18,6 @@ a{
 .menu-item{
     overflow: hidden;
     text-overflow: ellipsis;
-    padding: 0.2rem 0rem 0.1rem 0.1rem!important;
 }
 
 .compact-font-size {
@@ -36,7 +35,10 @@ fa-icon {
 
 .module-item {
     font-size: small;
-    padding: 0.5rem 0.1rem 0.5rem 0.5rem!important
+}
+
+.module-item, .menu-item {
+    padding: 0.5rem 0.2rem 0.5rem 0.5rem!important
 }
 
 .nav-pills .nav-link.active {
@@ -49,8 +51,8 @@ fa-icon {
     color: var(--bs-form-control-bg);;
 }
 
-@media only screen and (max-width: 900px){
+/* @media only screen and (max-width: 900px){
     .module-item, .menu-item {
         padding: 0.5rem 0.2rem 0.5rem 0.5rem!important
     }
-}
+} */

@@ -1,5 +1,4 @@
 span {
-    max-width: 75%;
     text-overflow: ellipsis;
     overflow: hidden;
 }
@@ -34,11 +33,14 @@ fa-icon {
 .menu-item{
     overflow: hidden;
     text-overflow: ellipsis;
-    padding: 0.2rem 0rem 0.1rem 0.1rem!important;
 }
 
-@media only screen and (max-width: 900px){
+.menu-item, .collapsible-item {
+    padding: 0.5rem 0.2rem 0.5rem 0.5rem!important
+}
+
+/* @media only screen and (max-width: 900px){
     .menu-item, .collapsible-item {
         padding: 0.5rem 0.2rem 0.5rem 0.5rem!important
     }
-}
+} */
