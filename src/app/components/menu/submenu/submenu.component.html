@@ -1,15 +1,17 @@
-<a role="button" class="compact-font-size nav-link d-flex align-items-center px-0 py-0" data-bs-toggle="collapse" href="#{{submenu.name}}">
+<a role="button" class="compact-font-size nav-link d-flex align-items-center px-0 py-0" data-bs-toggle="collapse"
+    href="#{{submenu.name +'.'+ moduleName}}">
     <div class="collapsible-item d-flex justify-content-between align-items-center w-100 pe-2">
         <span class="text-uppercase">{{submenu.label}}</span>
         <fa-icon [icon]="icons.folder"></fa-icon>
     </div>
 </a>
-<div id="{{submenu.name}}" class="collapse">
+<div id="{{submenu.name +'.'+ moduleName}}" class="collapse">
     <ul class="nav nav-pills flex-column mb-auto px-2 py-1">
         <li *ngFor="let table of submenu.tables" class="nav-item w-100">
             <ng-container *ngIf="table.isFolder then folderTemplate; else tableTemplate"></ng-container>
             <ng-template #tableTemplate>
-                <a routerLinkActive="active" class="compact-font-size menu-item nav-link p-0" [routerLink]="table.getLink(moduleName)" aria-current="page">
+                <a routerLinkActive="active" class="compact-font-size menu-item nav-link p-0"
+                    [routerLink]="table.getLink(moduleName)" aria-current="page">
                     <div class="d-flex justify-content-between align-items-center pe-2 fw-light">
                         <span class="ms-1 text-capitalize">{{table.label}}</span>
                         <fa-icon [icon]="table.getIcon()"></fa-icon>
@@ -22,4 +24,3 @@
         </li>
     </ul>
 </div>
-
