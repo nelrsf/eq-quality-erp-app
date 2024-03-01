@@ -161,6 +161,7 @@ export class AutocompleteComponent implements OnInit, AfterViewInit {
             modalRef.componentInstance.table = fieldRestriction.column?.tableRestriction;
             modalRef.componentInstance.row = row;
             modalRef.componentInstance.padding = '2rem';
+            modalRef.componentInstance.componentAccesMode = 'bySelector';
           },
           error: (error: any) => {
             console.log(error)
