@@ -12,7 +12,7 @@
           <li *ngFor="let table of module.tables" class="nav-item">
             <ng-container *ngIf="!table.isFolder then tableTemplate; else folderTemplate"></ng-container>
             <ng-template #tableTemplate>
-              <a routerLinkActive="active" [routerLink]="table.getLink(module)" class="menu-item compact-font-size nav-link p-0" aria-current="page">
+              <a routerLinkActive="active" [routerLink]="table.getLink(module.name)" class="menu-item compact-font-size nav-link p-0" aria-current="page">
                 <div class="d-flex justify-content-between align-items-center fw-light">
                   <span class="text-uppercase">{{table.label}}</span>
                   <fa-icon [icon]="table.getIcon()"></fa-icon>
