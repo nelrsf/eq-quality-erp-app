@@ -38,3 +38,19 @@ fa-icon {
     font-size: small;
     padding: 0.5rem 0.1rem 0.5rem 0.5rem!important
 }
+
+.nav-pills .nav-link.active {
+    color: var(--bs-form-control-bg);
+    background-color: var(--bs-success-text);
+    font-weight: 400;
+}
+
+.nav-link.active fa-icon {
+    color: var(--bs-form-control-bg);;
+}
+
+@media only screen and (max-width: 900px){
+    .module-item, .menu-item {
+        padding: 0.5rem 0.2rem 0.5rem 0.5rem!important
+    }
+}
