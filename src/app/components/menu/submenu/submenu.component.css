@@ -8,14 +8,31 @@ span {
     padding-right: 0!important;
 }
 
-a.menu-item.nav-link {
+.compact-font-size {
     font-size: small;
+    font-weight: 100;
 } 
 
 fa-icon {
     color: var(--bs-gray);
 }
 
-span {
-    color: var(--bs-emphasis-color);
+.t-custom-color {
+    color: var(--bs-badge-color);
+}
+
+.nav-pills .nav-link.active {
+    color: var(--bs-form-control-bg);
+    background-color: var(--bs-success-text);
+    font-weight: 400;
+}
+
+.nav-link.active fa-icon {
+    color: var(--bs-form-control-bg);;
+}
+
+.menu-item{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0.2rem 0rem 0.1rem 0.1rem!important;
 }

@@ -1,18 +1,18 @@
 <div class="d-flex flex-column flex-shrink-0 p-4 menu-wrapper" style="width: 280px;">
   <ul class="nav nav-pills flex-column mb-auto">
     <li class="nav-item" *ngFor="let module of modules; let i = index">
-      <a role="button" class="d-flex align-items-center mb-2 text-decoration-none" data-bs-toggle="collapse" href="#module-{{i}}">
-        <div class="d-flex justify-content-between align-items-center w-100 badge text-bg-secondary text-decoration-none fw-light">
+      <a role="button" class="t-custom-color d-flex align-items-center mb-2 text-decoration-none" data-bs-toggle="collapse" href="#module-{{i}}">
+        <div class="module-item d-flex justify-content-between align-items-center w-100 badge text-bg-secondary text-decoration-none fw-light">
           <span class="text-uppercase">{{module.label}}</span>
-          <fa-icon [icon]="module.getIcon()"></fa-icon>
+          <!-- <fa-icon [icon]="module.getIcon()"></fa-icon> -->
         </div>
       </a>
-      <div id="module-{{i}}" class="collapse">
+      <div id="module-{{i}}" class="ms-2 collapse">
         <ul class="nav nav-pills flex-column">
           <li *ngFor="let table of module.tables" class="nav-item">
             <ng-container *ngIf="!table.isFolder then tableTemplate; else folderTemplate"></ng-container>
             <ng-template #tableTemplate>
-              <a routerLinkActive="active" [routerLink]="table.getLink(module)" class="nav-link p-0" aria-current="page">
+              <a routerLinkActive="active" [routerLink]="table.getLink(module)" class="compact-font-size nav-link p-0" aria-current="page">
                 <div class="d-flex justify-content-between align-items-center pe-2 fw-light">
                   <span class="ms-1 text-uppercase">{{table.label}}</span>
                   <fa-icon [icon]="table.getIcon()"></fa-icon>
