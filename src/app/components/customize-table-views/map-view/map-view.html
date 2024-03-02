@@ -1,0 +1,21 @@
+<div class="m-0 modal-dialog mw-100">
+    <div class="modal-content">
+        <div class="modal-header px-3 py-2">
+            <h5 class="modal-title m-0" id="exampleModalLabel">Crear acceso a mapas</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                (click)="onCloseModal()"></button>
+        </div>
+        <div class="modal-body">
+            <form (submit)="onCreateNewEntity()">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Nombre</label>
+                    <input type="text" class="form-control" placeholder="" name="newModule"
+                        [(ngModel)]="newEntity.name">
+                    <div *ngIf="false" class="mt-2" columnSelector [hideColumnLevel]="true" (tableChange)="tableSelectorChange($event)" (moduleChange)="moduleSelectorChange($event)"></div>
+                </div>
+                <hr>
+                <button type="submit" class="btn btn-primary">Crear</button>
+            </form>
+        </div>
+    </div>
+</div>

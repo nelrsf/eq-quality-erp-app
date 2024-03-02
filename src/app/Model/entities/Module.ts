@@ -1,9 +1,10 @@
 import { IconDefinition, faBuilding } from "@fortawesome/free-solid-svg-icons";
 import { IModule } from "../interfaces/IModule";
 import { IPermission } from "../interfaces/IPermission";
-import { faRProject } from "@fortawesome/free-brands-svg-icons";
+import { Type } from "@angular/core";
 
 export class Module implements IModule {
+    customizeViewComponent: Type<unknown> | undefined;
     name!: string;
     label!: string;
     description!: string;

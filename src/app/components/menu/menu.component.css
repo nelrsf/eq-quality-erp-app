@@ -27,6 +27,7 @@ a{
 
 fa-icon {
     color: var(--bs-gray);
+    margin-right: 0.3rem;
 }
 
 .t-custom-color {

@@ -27,7 +27,6 @@ export class TablesSumaryComponent implements OnInit, OnDestroy {
   @ViewChild('modalError') modalError!: ElementRef;
   @ViewChild('customizeTable') customizeTable!: ElementRef;
   @ViewChild('createFolder') createFolder!: ElementRef;
-  @ViewChild('createEntity') createEntity!: ElementRef;
 
   module!: string;
   route!: string;
@@ -186,25 +185,17 @@ export class TablesSumaryComponent implements OnInit, OnDestroy {
   openCreateEntity(viewMode: TableModes) {
     this.tableViewMode = viewMode;
     const enityType = this.tablesFactory.entities.get(viewMode);
-    if(enityType){
+    if (enityType) {
       this.newEntity = new enityType();
       this.newEntity.viewMode = viewMode;
-      this.ngbModal.open(this.createEntity);
+      const modalRef = this.ngbModal.open(this.newEntity.customizeViewComponent);
+      modalRef.componentInstance.newEntity = this.newEntity;
+      modalRef.componentInstance.newEntityChange.subscribe((ne: Table) => this.newEntity = ne);
+      modalRef.componentInstance.createNewEntity.subscribe(() => { this.createNewEntity() });
+      modalRef.componentInstance.closeModal.subscribe(() => { modalRef.close() });
     }
   }
 
-  moduleSelectorChange(module: Module){
-    if(this.newEntity instanceof Form){
-      this.newEntity.targetModule = module.name;
-    } 
-  }
-
-  tableSelectorChange(table: Table){
-    if(this.newEntity instanceof Form){
-      this.newEntity.targetTable = table.name;
-    } 
-  }
-  
   createNewEntity() {
     if (!this.newEntity || !this.newEntity?.name) {
       return;
@@ -256,7 +247,7 @@ export class TablesSumaryComponent implements OnInit, OnDestroy {
   }
 
   closeModal() {
-    if (this.ngbModal.hasOpenModals()) {
+    if (this.ngbModal?.hasOpenModals()) {
       this.ngbModal.dismissAll();
     }
   }
@@ -345,15 +336,15 @@ export class TablesSumaryComponent implements OnInit, OnDestroy {
       );
   }
 
-  getIcon(table: ITable) {
-    if (table.isFolder) {
-      return this.icons.folder;
-    } else if (table?.viewMode === 'form') {
-      return this.icons.form;
-    } else if (table.viewMode === 'map') {
-      return this.icons.map;
-    } else {
-      return this.icons.table;
-    }
-  }
+  // getIcon(table: ITable) {
+  //   if (table.isFolder) {
+  //     return this.icons.folder;
+  //   } else if (table?.viewMode === 'form') {
+  //     return this.icons.form;
+  //   } else if (table.viewMode === 'map') {
+  //     return this.icons.map;
+  //   } else {
+  //     return this.icons.table;
+  //   }
+  // }
 }

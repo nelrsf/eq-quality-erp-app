@@ -1,5 +1,5 @@
 import { Type } from "@angular/core";
-import { Form, Table } from "src/app/Model/entities/Table";
+import { Form, MapView, Table } from "src/app/Model/entities/Table";
 import { ITable, TableModes } from "src/app/Model/interfaces/ITable";
 
 export class TablesFactory {
@@ -8,6 +8,7 @@ export class TablesFactory {
     constructor() {
         this.entities.set('default', Table);
         this.entities.set('form', Form);
+        this.entities.set('map', MapView);
     }
 
     convertEntity(entity: ITable) {
