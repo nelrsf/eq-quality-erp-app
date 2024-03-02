@@ -23,7 +23,8 @@ export class ResizableDirective implements AfterViewInit {
     onMouseDown(event: MouseEvent) {
         event.preventDefault(); // Prevent text selection while dragging
 
-        const initialX = event.clientX;
+        const rect = this.el.nativeElement.getBoundingClientRect();
+        const initialX = rect.right;
         const initialWidth = this.el.nativeElement.clientWidth;
         const rightBorder = initialWidth - 25; // Adjust the border width as needed
 
