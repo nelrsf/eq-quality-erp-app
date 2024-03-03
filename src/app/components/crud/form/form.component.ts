@@ -402,7 +402,8 @@ export class FormComponent implements OnInit {
 
   updateRow(module: string, table: string, newRow: any, id: string) {
     newRow._id = id;
-    this.tableService.updateRows(module, table, [newRow])
+    const restrictions = this.getRestrictions();
+    this.tableService.updateRows(module, table, [newRow, restrictions])
       .subscribe(
         {
           next: (response: any) => {
@@ -419,7 +420,7 @@ export class FormComponent implements OnInit {
   }
 
   createRow(module: string, table: string, newRow: any) {
-    const restrictions = this.getRestrictions(newRow);
+    const restrictions = this.getRestrictions();
     this.tableService.createRow(module, table, newRow, restrictions)
       .subscribe(
         {
@@ -479,35 +480,12 @@ export class FormComponent implements OnInit {
 
   }
 
-  getRestrictions(row: any) {
-    this.autocompleteSelections.forEach(
-      (acs: { columnId: string, restriction: Partial<ICellRestriction> }) => {
-        acs.restriction.rowId = row._id;
-      }
-    )
+  getRestrictions() {
     return this.autocompleteSelections.map(
       (acs: { columnId: string, restriction: Partial<ICellRestriction> }) => {
         return acs.restriction
       }
     );
-    // if (newRestrictions.length === 0 || !newRestrictions) {
-    //   this.rowCreationEnd(row);
-    //   return;
-    // }
-    // this.tableService.updateRestrictions(this.module, this.table, newRestrictions)
-    //   .subscribe(
-    //     {
-    //       next: (_result: any) => {
-    //         this.rowCreationEnd(row);
-    //       },
-    //       error: (error) => {
-    //         this.loading = false;
-    //         this.hasError = true;
-    //         this.errorMessage = error.error;
-    //         console.log(error)
-    //       }
-    //     }
-    //   )
   }
 
   rowCreationEnd(result: any) {

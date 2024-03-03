@@ -17,7 +17,7 @@ export class UserService {
         this.loadUser();
     }
 
-    public loadUser(){
+    public loadUser() {
         const token = this.authService.getToken();
         if (token && !this.getUser()) {
             const id = this.getUserIdFromLocalStorage(token);
@@ -33,7 +33,7 @@ export class UserService {
     }
 
 
-    getUserSubject(){
+    getUserSubject() {
         return this.currentUserSubject;
     }
 
@@ -49,6 +49,9 @@ export class UserService {
         this.tableService.getRowById('_eq__admin_manager', 'users', id)
             .subscribe(
                 ((data: any) => {
+                    if (!data) {
+                        return;
+                    }
                     this.currentUserSubject.next(
                         {
                             _id: data._id,
@@ -61,7 +64,7 @@ export class UserService {
             )
     }
 
-    saveUser(user: IUser){
+    saveUser(user: IUser) {
         const module = environment.adminTables.mainUsersModule;
         const table = environment.adminTables.mainUsersTable;
         const userRow = {
