@@ -245,7 +245,7 @@ h3,
 }
 
 .container {
-    width: 100%;
+    width: fit-content;
     margin-right: auto;
     margin-left: auto;
     padding-right: 15px;
@@ -1261,7 +1261,8 @@ a.btn-icon-only {
 .main-content {
     position: relative;
     margin-bottom: 4rem;
-    width: fit-content;
+    width: 100%;
+    overflow-x: auto;
 }
 
 .dropdown {

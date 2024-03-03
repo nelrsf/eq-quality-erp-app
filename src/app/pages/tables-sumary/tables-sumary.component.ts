@@ -110,7 +110,6 @@ export class TablesSumaryComponent implements OnInit, OnDestroy {
           }
         }
       });
-
     this.permissionsService.isOwner(module)
       .subscribe({
         next: (isOwner: boolean) => {

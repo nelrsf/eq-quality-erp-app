@@ -136,7 +136,6 @@ export class FormComponent implements OnInit {
   }
 
   checkFormPermissions() {
-
     const combinedObservable: Observable<boolean> = this.permissionsService.isOwner(this.module).pipe(
       switchMap(isOwner => {
         if (isOwner) {

@@ -159,7 +159,6 @@ export class TablesComponent implements OnInit, AfterViewInit {
           }
         }
       });
-
     this.permissionsService.isOwner(module)
       .subscribe({
         next: (isOwner: boolean) => {

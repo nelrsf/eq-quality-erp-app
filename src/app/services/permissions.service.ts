@@ -63,7 +63,7 @@ export class PermissionsService {
                         }
                     )
                 );
-                
+
                 columnObserver.subscribe(
                     {
                         next: (result: any) => {
@@ -285,25 +285,29 @@ export class PermissionsService {
     setEditableColumns(columns: Array<IColumn>) {
         const colEditObsv: Array<Observable<{ value: boolean, column: string }>> = [];
         columns.forEach(
-          (col: IColumn) => {
-            const combinedObservable: Observable<{ value: boolean, column: string }> = this.isOwner(col.module).pipe(
-              take(1),
-              switchMap(isOwner => {
-                if (isOwner) {
-                  return of(true);
-                } else {
-                  return this.canEditColumn(col.module, col.table, col._id);
+                (col: IColumn) => {
+                    if(!col.module || !col.table){
+                        colEditObsv.push(of({ value: true, column: col._id }));
+                        return;
+                    }
+                    const combinedObservable: Observable<{ value: boolean, column: string }> = this.isOwner(col.module).pipe(
+                        take(1),
+                        switchMap(isOwner => {
+                            if (isOwner) {
+                                return of(true);
+                            } else {
+                                return this.canEditColumn(col.module, col.table, col._id);
+                            }
+                        }),
+                        map((value: boolean) => {
+                            return { value: value, column: col._id }
+                        })
+                    );
+                    colEditObsv.push(combinedObservable)
                 }
-              }),
-              map((value: boolean) => {
-                return { value: value, column: col._id }
-              })
-            );
-            colEditObsv.push(combinedObservable)
-          }
-        )
+            )
         return forkJoin(colEditObsv);
-      }
+    }
 
 
 }
