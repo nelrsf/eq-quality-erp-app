@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, HostListener, Renderer2, TemplateRef, ViewChild } from '@angular/core';
 import { MapsCustomizePanelComponent } from '../maps-customize-panel/maps-customize-panel.component';
-import { Icon, LatLngExpression, LeafletEvent, LeafletKeyboardEvent, LeafletMouseEvent, Map, Marker, Point, Polyline, Popup, divIcon, marker, point, polyline, popup, tileLayer } from 'leaflet';
+import { BaseIconOptions, Control, DivIcon, Icon, LatLngExpression, Layer, LeafletEvent, LeafletKeyboardEvent, LeafletMouseEvent, Map, Marker, Point, Polyline, Popup, TileLayer, TileLayerOptions, divIcon, marker, point, polyline, popup, tileLayer } from 'leaflet';
 import { IMapElement } from '../Model/IMapElement';
 import { MapsService } from '../maps.service';
 import { IMarker } from '../Model/IMarker';
@@ -12,6 +12,7 @@ import { ConfirmDialogComponent, EQ_CONFIRM_MODAL_NO, EQ_CONFIRM_MODAL_YES } fro
 import { EqMarker } from '../Model/Marker';
 import { EqPath } from '../Model/Path';
 import { IPath } from '../Model/IPath';
+import { DeviceDetectorService, DeviceType } from 'src/app/services/device-detector.service';
 
 
 type EQ_MAP_CONTEXT_MENU_BUTTONS = 'delete' | 'end-path';
@@ -36,6 +37,8 @@ export class MapsComponent implements AfterViewInit {
 
   mapElements: IMapElement[] = [];
   map!: Map;
+  miniMap!: Map;
+  miniMapDisabled: boolean = true;
   icons: any[] = [];
   popUpMenu!: Popup;
   currentElement!: EqMarker | EqPath;
@@ -53,12 +56,16 @@ export class MapsComponent implements AfterViewInit {
   iMarkers: IPath[] = [];
   baseZoom: number = 19;
   factor: number = 1;
+  tileUrl: string = "";
+  device!: DeviceType;
 
-  constructor(private modal: NgbModal, private mapsService: MapsService, private renderer2: Renderer2) { }
 
-  ngAfterViewInit(): void {
+  constructor(private deviceDetector: DeviceDetectorService, private modal: NgbModal, private mapsService: MapsService, private renderer2: Renderer2) { }
+
+  async ngAfterViewInit(): Promise<void> {
+    this.deviceDetector.detectDevice().then(device => this.device = device);
     this.map = new Map('map').setView(this.mapCenter, this.mapZoom);
-    this.selectMapTheme(this.map);
+    this.selectMapTheme();
     this.map.addEventListener('click', this.onClickMap);
     this.map.addEventListener("zoom", this.onMapZoom);
     this.map.addEventListener("zoomend", this.onMapZoomEnd);
@@ -91,12 +98,21 @@ export class MapsComponent implements AfterViewInit {
     }
   }
 
-  selectMapTheme(map: Map) {
-    tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  selectMapTheme() {
+    this.tileUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+    const atribution = 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community';
+    tileLayer(this.tileUrl, {
       maxZoom: this.baseZoom,
       updateWhenZooming: false,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map)
+      attribution: atribution
+    }).addTo(this.map)
+
+    tileLayer('https://tiles.stadiamaps.com/tiles/stamen_terrain_labels/{z}/{x}/{y}{r}.{ext}', {
+      minZoom: 0,
+      maxZoom: 18,
+      attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://www.stamen.com/" target="_blank">Stamen Design</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      ext: 'png'
+    } as TileLayerOptions).addTo(this.map)
   }
 
   insertMarker(mapElement: IMapElement) {
@@ -125,10 +141,9 @@ export class MapsComponent implements AfterViewInit {
 
   updateZoomFactor() {
     const zoom = this.map.getZoom();
-    const minZoom = 10;
-    const maxZoom = this.baseZoom;
-
-    this.factor = zoom / this.baseZoom;
+    const weight = 2.5;
+    this.factor = (1 - weight * (this.baseZoom - zoom) / this.baseZoom);
+    this.factor = this.factor > 0 ? this.factor : 0;
   }
 
   handleOnZoomPaths(factor: number) {
@@ -252,18 +267,72 @@ export class MapsComponent implements AfterViewInit {
       this.closeCustomPanel.next();
       this.openMarkerInfoPanel.next({ mapShape: newMarker, mapElement: mapElement });
     });
+    mark.addEventListener("dragstart", (event: any) => {
+      this.dragStartMarkerhandler()
+    })
+    mark.addEventListener("drag", (event: any) => {
+      this.dragMarkerHandler(event);
+    })
     mark.addEventListener("dragend", (event) => {
       newMarker.lat = event.target._latlng.lat;
       newMarker.lng = event.target._latlng.lng;
       this.updateMarker(newMarker);
+      this.miniMapDisabled = true;
     });
     mark.addEventListener("contextmenu", (event) => {
       const latlng = event.target._latlng;
-      this.showContextMenu(latlng, mark, newMarker, ['delete'])
+      this.showContextMenu(latlng, mark, newMarker, ['delete']);
+      this.miniMapDisabled = true;
     });
     this.markers.push(mark);
     this.iMarkers.push(newMarker);
     mark.addTo(this.map);
+  }
+
+  dragMarkerHandler(event: any) {
+    if (this.device === 'web') {
+      return;
+    }
+    this.miniMap.panTo(event.latlng)
+    this.deepClearMap(this.miniMap);
+    this.cloneMap(this.map, this.miniMap);
+  }
+
+
+  deepClearMap(map: Map) {
+    map.eachLayer(
+      (layer: Layer) => {
+        if (!(layer instanceof TileLayer)) {
+          layer.removeFrom(map);
+        }
+
+      }
+    )
+  }
+
+  cloneMap(mapSource: Map, mapTarget: Map) {
+    mapSource.eachLayer(
+      (layer: Layer) => {
+        let clonedLayer;
+        if (layer instanceof Polyline) {
+          clonedLayer = new Polyline(layer.getLatLngs() as LatLngExpression[], layer.options);
+        } else if (layer instanceof TileLayer) {
+          clonedLayer = tileLayer(this.tileUrl, layer.options);
+          clonedLayer.options.attribution = "";
+        } else if (layer instanceof Marker) {
+          const { icon, ...rest } = layer.options;
+          clonedLayer = marker(layer.getLatLng(), rest)
+          if (icon instanceof DivIcon) {
+            clonedLayer.setIcon(this.getPathMarkerIcon());
+          } else {
+            clonedLayer.setIcon(icon as Icon)
+          }
+
+        }
+
+        clonedLayer?.addTo(mapTarget);
+      }
+    )
   }
 
   getPathMarkerIcon(color?: string, stroke?: number) {
@@ -558,8 +627,39 @@ export class MapsComponent implements AfterViewInit {
         }).addTo(this.map);
       this.pathMarkers.push(pathMarker);
 
-      pathMarker.addEventListener("dragend", (event) => this.handleMarkerDragEnd(event, index, points, path, pathMarker));
+      pathMarker.addEventListener("dragend",
+        (event) => {
+          this.handleMarkerDragEnd(event, index, points, path, pathMarker);
+          this.miniMapDisabled = true;
+        });
+      pathMarker.addEventListener("drag", event => {
+        this.dragMarkerHandler(event);
+        this.updateTemporalPath(event, index, points, path);
+      });
+      pathMarker.addEventListener("dragstart", event => {
+        this.dragStartMarkerhandler();
+      })
     });
+  }
+
+  private dragStartMarkerhandler() {
+    this.miniMapDisabled = false;
+    if (this.device === 'web') {
+      return;
+    }
+    this.miniMap = new Map('minimap').setView(this.mapCenter, this.baseZoom);
+    this.miniMap.options.attributionControl = false;
+    this.miniMap.zoomControl.remove();
+  }
+
+  private updateTemporalPath(event: any, index: number, points: any[], path: IPath): void {
+    if (this.device === 'web') {
+      return;
+    }
+    const point = event.target._latlng;
+    points[index] = [point.lat, point.lng];
+    const tempPolyline = polyline(points);
+    tempPolyline.addTo(this.miniMap)
   }
 
   private handleMarkerDragEnd(event: any, index: number, points: any[], path: IPath, pathMarker: Marker): void {

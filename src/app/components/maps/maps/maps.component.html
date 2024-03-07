@@ -1,6 +1,7 @@
 <eq-maps-customize-panel [closePanel]="closeCustomPanel" (onInsertMarker)="insertMarker($event)" (onGetMapIcons)="getMapIcons($event)" (onGetMapElements)="getMapElements($event)"></eq-maps-customize-panel>
 <eq-marker-info [openPanel]="openMarkerInfoPanel"></eq-marker-info>
 <div id="map" [ngClass]="[insertMarkerByClick?'insert-marker':'']"></div>
+<div *ngIf="!miniMapDisabled && device!=='web'" id="minimap" class="d-sm-block s-md-none"></div>
 
 <div #contextMenu class="d-none">
         <button id="delete-marker" class="btn btn-danger d-none mb-2 w-100">Eliminar marcador</button>

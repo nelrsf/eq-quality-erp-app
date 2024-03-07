@@ -1,7 +1,22 @@
 #map {
-    height: calc(100vh - 15rem);
+    height: calc(100vh - 12rem);
     z-index: 0;
 }
+
+#minimap {
+    height: 30%;
+    width: 20%;
+    position: absolute;
+    top: 8rem;
+    outline-style: solid !important;
+}
+
+@media (max-width: 900px) {
+    #minimap {
+        height: 40%;
+        width: 30%;
+    }
+  }
 
 .insert-marker {
     cursor: crosshair;
