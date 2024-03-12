@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Input, OnInit } from "@angular/core";
+import { Directive, ElementRef, Input, OnChanges, OnInit, SimpleChanges } from "@angular/core";
 import { IModule } from "src/app/Model/interfaces/IModule";
 import { IUser } from "src/app/Model/interfaces/IUser";
 import { PermissionsService } from "src/app/services/permissions.service";
@@ -8,13 +8,25 @@ import { UserService } from "src/app/services/user.service";
     selector: '[showIfIsOwner]',
     standalone: true
 })
-export class ShowIfIsOwner implements OnInit {
+export class ShowIfIsOwner implements OnInit, OnChanges {
 
     @Input() showIfIsOwner!: string;
 
     constructor(public elementRef: ElementRef, private userService: UserService, private permissionsService: PermissionsService) { }
+    
+    ngOnChanges(changes: SimpleChanges): void {
+        if(changes['showIfIsOwner']){
+            this.initializeDirective();
+        }
+    }
+
+
 
     ngOnInit(): void {
+        this.initializeDirective();
+    }
+
+    initializeDirective(){
         this.elementRef.nativeElement.style.display = 'none';
         if (!this.showIfIsOwner) {
             return;
@@ -31,7 +43,6 @@ export class ShowIfIsOwner implements OnInit {
                     }
                 }
             )
-
     }
 
     getModuleDataCallback = (user: IUser, module: IModule) => {

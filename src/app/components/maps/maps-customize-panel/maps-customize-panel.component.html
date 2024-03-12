@@ -31,7 +31,7 @@
 		</div>
 
 		<div ngbAccordion [closeOthers]="true">
-			<div [showIfCanEdit]="{ table: item.tableRef, module: item.moduleRef }" *ngFor="let item of mapElements; let i=index" ngbAccordionItem [collapsed]="true">
+			<div *ngFor="let item of mapElements; let i=index" ngbAccordionItem [collapsed]="true">
 				<h2 ngbAccordionHeader>
 					<button ngbAccordionButton class="d-inline-flex">
 						<div class="ms-2 d-inline-flex align-items-center">
@@ -66,17 +66,16 @@
 
 
 
-<div class="d-inline-flex align-items-center w-100">
-	<button [showIfIsAdmin]="module" [showIfIsOwner]="table"  class="btn btn-outline-primary mb-2 me-2 mt-2 button-control" (click)="openEnd(content)">
+<div class="d-inline-flex align-items-center w-100 mb-2">
+	<button [showIfIsAdmin]="module" [showIfIsOwner]="module"  class="btn btn-outline-primary me-2 button-control" (click)="openEnd(content)">
 		<fa-icon [icon]="icons.config"></fa-icon>
 	</button>
-	<button *ngFor="let mapElement of mapElements" class="icon-item me-2 button-control"
+	<button [showIfIsAdmin]="mapElement.moduleRef" [showIfIsOwner]="mapElement.moduleRef" [showIfCanEdit]="{table: mapElement.tableRef, module: mapElement.moduleRef}" *ngFor="let mapElement of mapElements" class="icon-item me-2 button-control"
 		(click)="insertMarker(mapElement)">
 		<img *ngIf="mapElement.type==='point'" [src]="getButtonIcon(mapElement.icon)" width="25" height="25" />
 		<div *ngIf="mapElement.type==='path'" [style.height]="mapElement.pathStroke + 'px'"
 			[style.backgroundColor]="mapElement.pathColor" [style.width]="'1.5rem'"></div>
 	</button>
-
 </div>
 
 

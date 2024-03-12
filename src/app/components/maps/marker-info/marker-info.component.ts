@@ -42,6 +42,9 @@ export class MarkerInfoComponent implements AfterViewInit {
       debounceTime(200),
       distinctUntilChanged(),
       switchMap((term: string) => {
+        if(term.length < 2){
+          return of([]);
+        }
         this.columnMetadata = undefined;
         if (!this.mapElement) {
           return of([]);
