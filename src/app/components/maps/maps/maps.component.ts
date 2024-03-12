@@ -1,11 +1,11 @@
 import { AfterViewInit, Component, ElementRef, HostListener, Renderer2, TemplateRef, ViewChild } from '@angular/core';
 import { MapsCustomizePanelComponent } from '../maps-customize-panel/maps-customize-panel.component';
-import { BaseIconOptions, Control, DivIcon, Icon, LatLngExpression, Layer, LeafletEvent, LeafletKeyboardEvent, LeafletMouseEvent, Map, Marker, Point, Polyline, Popup, TileLayer, TileLayerOptions, divIcon, marker, point, polyline, popup, tileLayer } from 'leaflet';
+import { DivIcon, Icon, LatLngExpression, Layer, LeafletMouseEvent, Map, Marker, Point, Polyline, Popup, TileLayer, TileLayerOptions, divIcon, marker, point, polyline, popup, tileLayer } from 'leaflet';
 import { IMapElement } from '../Model/IMapElement';
 import { MapsService } from '../maps.service';
 import { IMarker } from '../Model/IMarker';
 import { CommonModule } from '@angular/common';
-import { Subject } from 'rxjs';
+import { Subject, firstValueFrom } from 'rxjs';
 import { MarkerInfoComponent } from '../marker-info/marker-info.component';
 import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent, EQ_CONFIRM_MODAL_NO, EQ_CONFIRM_MODAL_YES } from '../../alerts/confirm/confirm.component';
@@ -13,6 +13,8 @@ import { EqMarker } from '../Model/Marker';
 import { EqPath } from '../Model/Path';
 import { IPath } from '../Model/IPath';
 import { DeviceDetectorService, DeviceType } from 'src/app/services/device-detector.service';
+import { PermissionsService } from 'src/app/services/permissions.service';
+import { ActivatedRoute, Params } from '@angular/router';
 
 
 type EQ_MAP_CONTEXT_MENU_BUTTONS = 'delete' | 'end-path';
@@ -35,6 +37,8 @@ export class MapsComponent implements AfterViewInit {
   @ViewChild('contextMenu') contextMenu!: ElementRef;
   @ViewChild('confirmDeleteMarker') confirmDeleteMarker!: TemplateRef<any>;
 
+  module!: string;
+  table!: string;
   mapElements: IMapElement[] = [];
   map!: Map;
   miniMap!: Map;
@@ -45,8 +49,8 @@ export class MapsComponent implements AfterViewInit {
   insertMarkerByClick: boolean = false;
   closeCustomPanel: Subject<void> = new Subject<void>();
   openMarkerInfoPanel: Subject<{ mapShape: IMarker | IPath, mapElement: IMapElement }> = new Subject<{ mapShape: IMarker | IPath, mapElement: IMapElement }>();
-  mapCenter: LatLngExpression = this.getInitialMapCenter();
-  mapZoom: number = this.getInitialMapZoom();
+  mapCenter: LatLngExpression;
+  mapZoom: number;
   mapShapeToDelete!: IMarker | IPath;
   leafletMapShapeToDelete!: Marker | Polyline;
   markers: Marker[] = [];
@@ -60,9 +64,22 @@ export class MapsComponent implements AfterViewInit {
   device!: DeviceType;
 
 
-  constructor(private deviceDetector: DeviceDetectorService, private modal: NgbModal, private mapsService: MapsService, private renderer2: Renderer2) { }
+  constructor(private activatedRoute: ActivatedRoute, private permissionsService: PermissionsService, private deviceDetector: DeviceDetectorService, private modal: NgbModal, private mapsService: MapsService, private renderer2: Renderer2) {
+    this.mapCenter = this.getInitialMapCenter();
+    this.mapZoom = this.getInitialMapZoom();
+  }
 
   async ngAfterViewInit(): Promise<void> {
+    this.activatedRoute.params.subscribe(
+      (params: Params) => {
+        this.module = params['module'];
+        this.table = params['table'];
+        this.initializeMapComponent();
+      }
+    )
+  }
+
+  initializeMapComponent() {
     this.deviceDetector.detectDevice().then(device => this.device = device);
     this.map = new Map('map').setView(this.mapCenter, this.mapZoom);
     this.selectMapTheme();
@@ -76,6 +93,24 @@ export class MapsComponent implements AfterViewInit {
         event.originalEvent.stopPropagation();
       }
     });
+  }
+
+  async canEdit(shape: IMarker | IPath) {
+    const mapElement = this.getMapElementById(shape?.mapElement ? shape.mapElement : -1);
+    if (!mapElement) {
+      return false;
+    }
+    const isOwner = await firstValueFrom(this.permissionsService.isOwner(mapElement.moduleRef));
+    if (isOwner) {
+      return true;
+    }
+    const isAdmin = await firstValueFrom(this.permissionsService.isAdmin(mapElement.moduleRef));
+    if (isAdmin) {
+      return true;
+    }
+    const editable = await firstValueFrom(this.permissionsService.canEditTable(mapElement.moduleRef, mapElement.tableRef));
+
+    return editable;
   }
 
   getInitialMapZoom() {
@@ -238,7 +273,7 @@ export class MapsComponent implements AfterViewInit {
     this.insertMarkerByClick = this.currentElement.onClickMap(event, this.insertMarkerByClick);
   }
 
-  pinNewMarker = (newMarker: IMarker) => {
+  pinNewMarker = async (newMarker: IMarker) => {
     const mapElement: IMapElement | undefined = this.getMapElementById(newMarker.mapElement);
     if (!mapElement) {
       return;
@@ -255,7 +290,7 @@ export class MapsComponent implements AfterViewInit {
     })
     const mark = marker([newMarker.lat, newMarker.lng], {
       icon: icon,
-      draggable: true,
+      draggable: await this.canEdit(newMarker),
       interactive: true,
       bubblingMouseEvents: true,
       alt: newMarker.id.toString()
@@ -321,15 +356,13 @@ export class MapsComponent implements AfterViewInit {
           clonedLayer.options.attribution = "";
         } else if (layer instanceof Marker) {
           const { icon, ...rest } = layer.options;
-          clonedLayer = marker(layer.getLatLng(), rest)
+          clonedLayer = marker(layer.getLatLng(), rest);
           if (icon instanceof DivIcon) {
             clonedLayer.setIcon(this.getPathMarkerIcon());
           } else {
             clonedLayer.setIcon(icon as Icon)
           }
-
         }
-
         clonedLayer?.addTo(mapTarget);
       }
     )
@@ -504,7 +537,11 @@ export class MapsComponent implements AfterViewInit {
   }
 
 
-  showContextMenu(latlng: LatLngExpression, llMapShape: Marker | Polyline, mapShape: IMarker | IPath, ctxButtons: EQ_MAP_CONTEXT_MENU_BUTTONS[]) {
+  async showContextMenu(latlng: LatLngExpression, llMapShape: Marker | Polyline, mapShape: IMarker | IPath, ctxButtons: EQ_MAP_CONTEXT_MENU_BUTTONS[]) {
+    const canEdit = await this.canEdit(mapShape);
+    if (!canEdit) {
+      return;
+    }
     this.popUpMenu = popup(
       {
         content: this.contextMenu.nativeElement,
@@ -677,6 +714,8 @@ export class MapsComponent implements AfterViewInit {
   private refreshPath(path: IPath): void {
     this.paths.forEach(p => p.remove());
     this.pathMarkers.forEach(m => m.remove());
+    this.paths = [];
+    this.pathMarkers = [];
     this.getAllPaths();
   }
 

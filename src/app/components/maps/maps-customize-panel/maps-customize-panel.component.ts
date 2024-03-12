@@ -13,6 +13,7 @@ import { IColumn } from 'src/app/Model/interfaces/IColumn';
 import { Subject } from 'rxjs';
 import { ShowIfIsAdmin } from 'src/app/directives/permissions/show-if-is-admin.directive';
 import { ShowIfIsOwner } from 'src/app/directives/permissions/show-if-is-owner.directive';
+import { ShowIfCanEdit } from 'src/app/directives/permissions/show-if-can-edit.directive';
 
 @Component({
   selector: 'eq-maps-customize-panel',
@@ -26,7 +27,8 @@ import { ShowIfIsOwner } from 'src/app/directives/permissions/show-if-is-owner.d
     NgbAccordionModule,
     FormsModule,
     ShowIfIsAdmin,
-    ShowIfIsOwner
+    ShowIfIsOwner,
+    ShowIfCanEdit
   ]
 })
 export class MapsCustomizePanelComponent implements OnInit {
@@ -35,6 +37,8 @@ export class MapsCustomizePanelComponent implements OnInit {
   @Output() onGetMapIcons: EventEmitter<any> = new EventEmitter();
   @Output() onGetMapElements: EventEmitter<IMapElement[]> = new EventEmitter();
   @Input() closePanel!: Subject<void>;
+  @Input() module!: string;
+  @Input() table!: string;
 
   icons = {
     config: faCog

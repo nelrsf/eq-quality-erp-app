@@ -54,7 +54,7 @@ export class MapView extends Table {
     override customizeViewComponent: Type<unknown> = MapCustomizeView;
 
     override getLink(module: string): string {
-        return "/maps";
+        return "/maps/" + module + '/' + this.name;
     }
 
     override getIcon(): IconDefinition {

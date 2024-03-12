@@ -57,7 +57,7 @@ const routes: Routes = [
       {path: 'images-gallery/:images', component: GalleryViewComponent, canActivate: [ParamGuard]},
       {path: 'list/:listData', component: ListViewerComponent, canActivate: [ParamGuard]},
       {path: 'subtable', component: SubtableComponent},
-      {path: 'maps', component: MapsComponent, canActivate: [PlugginGuard], data: {type: 'maps'}},
+      {path: 'maps/:module/:table', component: MapsComponent, canActivate: [PlugginGuard], data: {type: 'maps'}},
       {path: 'error', component: ErrorNotFoundComponent},
       {path: 'unauthorized', component: ErrorUnauthorizedPageComponent},
       {path: 'docs', component: ApiDocsComponent},
