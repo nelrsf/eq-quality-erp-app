@@ -289,12 +289,12 @@ export class FieldRendererComponent implements AfterViewInit, OnDestroy, OnChang
     if (!foreignRestriction) {
       return false;
     }
-    const foreignModule = foreignRestriction.column?.module;
-    if (foreignModule !== this.column?.module) {
+    const foreignModule = foreignRestriction.column?.moduleRestriction;
+    if (foreignModule !== this.column?.moduleRestriction) {
       return false;
     }
-    const foreignTable = foreignRestriction.column?.table;
-    if (foreignTable !== this.column?.table) {
+    const foreignTable = foreignRestriction.column?.tableRestriction;
+    if (foreignTable !== this.column?.tableRestriction) {
       return false;
     }
     const foreignRow = foreignRestriction.rowId;
