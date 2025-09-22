@@ -11,6 +11,10 @@ import { debounceTime, distinctUntilChanged, filter, fromEvent, map, Observable,
 import { ICellRestriction } from 'src/app/Model/interfaces/ICellRestrictions';
 import { FormComponent } from '../../../form/form.component';
 import { TablesService } from 'src/app/pages/tables/tables.service';
+import { AutocompleteFilterService } from 'src/app/services/autocomplete-filter.service';
+import { AutocompleteValidationService } from 'src/app/services/autocomplete-validation.service';
+import { AutocompleteFormNavigationService } from 'src/app/services/autocomplete-form-navigation.service';
+import { AutocompleteStateService } from 'src/app/services/autocomplete-state.service';
 
 @Component({
   selector: 'eq-autocomplete',
@@ -53,19 +57,21 @@ export class AutocompleteComponent implements OnInit, AfterViewInit {
   }
 
   search = (text$: Observable<string>) =>
-    text$.pipe(
-      debounceTime(200),
-      distinctUntilChanged(),
-      map(term => term === '' ? []
-        : this.filteredData.filter(v => v.value.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
-    );
+    this.filterService.createSearch(this.filteredData)(text$);
 
   formatValue = (item: any) => {
     return item?.value ? item.value : '';
   }
 
 
-  constructor(private modal: NgbModal, private tableService: TablesService) {
+  constructor(
+    private modal: NgbModal, 
+    private tableService: TablesService,
+    private filterService: AutocompleteFilterService,
+    private validationService: AutocompleteValidationService,
+    private formNavigationService: AutocompleteFormNavigationService,
+    private stateService: AutocompleteStateService
+  ) {
   }
 
   ngAfterViewInit(): void {
@@ -73,7 +79,7 @@ export class AutocompleteComponent implements OnInit, AfterViewInit {
     inputChangeEvent.subscribe(
       (event: any) => {
         const value: string = event.target.value;
-        this.filteredData = this.filterData(value);
+        this.filteredData = this.filterService.filterData(this.data, value);
       }
     )
   }
@@ -84,90 +90,40 @@ export class AutocompleteComponent implements OnInit, AfterViewInit {
   }
 
   filterData = (name: string) => {
-    if (!this.data) {
-      return [];
-    }
-    return this.data.filter(d => {
-      if (d.value === undefined || d.value === null) {
-        return;
-      }
-      return d.value?.toLowerCase().indexOf(name.toLowerCase()) !== -1;
-    })
-
+    return this.filterService.filterData(this.data, name);
   }
 
   onFocus(event: any) {
     const value = event.target.value;
-    this.filteredData = this.filterData(value);
+    this.filteredData = this.filterService.filterData(this.data, value);
   }
 
   checkValue() {
-    if (this.didValueMatchRestrictions()) {
+    if (this.validationService.doesValueMatchRestrictions(this.data, this.value)) {
       if (this.value === "") {
-        this.previousRestriction = this.previousRestriction ? this.previousRestriction : {};
-        this.previousRestriction.deleteMode = true
-        this.onListChange.emit(this.previousRestriction);
+        const deleteRestriction = this.stateService.createDeleteModeRestriction(this.previousRestriction);
+        this.previousRestriction = deleteRestriction;
+        this.onListChange.emit(deleteRestriction);
         return;
       }
-      const dataRestriction = this.data?.find(
-        (cellRes: Partial<ICellRestriction>) => {
-          return cellRes.value === this.value;
-        }
-      );
+      const dataRestriction = this.validationService.findMatchingRestriction(this.data, this.value);
       if (!dataRestriction) {
         return;
       }
-      this.previousRestriction = dataRestriction;
-      this.previousRestriction.deleteMode = false;
-      this.onListChange.emit(dataRestriction);
+      const normalRestriction = this.stateService.createNormalModeRestriction(dataRestriction);
+      this.previousRestriction = this.stateService.updatePreviousRestriction(this.previousRestriction, normalRestriction);
+      this.onListChange.emit(normalRestriction);
     }
   }
 
   didValueMatchRestrictions(): boolean {
-    if (!this.data) {
-      return true;
-    }
-    const findValue = this.data.find(
-      (element) => {
-        return element.value === this.value;
-      }
-    )
-    return findValue !== undefined || !this.value;
+    return this.validationService.doesValueMatchRestrictions(this.data, this.value);
   }
 
   async goToForm(event: any) {
     event.preventDefault();
     const fieldRestriction = this.previousRestriction || this.restriction;
-    if (!fieldRestriction) {
-      return;
-    }
-    this.tableService.getRowById(
-      fieldRestriction.column?.moduleRestriction || '',
-      fieldRestriction.column?.tableRestriction || '',
-      fieldRestriction.rowIdRestriction || '')
-      .subscribe(
-        {
-          next: async (row: any) => {
-            const formComponentImport = await import('../../../form/form.component');
-            const formComponent = formComponentImport.FormComponent;
-            const modalRef = this.modal.open(formComponent, {
-              backdropClass: 'backdrop-infinite-form',
-              size: 'lg',
-              modalDialogClass: 'modal-infinite-form',
-            })
-            modalRef.componentInstance.closeButton = true;
-            modalRef.componentInstance.onCloseButton.subscribe(() => modalRef.close());
-            modalRef.componentInstance.module = fieldRestriction.column?.moduleRestriction;
-            modalRef.componentInstance.table = fieldRestriction.column?.tableRestriction;
-            modalRef.componentInstance.row = row;
-            modalRef.componentInstance.padding = '2rem';
-            modalRef.componentInstance.componentAccesMode = 'bySelector';
-          },
-          error: (error: any) => {
-            console.log(error)
-          }
-        }
-      )
+    await this.formNavigationService.openForm(fieldRestriction);
   }
 
 }
